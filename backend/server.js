@@ -1,5 +1,21 @@
 const express = require('express');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const app = express();
-const port = process.env.PORT || 3001
+require('dotenv').config();
+const port = process.env.PORT || 3000
 
-app.listen(port, () => console.log(`Listening on port ${port}`))
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })
+
+// Middlewares
+app.use(morgan('dev'));
+app.use(bodyParser.json());
+
+// Routes
+
+app.use('/users', require('./routes/users'))
+
+app.listen(port, () =>
+    console.log(`Listening on port ${port}`)
+)
