@@ -10,8 +10,6 @@ import authReducer from './store/reducers/auth';
 
 const store = createStore(authReducer, applyMiddleware(thunk));
 
-console.log(store.getState());
-
 
 const app = (
     <Provider store={store}>
