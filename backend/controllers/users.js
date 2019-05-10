@@ -15,7 +15,7 @@ signToken = user => {
 module.exports = {
     signUp: async (req, res, next) => {
         // Email and password from user
-        const { email, password } = req.value.body
+        const { email, password, name } = req.value.body
         // Check if user exists in database
         const foundUser = await User.findOne({ "local.email": email })
 
@@ -29,7 +29,8 @@ module.exports = {
             method: 'local',
             local: {
                 email: email,
-                password: password
+                password: password,
+                name: name
             }
         });
         await newUser.save();
