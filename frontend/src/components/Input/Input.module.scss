@@ -1,0 +1,16 @@
+.InputContainer {
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+
+.Input {
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 220px;
+    height: 40px;
+    outline: none;
+    padding: 0 20px;
+}
