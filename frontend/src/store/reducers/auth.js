@@ -1,3 +1,5 @@
+import * as actionTypes from '../actions/actionTypes';
+
 const DEFAULT_STATE = {
     isAuthenticated: false,
     token: '',
@@ -5,7 +7,23 @@ const DEFAULT_STATE = {
 }
 
 const reducer = (state = DEFAULT_STATE, action) => {
-    return state;
+    switch (action.type) {
+        case actionTypes.AUTH_SIGN_IN:
+            return {
+                ...state,
+                token: action.payload,
+                isAuthenticated: true,
+                errorMessage: ''
+            }
+        case actionTypes.AUTH_ERROR:
+            return {
+                ...state,
+                isAuthenticated: false,
+                errorMessage: action.payload
+            }
+        default:
+            return state;
+    }
 }
 
 export default reducer;
