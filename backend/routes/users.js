@@ -12,13 +12,13 @@ const passportFacebook = passport.authenticate('facebookToken', { session: false
 
 router.route('/signup')
     .post(
-        validateBody(schemas.authSchema),
+        validateBody(schemas.signUpSchema),
         UsersController.signUp
     )
 
 router.route('/signin')
     .post(
-        validateBody(schemas.authSchema),
+        validateBody(schemas.signInSchema),
         passportSignIn,
         UsersController.signIn
     )
