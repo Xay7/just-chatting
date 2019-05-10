@@ -42,12 +42,15 @@ module.exports = {
     },
     signIn: async (req, res, next) => {
 
+        const { email } = req.value.body
+        console.log(email);
+        const foundUser = await User.findOne({ "local.email": email })
+
         const token = signToken(req.user);
-        res.status(200).json({ token });
-        console.log("Successful login");
+        res.status(200).json({ token, name: foundUser.local.name });
     },
     chat: async (req, res, next) => {
-        console.log("Success");
+        ;
         console.log(req.user);
         res.status(200).json({ secret: "success" })
     },
