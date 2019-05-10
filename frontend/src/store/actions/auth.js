@@ -5,7 +5,7 @@ export const signIn = data => {
     return async dispatch => {
         try {
             const res = await axios.post('http://localhost:3001/users/signin', data);
-
+            console.log(res);
             dispatch({
                 type: actionsTypes.AUTH_SIGN_IN,
                 payload: res.data.token

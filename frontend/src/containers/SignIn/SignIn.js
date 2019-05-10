@@ -32,6 +32,15 @@ class SignIn extends Component {
 
         let inputStyle = this.props.error ? styles.InputError : styles.Input;
 
+
+        let errorMessage = null;
+
+        if (this.props.error) {
+            errorMessage = <div className={styles.ErrorMessage}>
+                <p className={styles.ErrorParagraph}>Wrong email or password</p>
+            </div>
+        }
+
         return (
             <div className={styles.Body}>
                 <div className={styles.Form}>
@@ -39,7 +48,9 @@ class SignIn extends Component {
                     <form onSubmit={this.onSubmit} >
                         <Input inputClass={inputStyle} inputPlaceholder="Email" inputType="email" onchange={this.onChangeHandler} inputName="email" {...this.props}>Email</Input>
                         <Input inputClass={inputStyle} inputPlaceholder="Password" inputType="password" onchange={this.onChangeHandler} inputName="password" {...this.props}>Password</Input>
+                        {errorMessage}
                         <button type="submit" onClick={this.onSubmit} className={styles.SubmitBtn}>SUBMIT</button>
+
                     </form>
                 </div>
                 <Link to='/signup' className={styles.Link}>Click here to register</Link>
