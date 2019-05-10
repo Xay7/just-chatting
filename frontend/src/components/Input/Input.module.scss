@@ -3,14 +3,27 @@
     flex-direction: column;
     width: max-content;
     margin: 0 auto;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+
 }
 
-.Input {
-    border: 1px solid black;
-    border-radius: 10px;
+.Input,
+.InputError {
+    border: none;
+    box-shadow: 0 0 2px 0px black;
+    border-radius: 25px;
     width: 220px;
     height: 40px;
     outline: none;
     padding: 0 20px;
+}
+
+.InputError {
+    border: 1px solid red;
+    animation-name: inputError;
+    animation-duration: 4s;
+}
+
+.Label {
+    margin-bottom: 5px;
 }
