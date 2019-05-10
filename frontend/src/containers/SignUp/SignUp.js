@@ -14,7 +14,7 @@ class SignUp extends Component {
     }
 
     onSubmit = async () => {
-        this.props.signUp(this.state)
+        this.props.signUp(this.state);
     }
 
     onChangeHandler = (e) => {
@@ -22,21 +22,31 @@ class SignUp extends Component {
     }
 
     render() {
+
+        let inputStyle = this.props.error ? styles.InputError : styles.Input;
+
         return (
             <div className={styles.Body}>
                 <div className={styles.Form}>
                     <h1 className={styles.Login}>Register</h1>
                     <form onSubmit={this.onSubmit}>
-                        <Input inputType="text" onchange={this.onChangeHandler} inputName="name">Name</Input>
-                        <Input inputType="email" onchange={this.onChangeHandler} inputName="email">Email</Input>
-                        <Input inputType="password" onchange={this.onChangeHandler} inputName="password">Password</Input>
+                        <Input inputClass={inputStyle} inputPlaceholder="Name" inputType="text" onchange={this.onChangeHandler} inputName="name">Name</Input>
+                        <Input inputClass={inputStyle} inputPlaceholder="Email" inputType="email" onchange={this.onChangeHandler} inputName="email">Email</Input>
+                        <Input inputClass={inputStyle} inputPlaceholder="Password" inputType="password" onchange={this.onChangeHandler} inputName="password">Password</Input>
                     </form>
                     <button type="submit" onClick={this.onSubmit} className={styles.SubmitBtn}>SUBMIT</button>
                 </div>
-                <Link to='/signin'>If you have an account sign in here</Link>
+                <Link to='/' className={styles.Link}>If you have an account sign in here</Link>
             </div >
         )
     }
 }
 
-export default connect(null, actions)(SignUp);
+const mapStateToProps = state => {
+    return {
+        isAuth: state.auth.isAuthenticated,
+        error: state.auth.signUpError
+    }
+}
+
+export default connect(mapStateToProps, actions)(SignUp);

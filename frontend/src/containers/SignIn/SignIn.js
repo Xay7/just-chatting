@@ -12,29 +12,47 @@ class SignIn extends Component {
         password: null
     }
 
-    onSubmit = async () => {
-        this.props.signIn(this.state)
+    onSubmit = async (e) => {
+        e.preventDefault();
+        this.props.signIn(this.state);
+    }
+
+    componentDidUpdate() {
+        if (this.props.isAuth) {
+            this.props.history.push('/chat')
+        }
     }
 
     onChangeHandler = (e) => {
         this.setState({ [e.target.name]: e.target.value })
     }
 
+
     render() {
+
+        let inputStyle = this.props.error ? styles.InputError : styles.Input;
+
         return (
             <div className={styles.Body}>
                 <div className={styles.Form}>
                     <h1 className={styles.Login}>Login</h1>
-                    <form onSubmit={this.onSubmit}>
-                        <Input inputType="email" onchange={this.onChangeHandler} inputName="email">Email</Input>
-                        <Input inputType="password" onchange={this.onChangeHandler} inputName="password">Password</Input>
+                    <form onSubmit={this.onSubmit} >
+                        <Input inputClass={inputStyle} inputPlaceholder="Email" inputType="email" onchange={this.onChangeHandler} inputName="email" {...this.props}>Email</Input>
+                        <Input inputClass={inputStyle} inputPlaceholder="Password" inputType="password" onchange={this.onChangeHandler} inputName="password" {...this.props}>Password</Input>
+                        <button type="submit" onClick={this.onSubmit} className={styles.SubmitBtn}>SUBMIT</button>
                     </form>
-                    <button type="submit" onClick={this.onSubmit} className={styles.SubmitBtn}>SUBMIT</button>
                 </div>
-                <Link to='/signup'>Click here to register</Link>
+                <Link to='/signup' className={styles.Link}>Click here to register</Link>
             </div >
         )
     }
 }
 
-export default connect(null, actions)(SignIn);
+const mapStateToProps = state => {
+    return {
+        isAuth: state.auth.isAuthenticated,
+        error: state.auth.signInError
+    }
+}
+
+export default connect(mapStateToProps, actions)(SignIn);
