@@ -5,7 +5,6 @@ export const signIn = data => {
     return async dispatch => {
         try {
             const res = await axios.post('http://localhost:3001/users/signin', data);
-            console.log(res);
 
             dispatch({
                 type: actionsTypes.AUTH_SIGN_IN,
@@ -16,8 +15,8 @@ export const signIn = data => {
 
         } catch (err) {
             dispatch({
-                type: actionsTypes.AUTH_ERROR,
-                payload: 'Wrong credientals'
+                type: actionsTypes.AUTH_SIGN_IN_ERROR,
+                payload: 'Invalid email or password'
             });
         }
     }
@@ -27,7 +26,6 @@ export const signUp = data => {
     return async dispatch => {
         try {
             const res = await axios.post('http://localhost:3001/users/signup', data);
-            console.log(res);
 
             dispatch({
                 type: actionsTypes.AUTH_SIGN_UP,
@@ -38,7 +36,7 @@ export const signUp = data => {
 
         } catch (err) {
             dispatch({
-                type: actionsTypes.AUTH_ERROR,
+                type: actionsTypes.AUTH_SIGN_UP_ERROR,
                 payload: 'Email is arleady in use'
             });
         }
