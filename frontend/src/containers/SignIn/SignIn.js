@@ -4,17 +4,28 @@ import Input from '../../components/Input/Input';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/auth';
 import { Link } from 'react-router-dom';
+import Spinner from '../../components/Spinner/Spinner';
 
 class SignIn extends Component {
 
     state = {
         email: null,
-        password: null
+        password: null,
+        loading: false
     }
 
     onSubmit = async (e) => {
+        this.setState({ loading: true });
+
         e.preventDefault();
-        this.props.signIn(this.state);
+        const userInfo = {
+            email: this.state.email,
+            password: this.state.password
+        }
+
+        await this.props.signIn(userInfo);
+
+        this.setState({ loading: false });
     }
 
     componentDidUpdate() {
@@ -41,6 +52,19 @@ class SignIn extends Component {
             </div>
         }
 
+        let registerSuccess = null;
+
+        if (this.props.registered) {
+            registerSuccess = <p className={styles.RegisterSuccess}>Registration succesful, please login</p>
+        }
+
+
+        let submitButton = <button type="submit" onClick={this.onSubmit} className={styles.SubmitBtn}>SUBMIT</button>
+
+        if (this.state.loading) {
+            submitButton = <Spinner />
+        }
+
         return (
             <div className={styles.Body}>
                 <div className={styles.Form}>
@@ -49,8 +73,8 @@ class SignIn extends Component {
                         <Input inputClass={inputStyle} inputPlaceholder="Email" inputType="email" onchange={this.onChangeHandler} inputName="email" {...this.props}>Email</Input>
                         <Input inputClass={inputStyle} inputPlaceholder="Password" inputType="password" onchange={this.onChangeHandler} inputName="password" {...this.props}>Password</Input>
                         {errorMessage}
-                        <button type="submit" onClick={this.onSubmit} className={styles.SubmitBtn}>SUBMIT</button>
-
+                        {registerSuccess}
+                        {submitButton}
                     </form>
                 </div>
                 <Link to='/signup' className={styles.Link}>Click here to register</Link>
@@ -62,7 +86,8 @@ class SignIn extends Component {
 const mapStateToProps = state => {
     return {
         isAuth: state.auth.isAuthenticated,
-        error: state.auth.signInError
+        error: state.auth.signInError,
+        registered: state.auth.registerSuccess
     }
 }
 

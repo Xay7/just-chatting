@@ -5,7 +5,8 @@ const DEFAULT_STATE = {
     token: '',
     errorMessage: '',
     signInError: false,
-    signUpError: false
+    signUpError: false,
+    registerSuccess: false
 }
 
 const reducer = (state = DEFAULT_STATE, action) => {
@@ -17,6 +18,7 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 isAuthenticated: true,
                 errorMessage: '',
                 signInError: false,
+                registerSuccess: false
             }
         case actionTypes.AUTH_SIGN_UP:
             return {
@@ -24,14 +26,16 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 token: action.payload,
                 isAuthenticated: false,
                 errorMessage: '',
-                signUpError: false
+                signUpError: false,
+                registerSuccess: true
             }
         case actionTypes.AUTH_SIGN_IN_ERROR:
             return {
                 ...state,
                 isAuthenticated: false,
                 errorMessage: action.payload,
-                signInError: true
+                signInError: true,
+                registerSuccess: false
             }
         case actionTypes.AUTH_SIGN_UP_ERROR:
             console.log("test");
@@ -39,7 +43,8 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 ...state,
                 isAuthenticated: false,
                 errorMessage: action.payload,
-                signUpError: true
+                signUpError: true,
+                registerSuccess: false
             }
         default:
             return state;
