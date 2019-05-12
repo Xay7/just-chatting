@@ -6,7 +6,8 @@ const DEFAULT_STATE = {
     errorMessage: '',
     signInError: false,
     signUpError: false,
-    registerSuccess: false
+    registerSuccess: false,
+    name: ''
 }
 
 const reducer = (state = DEFAULT_STATE, action) => {
@@ -18,7 +19,8 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 isAuthenticated: true,
                 errorMessage: '',
                 signInError: false,
-                registerSuccess: false
+                registerSuccess: false,
+                name: action.name
             }
         case actionTypes.AUTH_SIGN_UP:
             return {
@@ -38,7 +40,6 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 registerSuccess: false
             }
         case actionTypes.AUTH_SIGN_UP_ERROR:
-            console.log("test");
             return {
                 ...state,
                 isAuthenticated: false,
