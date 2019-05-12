@@ -1,0 +1,58 @@
+.Chatbox {
+    width: 60%;
+    background-color: #262626;
+    height: 100vh;
+}
+
+.InputContainer {
+    position: fixed;
+    width: 60%;
+    bottom: 0;
+    margin-bottom: 30px;
+}
+
+.MessageInput {
+    background-color: 94A8B5;
+    display: block;
+    margin: 0 auto;
+    border-radius: 10px;
+    border: none;
+    width: 85%;
+    height: 50px;
+    outline: none;
+    padding: 0px 20px;
+}
+
+.MessagesContainer {
+    width: 90%;
+    background-color: #262626;
+    height: 85%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+
+.Messages:first-child {
+    margin-top: auto;
+}
+
+.Messages {
+    width: 100%;
+    color: #DCDCDC;
+    background-color: inherit;
+    word-wrap: break-word;
+}
+
+.MessageHorizontalLine {
+    border: 1px solid #2e2d2d;
+    margin-top: 9px;
+}
+
+.Username {
+    margin: 0;
+    font-weight: bold;
+    margin-bottom: 7px;
+    text-transform: capitalize;
+}
