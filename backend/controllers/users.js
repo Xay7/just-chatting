@@ -1,6 +1,7 @@
 const JWT = require('jsonwebtoken');
 const User = require('../models/user');
 const { JWT_S } = require('../config/index');
+const io = require('../index');
 
 signToken = user => {
     return token = JWT.sign({
@@ -18,9 +19,14 @@ module.exports = {
         const { email, password, name } = req.value.body
         // Check if user exists in database
         const foundUser = await User.findOne({ "local.email": email })
+        const foundName = await User.findOne({ "local.name": name })
 
         if (foundUser) {
-            return res.status(403).send({ error: "Email arleady exists" })
+            return res.status(403).send({ error: "Email arleady in use" })
+        }
+
+        if (foundName) {
+            return res.status(403).send({ error: "Username arleady in use" })
         }
 
         // Create new user
@@ -43,15 +49,12 @@ module.exports = {
     signIn: async (req, res, next) => {
 
         const { email } = req.value.body
-        console.log(email);
         const foundUser = await User.findOne({ "local.email": email })
-
         const token = signToken(req.user);
+
         res.status(200).json({ token, name: foundUser.local.name });
     },
     chat: async (req, res, next) => {
-        ;
-        console.log(req.user);
         res.status(200).json({ secret: "success" })
     },
     googleOAuth: async (req, res, next) => {
