@@ -1,16 +1,29 @@
-const app = require('./app');
+const express = require('express');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const mongoose = require('mongoose');
+const app = express();
 const socket = require("socket.io");
-
 const port = process.env.PORT || 3001;
+require('dotenv').config();
 
-server = app.listen(port);
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+
+
+const server = app.listen(port);
 io = socket(server);
 
-io.on("connection", (socket) => {
-    socket.on('SEND_MESSAGE', function (data) {
-        io.emit('RECEIVE_MESSAGE', data);
-    })
-})
+module.exports = io;
+
+app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(cors());
+
+
+
+
+app.use('/users', require('./routes/users'))
 
 
 
