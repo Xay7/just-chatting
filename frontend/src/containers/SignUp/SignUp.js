@@ -44,16 +44,16 @@ class SignUp extends Component {
         let inputStyle = this.props.error ? styles.InputError : styles.Input;
 
         let errorMessage = <div className={styles.Information}>
-            <p >Name must be longer than 3 characters</p>
-            <p>Password must be longer than 6 characters</p>
+            <p className={styles.ErrorParagraph}>Name must be longer than 3 characters</p>
+            <p className={styles.ErrorParagraph}>Password must be longer than 6 characters</p>
         </div>;
 
 
         if (this.props.error) {
             errorMessage = <div className={styles.ErrorMessage}>
+                <p className={styles.ErrorInUse}>{this.props.errorMessage}</p>
                 <p className={styles.ErrorParagraph}>Name must be longer than 3 characters</p>
                 <p className={styles.ErrorParagraph}>Password must be longer than 6 characters</p>
-                <p className={styles.ErrorParagraph}>Email may be in use</p>
             </div>
         }
 
@@ -69,7 +69,7 @@ class SignUp extends Component {
                 <div className={styles.Form}>
                     <h1 className={styles.Login}>Register</h1>
                     <form onSubmit={this.onSubmit}>
-                        <Input inputClass={inputStyle} inputPlaceholder="Name" inputType="text" onchange={this.onChangeHandler} inputName="name">Name</Input>
+                        <Input inputClass={inputStyle} inputPlaceholder="Name" inputType="text" onchange={this.onChangeHandler} inputName="name">Username</Input>
                         <Input inputClass={inputStyle} inputPlaceholder="Email" inputType="email" onchange={this.onChangeHandler} inputName="email">Email</Input>
                         <Input inputClass={inputStyle} inputPlaceholder="Password" inputType="password" onchange={this.onChangeHandler} inputName="password">Password</Input>
                         {errorMessage}
@@ -86,6 +86,7 @@ const mapStateToProps = state => {
     return {
         isAuth: state.auth.isAuthenticated,
         error: state.auth.signUpError,
+        errorMessage: state.auth.errorMessage,
         registered: state.auth.registerSuccess
     }
 }
