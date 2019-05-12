@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 
 class Main extends Component {
 
+    // TODO
+    // ADD NAVBAR
+
     componentDidUpdate() {
         if (this.props.isAuth) {
             this.props.history.push('/chat')
@@ -13,7 +16,7 @@ class Main extends Component {
         return (
             <div className={styles.Body}>
                 <div>
-                    <h1 className={styles.title}>Just chatting</h1>
+                    <h1 className={styles.Title}>Just chatting</h1>
                 </div>
                 <Link to="/signin">
                     <button className={styles.Login}>Login</button>
