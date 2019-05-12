@@ -26,9 +26,7 @@ class SignIn extends Component {
         await this.props.signIn(userInfo);
 
         this.setState({ loading: false });
-    }
 
-    componentDidUpdate() {
         if (this.props.isAuth) {
             this.props.history.push('/chat')
         }
@@ -48,14 +46,14 @@ class SignIn extends Component {
 
         if (this.props.error) {
             errorMessage = <div className={styles.ErrorMessage}>
-                <p className={styles.ErrorParagraph}>Wrong email or password</p>
+                <p className={styles.ErrorParagraph}>Invalid email or password</p>
             </div>
         }
 
         let registerSuccess = null;
 
         if (this.props.registered) {
-            registerSuccess = <p className={styles.RegisterSuccess}>Registration succesful, please login</p>
+            registerSuccess = <p className={styles.RegisterSuccess}>Registration succesful, you can login</p>
         }
 
 
