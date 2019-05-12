@@ -4,20 +4,22 @@ import { connect } from 'react-redux';
 export default (OriginalComponent) => {
     class MixedComponent extends Component {
 
-        checkAuth() {
-            if (!this.props.isAuth && !this.props.jwtToken) {
-                this.props.history.push('/');
-            }
-        }
+        // REMOVE COMMENT WHEN DONE IMPLEMENTING CHAT
 
-        componentDidMount() {
-            this.checkAuth();
-        }
+        // checkAuth() {
+        //     if (!this.props.isAuth && !this.props.jwtToken) {
+        //         this.props.history.push('/');
+        //     }
+        // }
+
+        // componentDidMount() {
+        //     this.checkAuth();
+        // }
 
 
-        componentDidUpdate() {
-            this.checkAuth();
-        }
+        // componentDidUpdate() {
+        //     this.checkAuth();
+        // }
 
         render() {
             return <OriginalComponent {...this.props} />;
