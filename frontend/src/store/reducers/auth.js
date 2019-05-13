@@ -7,7 +7,8 @@ const DEFAULT_STATE = {
     signInError: false,
     signUpError: false,
     registerSuccess: false,
-    name: ''
+    name: '',
+    tokenSuccess: false
 }
 
 const reducer = (state = DEFAULT_STATE, action) => {
@@ -47,8 +48,21 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 signUpError: true,
                 registerSuccess: false
             }
+        case actionTypes.TOKEN_ACCESS:
+            return {
+                ...state,
+                name: action.name,
+                tokenSuccess: true
+            }
+        case actionTypes.TOKEN_ERROR:
+            return {
+                ...state,
+                name: '',
+                tokenSuccess: false
+            }
         default:
             return state;
+
     }
 }
 

@@ -25,8 +25,8 @@ export const signIn = data => {
 export const signUp = data => {
     return async dispatch => {
         try {
-            const res = await axios.post('http://localhost:3001/users/signup', data);
 
+            const res = await axios.post('http://localhost:3001/users/signup', data);
             dispatch({
                 type: actionsTypes.AUTH_SIGN_UP,
                 payload: res.data.token
@@ -37,8 +37,36 @@ export const signUp = data => {
         } catch (err) {
             dispatch({
                 type: actionsTypes.AUTH_SIGN_UP_ERROR,
-                payload: 'Email is arleady in use'
+                payload: err.response.data.error
             });
         }
     }
 }
+
+export const tokenAccess = () => {
+    return async dispatch => {
+        try {
+
+            const token = localStorage.getItem('JWT_TOKEN');
+
+            const res = await axios.get('http://localhost:3001/users/chat', {
+                headers: {
+                    'authorization': token
+                }
+            })
+
+            dispatch({
+                type: actionsTypes.TOKEN_ACCESS,
+                name: res.data.name
+            });
+
+        }
+        catch (err) {
+            dispatch({
+                type: actionsTypes.TOKEN_ERROR
+            });
+
+        }
+    }
+}
+
