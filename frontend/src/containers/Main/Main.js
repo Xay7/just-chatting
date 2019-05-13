@@ -1,11 +1,24 @@
 import React, { Component } from 'react';
 import styles from './Main.module.scss';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import * as actions from '../../store/actions/auth';
 
 class Main extends Component {
 
     // TODO
     // ADD NAVBAR
+
+    tokenAccess = async () => {
+        await this.props.tokenAccess();
+        if (this.props.tokenAuthSuccess) {
+            await this.props.history.push('/chat');
+        }
+        else {
+            await this.props.history.push('/signin');
+        }
+
+    }
 
     componentDidUpdate() {
         if (this.props.isAuth) {
@@ -13,14 +26,13 @@ class Main extends Component {
         }
     }
     render() {
+
         return (
             <div className={styles.Body}>
                 <div>
                     <h1 className={styles.Title}>Just chatting</h1>
                 </div>
-                <Link to="/signin">
-                    <button className={styles.Login}>Login</button>
-                </Link>
+                <button className={styles.Login} onClick={this.tokenAccess}>Login</button>
                 <Link to="/signup">
                     <button className={styles.Register}>Register</button>
                 </Link>
@@ -31,4 +43,10 @@ class Main extends Component {
 
 }
 
-export default Main;
+const mapStateToProps = (state) => {
+    return {
+        tokenAuthSuccess: state.auth.tokenSuccess
+    }
+}
+
+export default connect(mapStateToProps, actions)(Main);
