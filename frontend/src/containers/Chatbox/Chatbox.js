@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import styles from './Chatbox.module.scss';
-import io from 'socket.io-client';
 import { connect } from 'react-redux';
+import { socketChat } from '../Chat/Chat';
+import moment from 'moment';
+
 
 class Chatbox extends Component {
+
+
 
     constructor(props) {
         super(props);
@@ -14,7 +18,7 @@ class Chatbox extends Component {
             sameUserMessage: false,
         };
 
-        this.socket = io('localhost:3001');
+        this.socket = socketChat;
 
         this.sendMessage = e => {
             this.socket.emit('SEND_MESSAGE', {
@@ -48,7 +52,6 @@ class Chatbox extends Component {
     }
 
     enterHandler = (e) => {
-        console.log(e.target.value);
         if (e.keyCode === 13 && this.state.message !== '') {
             this.sendMessage();
             this.setState({ message: '' });
@@ -59,7 +62,13 @@ class Chatbox extends Component {
         this.setState({ message: e.target.value })
     }
 
+    componentDidMount() {
+        console.log(moment().calendar());
+    }
+
     render() {
+
+
 
         // Makes messages continue on current user
 
@@ -76,8 +85,9 @@ class Chatbox extends Component {
                     return (
                         <div className={styles.Messages} key={index}>
                             <hr className={styles.MessageHorizontalLine}></hr>
-                            <div>
+                            <div className={styles.NameAndDate}>
                                 <p className={styles.Username}>{message.username}</p>
+                                <p className={styles.Date}>{moment().calendar()}</p>
                             </div>
                             <div className={styles.Message}>{message.message}</div>
                         </div>
@@ -88,8 +98,9 @@ class Chatbox extends Component {
                 return (
                     <div className={styles.Messages} key={index}>
                         <hr className={styles.MessageHorizontalLine}></hr>
-                        <div>
+                        <div className={styles.NameAndDate}>
                             <p className={styles.Username}>{message.username}</p>
+                            <p className={styles.Date}>{moment().calendar()}</p>
                         </div>
                         <div className={styles.Message}>{message.message}</div>
                     </div>
@@ -119,7 +130,8 @@ class Chatbox extends Component {
 
 const mapStateToProps = state => {
     return {
-        name: state.auth.name
+        name: state.auth.name,
+        users: state.auth.users
     }
 }
 
