@@ -6,8 +6,7 @@ import * as actions from '../../store/actions/auth';
 
 class Main extends Component {
 
-    // TODO
-    // ADD NAVBAR
+
 
     tokenAccess = async () => {
         await this.props.tokenAccess();
@@ -20,11 +19,8 @@ class Main extends Component {
 
     }
 
-    componentDidUpdate() {
-        if (this.props.isAuth) {
-            this.props.history.push('/chat')
-        }
-    }
+
+
     render() {
 
         return (

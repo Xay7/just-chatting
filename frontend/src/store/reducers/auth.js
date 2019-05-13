@@ -8,7 +8,7 @@ const DEFAULT_STATE = {
     signUpError: false,
     registerSuccess: false,
     name: '',
-    tokenSuccess: false
+    tokenSuccess: false,
 }
 
 const reducer = (state = DEFAULT_STATE, action) => {
@@ -21,7 +21,8 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 errorMessage: '',
                 signInError: false,
                 registerSuccess: false,
-                name: action.name
+                name: action.name,
+                names: action.users
             }
         case actionTypes.AUTH_SIGN_UP:
             return {

@@ -1,7 +1,6 @@
 const JWT = require('jsonwebtoken');
 const User = require('../models/user');
 const { JWT_S } = require('../config/index');
-const io = require('../index');
 
 signToken = user => {
     return token = JWT.sign({
@@ -42,8 +41,8 @@ module.exports = {
         await newUser.save();
 
         const token = signToken(newUser);
-
         res.status(200).json({ token: token });
+
 
     },
     signIn: async (req, res, next) => {
@@ -51,12 +50,12 @@ module.exports = {
         const { email } = req.value.body
         const foundUser = await User.findOne({ "local.email": email })
         const token = signToken(req.user);
-
-        res.status(200).json({ token, name: foundUser.local.name });
+        res.status(200).json({ token, name: foundUser.local.name, users: io.users });
     },
     chat: async (req, res, next) => {
-        res.status(200).json({ secret: "success" })
+        res.status(200).json({ secret: "success", name: req.user.local.name })
     },
+
     googleOAuth: async (req, res, next) => {
         const token = signToken(req.user);
         res.status(200).json({ token });

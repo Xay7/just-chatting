@@ -14,8 +14,8 @@ passport.use(new JWTStrategy({
 },
   async (payload, done) => {
     try {
-      const user = await User.findById(payload.sub);
 
+      const user = await User.findById(payload.sub);
       if (!user) {
         return done(null, false);
       }
@@ -30,31 +30,29 @@ passport.use(new JWTStrategy({
 
 // Local strategy
 
-passport.use(
-  new LocalStrategy(
-    {
-      usernameField: "email"
-    },
-    async (email, password, done) => {
-      try {
-        const user = await User.findOne({ "local.email": email });
+passport.use(new LocalStrategy({
+  usernameField: "email"
+},
+  async (email, password, done) => {
+    try {
+      const user = await User.findOne({ "local.email": email });
 
-        if (!user) {
-          return done(null, false);
-        }
-
-        const isValid = await user.isValidPassword(password);
-
-        if (!isValid) {
-          return done(null, false);
-        }
-
-        done(null, user);
-      } catch (error) {
-        done(error, false);
+      if (!user) {
+        return done(null, false);
       }
+
+      const isValid = await user.isValidPassword(password);
+
+      if (!isValid) {
+        return done(null, false);
+      }
+
+      done(null, user);
+    } catch (error) {
+      done(error, false);
     }
-  )
+  }
+)
 );
 
 // Google OAUTH strategy
@@ -93,10 +91,6 @@ passport.use('facebookToken', new FacebookTokenStrategy({
   clientSecret: oauth.facebook.clientSecret
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    console.log(accessToken);
-    console.log(refreshToken);
-    console.log(profile);
-
     const existingUser = await User.findOne({ "facebook.id": profile.id });
 
     if (existingUser) {

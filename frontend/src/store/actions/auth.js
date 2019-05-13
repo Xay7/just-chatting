@@ -8,7 +8,7 @@ export const signIn = data => {
             dispatch({
                 type: actionsTypes.AUTH_SIGN_IN,
                 payload: res.data.token,
-                name: res.data.name
+                name: res.data.name,
             });
 
             localStorage.setItem('JWT_TOKEN', res.data.token);
