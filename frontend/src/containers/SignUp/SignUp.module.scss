@@ -70,17 +70,23 @@
 .ErrorMessage {
     font-size: 12px;
     text-align: center;
-    color: red;
     margin: 0;
 }
 
 .ErrorParagraph {
     margin: 0;
     margin-bottom: 5px;
+    color: black;
 }
 
 .Information {
     font-size: 12px;
     text-align: center;
 
+}
+
+.ErrorInUse {
+    margin: 0;
+    margin-bottom: 5px;
+    color: red;
 }
