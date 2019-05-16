@@ -8,6 +8,7 @@ const socket = require("socket.io");
 const port = process.env.PORT || 3001;
 require('dotenv').config();
 
+
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
 
 
@@ -19,6 +20,7 @@ module.exports = io;
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(cors());
+mongoose.set('useFindAndModify', false);
 
 
 
