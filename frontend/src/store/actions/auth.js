@@ -5,13 +5,24 @@ export const signIn = data => {
     return async dispatch => {
         try {
             const res = await axios.post('http://localhost:3001/users/signin', data);
+
+
+            localStorage.setItem('JWT_TOKEN', res.data.token);
+
+            const resChat = await axios.get('http://localhost:3001/users/chat', {
+                headers: {
+                    'authorization': res.data.token
+                }
+            });
+
+            console.log(resChat);
+
             dispatch({
                 type: actionsTypes.AUTH_SIGN_IN,
                 payload: res.data.token,
                 name: res.data.name,
+                chatRooms: resChat.data.chatRooms
             });
-
-            localStorage.setItem('JWT_TOKEN', res.data.token);
 
         } catch (err) {
             dispatch({
@@ -57,7 +68,8 @@ export const tokenAccess = () => {
 
             dispatch({
                 type: actionsTypes.TOKEN_ACCESS,
-                name: res.data.name
+                name: res.data.name,
+                chatRooms: res.data.chatRooms
             });
 
         }
@@ -66,6 +78,17 @@ export const tokenAccess = () => {
                 type: actionsTypes.TOKEN_ERROR
             });
 
+        }
+    }
+}
+
+export const getChatRooms = () => {
+    return async dispatch => {
+        try {
+
+        }
+        catch (err) {
+            console.log(err);
         }
     }
 }
