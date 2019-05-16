@@ -25,8 +25,13 @@ router.route('/signin')
     )
 
 
+
 router.route('/chat')
     .get(passportJWT, UsersController.chat)
+
+router.route('/newchat')
+    .post(UsersController.newChat)
+
 
 
 router.route('/oauth/google')
