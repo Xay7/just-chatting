@@ -9,6 +9,7 @@ const DEFAULT_STATE = {
     registerSuccess: false,
     name: '',
     tokenSuccess: false,
+    chatRooms: []
 }
 
 const reducer = (state = DEFAULT_STATE, action) => {
@@ -22,7 +23,7 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 signInError: false,
                 registerSuccess: false,
                 name: action.name,
-                names: action.users
+                chatRooms: action.chatRooms
             }
         case actionTypes.AUTH_SIGN_UP:
             return {
@@ -53,12 +54,15 @@ const reducer = (state = DEFAULT_STATE, action) => {
             return {
                 ...state,
                 name: action.name,
-                tokenSuccess: true
+                isAuthenticated: true,
+                tokenSuccess: true,
+                chatRooms: action.chatRooms
             }
         case actionTypes.TOKEN_ERROR:
             return {
                 ...state,
                 name: '',
+                isAuthenticated: false,
                 tokenSuccess: false
             }
         default:
