@@ -2,7 +2,7 @@
     width: 60%;
     background-color: #262626;
     height: 100vh;
-    box-shadow: inset 25px 0px 5px -25px rgba(0, 0, 0, 0.45), inset -25px 0px 5px -25px rgba(0, 0, 0, 0.45);
+    box-shadow: inset 25px 0px 5px -25px black, inset -25px 0px 5px -25px black;
 
 }
 
@@ -18,7 +18,7 @@
     margin: 0 auto;
     border-radius: 10px;
     border: none;
-    width: 85%;
+    width: 80%;
     height: 50px;
     outline: none;
     padding: 0px 20px;
@@ -29,9 +29,29 @@
     background-color: #262626;
     height: 85%;
     margin: 0 auto;
+    margin-top: 1%;
+    padding-left: 1%;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+
+}
+
+.MessagesContainer::-webkit-scrollbar {
+    margin-left: 25px;
+    background-color: transparent;
+    width: 7px;
+}
+
+.MessagesContainer::-webkit-scrollbar-track {
+    background-color: rgb(58, 57, 57);
+    border-radius: 10px;
+}
+
+.MessagesContainer::-webkit-scrollbar-thumb {
+    background-color: rgb(20, 20, 20);
+    border-radius: 10px;
+
 }
 
 
@@ -42,9 +62,13 @@
 .Messages {
     font-size: 14px;
     width: 100%;
-    color: #DCDCDC;
+    color: #CCC;
     background-color: inherit;
     word-wrap: break-word;
+}
+
+.Message {
+    margin-bottom: 3px;
 }
 
 .MessageHorizontalLine {
@@ -60,6 +84,7 @@
 }
 
 .NameAndDate {
+    color: #CCC;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -67,9 +92,8 @@
 }
 
 .Date {
-    color: #ccc;
+    color: #686868;
     margin: 0;
-    margin-top: 2px;
     margin-bottom: 7px;
     margin-left: 10px;
     font-size: 10px;
