@@ -1,4 +1,5 @@
 import * as actionTypes from '../actions/actionTypes';
+import io from 'socket.io-client';
 
 const DEFAULT_STATE = {
     isAuthenticated: false,
@@ -9,9 +10,10 @@ const DEFAULT_STATE = {
     registerSuccess: false,
     name: '',
     tokenSuccess: false,
-    chatRooms: []
+    chatRooms: [],
+    socket: '',
+    room: ''
 }
-
 const reducer = (state = DEFAULT_STATE, action) => {
     switch (action.type) {
         case actionTypes.AUTH_SIGN_IN:
@@ -23,7 +25,8 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 signInError: false,
                 registerSuccess: false,
                 name: action.name,
-                chatRooms: action.chatRooms
+                chatRooms: action.chatRooms,
+                socket: io('http://localhost:3001')
             }
         case actionTypes.AUTH_SIGN_UP:
             return {
@@ -64,6 +67,11 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 name: '',
                 isAuthenticated: false,
                 tokenSuccess: false
+            }
+        case actionTypes.CHANGE_ROOM:
+            return {
+                ...state,
+                room: action.room
             }
         default:
             return state;
