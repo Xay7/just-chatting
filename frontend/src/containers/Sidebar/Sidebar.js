@@ -2,12 +2,28 @@ import React, { Component } from 'react';
 import styles from './Sidebar.module.scss';
 import { connect } from 'react-redux';
 import axios from 'axios';
+import * as actions from '../../store/actions/auth';
 
 class Sidebar extends Component {
 
-    state = {
-        chatRooms: [null]
+    constructor(props) {
+        super(props);
+        this.state = {
+            chatRooms: []
+        }
+
+        this.socket = this.props.socketChat;
+
+        this.switchChatroom = (el) => {
+            this.props.changeRoom(el);
+            this.socket.emit('SWITCH_ROOMS', {
+                room: el,
+                name: this.props.name
+            })
+        }
     }
+
+
 
     async componentDidMount() {
         await this.setState({ chatRooms: this.props.chatRooms });
@@ -19,7 +35,6 @@ class Sidebar extends Component {
         let data = {
             name: name,
             owner: this.props.name
-
         }
 
         await axios.post('http://localhost:3001/users/newchat', data);
@@ -34,17 +49,14 @@ class Sidebar extends Component {
 
         this.setState({ chatRooms: res.data.chatRooms });
 
-        console.log(res);
     }
-
-
 
     render() {
 
 
 
         let rooms = this.state.chatRooms.map(el => {
-            return <div style={{ color: 'white' }}>{el}</div>
+            return <div style={{ color: 'white' }} onClick={() => this.switchChatroom(el)} >{el}</div>
         })
 
         return (
@@ -60,9 +72,10 @@ class Sidebar extends Component {
 const mapStateToProps = state => {
     return {
         chatRooms: state.auth.chatRooms,
-        name: state.auth.name
+        name: state.auth.name,
+        socketChat: state.auth.socket
     }
 
 }
 
-export default connect(mapStateToProps)(Sidebar);
+export default connect(mapStateToProps, actions)(Sidebar);
