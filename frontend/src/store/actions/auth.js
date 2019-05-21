@@ -15,8 +15,6 @@ export const signIn = data => {
                 }
             });
 
-            console.log(resChat);
-
             dispatch({
                 type: actionsTypes.AUTH_SIGN_IN,
                 payload: res.data.token,
@@ -82,14 +80,11 @@ export const tokenAccess = () => {
     }
 }
 
-export const getChatRooms = () => {
-    return async dispatch => {
-        try {
-
-        }
-        catch (err) {
-            console.log(err);
-        }
+export const changeRoom = room => {
+    return dispatch => {
+        dispatch({
+            type: actionsTypes.CHANGE_ROOM,
+            room: room
+        });
     }
 }
-
