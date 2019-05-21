@@ -19,6 +19,9 @@ const userSchema = new Schema({
         },
         password: {
             type: String,
+        },
+        chatRooms: {
+            type: Array
         }
     },
     google: {
@@ -42,11 +45,13 @@ const userSchema = new Schema({
 
 });
 
+
 userSchema.pre('save', async function (next) {
     try {
         if (this.method !== 'local') {
             next();
         }
+
         // Generate a salt
         const salt = await bcrypt.genSalt(10);
         // Generate password hash
