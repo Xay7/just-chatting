@@ -11,7 +11,7 @@ const DEFAULT_STATE = {
     name: '',
     tokenSuccess: false,
     chatRooms: [],
-    socket: '',
+    socket: io('http://localhost:3001'),
     room: ''
 }
 const reducer = (state = DEFAULT_STATE, action) => {
@@ -26,7 +26,6 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 registerSuccess: false,
                 name: action.name,
                 chatRooms: action.chatRooms,
-                socket: io('http://localhost:3001')
             }
         case actionTypes.AUTH_SIGN_UP:
             return {
