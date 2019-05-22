@@ -59,42 +59,66 @@ module.exports = {
 
         const findUser = await User.findOne({ "local.name": name })
 
-        res.status(200).json({ name: findUser.local.name, chatRooms: findUser.local.chatRooms });
+        const userChatRoomsIds = findUser.local.chatRooms;
+
+        let userChatRoomsNames = [];
+
+        await Chatroom.find().where('id').in(userChatRoomsIds).exec(function (err, record) {
+            console.log(record);
+            userChatRoomsNames = record.map(el => {
+                console.log(el.name);
+                return el.name
+            })
+
+
+            var combined = []
+            for (var i = 0; i < userChatRoomsIds.length; i++) {
+                combined[i] = {
+                    id: userChatRoomsIds[i],
+                    name: userChatRoomsNames[i],
+                }
+            }
+
+            res.status(200).json({
+                username: findUser.local.name,
+                chatRooms: combined
+            });
+        })
+
     },
     newChat: async (req, res, next) => {
 
 
+        const id = req.body.id
         const name = req.body.name
         const owner = req.body.owner
 
 
         const newChatroom = new Chatroom({
+            id: id,
             name: name,
             owner: owner,
         })
 
         const foundChatroom = await Chatroom.findOne({ "name": name });
 
-        if (foundChatroom) {
-            return res.status(403).send({ error: "Chatroom name arleady in use" });
-        }
+        // if (foundChatroom) {
+        //     return res.status(403).send({ error: "Chatroom name arleady in use" });
+        // }
 
         await newChatroom.save();
-
-        // Push chatroom to user subscribed rooms   
-        // await User.findOne({ "local.name": owner }, function (err, doc) {
-        //     doc.local.chatRooms.push(name);
-        //     doc.save({ validateBeforeSave: false });
-        // })
 
         await User.findOneAndUpdate({ "local.name": owner }, {
             "$push":
             {
-                "local.chatRooms": name
+                "local.chatRooms": id
             }
         })
 
         res.status(200).json({ success: "New chat has been created" })
+    },
+    deleteChat: async (req, res, next) => {
+        res.status(200).json({ success: "Chat has been deleted" })
     },
     googleOAuth: async (req, res, next) => {
         const token = signToken(req.user);
