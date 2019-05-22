@@ -6,3 +6,4 @@ export const AUTH_ERROR = 'AUTH_ERROR';
 export const TOKEN_ACCESS = 'TOKEN_ACCESS';
 export const TOKEN_ERROR = 'TOKEN_ERROR';
 export const CHANGE_ROOM = 'CHANGE_ROOM';
+export const DELETE_ROOM = 'DELETE_ROOM';
