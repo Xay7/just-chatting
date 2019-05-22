@@ -9,6 +9,10 @@ const chatSchema = new Schema({
     owner: {
         type: String,
         required: true
+    },
+    id: {
+        type: String,
+        required: true
     }
 
 })
