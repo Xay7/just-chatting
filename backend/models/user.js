@@ -21,7 +21,12 @@ const userSchema = new Schema({
             type: String,
         },
         chatRooms: {
-            type: Array
+            owned: {
+                type: Array
+            },
+            joined: {
+                type: Array
+            },
         }
     },
     google: {
