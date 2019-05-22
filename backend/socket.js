@@ -1,6 +1,5 @@
 const io = require('./index.js');
 
-
 io.on("connection", function (socket) {
 
 
@@ -52,5 +51,17 @@ io.on("connection", function (socket) {
 
         // Send updated list of usernames to room he is connected to
         io.in(data.room).emit('UPDATING_USERS', usernames);
+
+        socket.on('disconnect', () => {
+
+            let clients = io.sockets.adapter.rooms[data.room].sockets;
+            let roomSocketIds = [];
+            for (var k in clients) roomSocketIds.push(k);
+            let usernames = roomSocketIds.map((el, index) => {
+                return io.sockets.connected[el].username
+            })
+            io.in(data.room).emit('UPDATING_USERS', usernames);
+
+        })
     })
 })
