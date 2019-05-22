@@ -58,31 +58,32 @@ module.exports = {
         const name = req.user.local.name
 
         const findUser = await User.findOne({ "local.name": name })
+        const ownedChatroomsId = findUser.local.chatRooms.owned;
+        const joinedChatroomsId = findUser.local.chatRooms.joined;
 
-        const userChatRoomsIds = findUser.local.chatRooms;
+        const ownedChatroomData = await Chatroom.find().where('id').in(ownedChatroomsId);
+        const joinedChatroomData = await Chatroom.find().where('id').in(joinedChatroomsId);
 
-        let userChatRoomsNames = [];
-
-        await Chatroom.find().where('id').in(userChatRoomsIds).exec(function (err, record) {
-            console.log(record);
-            userChatRoomsNames = record.map(el => {
-                console.log(el.name);
-                return el.name
-            })
-
-
-            var combined = []
-            for (var i = 0; i < userChatRoomsIds.length; i++) {
-                combined[i] = {
-                    id: userChatRoomsIds[i],
-                    name: userChatRoomsNames[i],
-                }
+        const formattedOwnedData = ownedChatroomData.map(el => {
+            return {
+                id: el.id,
+                name: el.name
             }
+        })
 
-            res.status(200).json({
-                username: findUser.local.name,
-                chatRooms: combined
-            });
+        const formattedJoinedData = joinedChatroomData.map(el => {
+            return {
+                id: el.id,
+                name: el.name
+            }
+        })
+
+        res.status(200).json({
+            username: findUser.local.name,
+            chatRooms: {
+                owned: formattedOwnedData,
+                joined: formattedJoinedData
+            }
         })
 
     },
@@ -100,22 +101,44 @@ module.exports = {
             owner: owner,
         })
 
-        const foundChatroom = await Chatroom.findOne({ "name": name });
-
-        // if (foundChatroom) {
-        //     return res.status(403).send({ error: "Chatroom name arleady in use" });
-        // }
-
         await newChatroom.save();
 
         await User.findOneAndUpdate({ "local.name": owner }, {
             "$push":
             {
-                "local.chatRooms": id
+                "local.chatRooms.owned": id
             }
         })
 
-        res.status(200).json({ success: "New chat has been created" })
+        res.status(201).json({ success: "New chat has been created" })
+    },
+    joinChat: async (req, res, next) => {
+
+        const id = req.body.id;
+        const name = req.body.name
+
+        const foundChatroom = await Chatroom.findOne({ "id": id });
+
+        if (!foundChatroom) {
+            return res.status(403).json({ error: "Chat doesn't exist" });
+        }
+
+        const foundUser = await User.findOne({ "local.name": name });
+
+        await User.findOneAndUpdate({ "local.name": name }, {
+            "$push":
+            {
+                "local.chatRooms.joined": id
+            }
+        })
+
+
+        let chatRoomData = {
+            id: foundChatroom.id,
+            name: foundChatroom.name
+        }
+
+        res.status(200).json(chatRoomData);
     },
     deleteChat: async (req, res, next) => {
         res.status(200).json({ success: "Chat has been deleted" })
