@@ -3,36 +3,39 @@ import styles from './Sidebar.module.scss';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import * as actions from '../../store/actions/auth';
+import uuid4 from 'uuid4'
 
 class Sidebar extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            chatRooms: []
+            chatRooms: [],
+            selectedRoom: '',
         }
 
         this.socket = this.props.socketChat;
 
-        this.switchChatroom = (el) => {
-            this.props.changeRoom(el);
-            this.socket.emit('SWITCH_ROOMS', {
-                room: el,
+        this.switchChatroom = async (room, index) => {
+            await this.setState({ selectedRoom: index });
+            await this.props.changeRoom(room);
+            await this.socket.emit('SWITCH_ROOMS', {
+                room: room,
                 name: this.props.name
             })
         }
     }
 
-
-
     async componentDidMount() {
         await this.setState({ chatRooms: this.props.chatRooms });
+        await console.log(this.state);
     }
 
     addNewRoom = async () => {
         const name = await prompt();
 
         let data = {
+            id: uuid4(),
             name: name,
             owner: this.props.name
         }
@@ -51,12 +54,33 @@ class Sidebar extends Component {
 
     }
 
+    // Changes selected room styles for visual clarity
+    currentRoomStyle = (index) => {
+        const isSelected = this.state.selectedRoom === index;
+        // True is room selected, rest are not
+        return isSelected ? "red" : "black";
+    }
+
+    // Disables click on currect room to prevent multiple socket calls
+    currentRoomDisable = (index) => {
+        const isSelected = this.state.selectedRoom === index;
+        return isSelected ? true : false;
+    }
+
     render() {
 
 
 
-        let rooms = this.state.chatRooms.map(el => {
-            return <div style={{ color: 'white' }} onClick={() => this.switchChatroom(el)} >{el}</div>
+        let rooms = this.state.chatRooms.map((room, index) => {
+            return <div>
+                <button
+                    style={{ color: this.currentRoomStyle(index) }}
+                    onClick={() => this.switchChatroom(room.id, index)}
+                    key={index}
+                    disabled={this.currentRoomDisable(index)}>{room.name}
+                </button>
+                <button>DELETE</button>
+            </div>
         })
 
         return (
