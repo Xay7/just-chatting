@@ -32,6 +32,12 @@ router.route('/chat')
 router.route('/newchat')
     .post(UsersController.newChat)
 
+router.route('/deletechat')
+    .delete(UsersController.deleteChat)
+
+router.route('/joinchat')
+    .get(UsersController.joinChat)
+
 
 
 router.route('/oauth/google')
