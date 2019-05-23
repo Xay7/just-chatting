@@ -7,11 +7,13 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import thunk from 'redux-thunk'
 import authReducer from './store/reducers/auth';
+import chatReducer from './store/reducers/chatroom';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const reducers = combineReducers({
-    auth: authReducer
+    auth: authReducer,
+    chat: chatReducer
 });
 
 const store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)));
