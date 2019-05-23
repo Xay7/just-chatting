@@ -7,6 +7,18 @@ const token = localStorage.getItem('JWT_TOKEN');
 // ADD DISPATCH ERRORS
 
 
+const updateRooms = async () => {
+
+    const res = await axios.get('http://localhost:3001/users/chat', {
+        headers: {
+            'authorization': token
+        }
+    });
+
+    return res;
+}
+
+
 export const getRooms = () => {
     return async dispatch => {
         try {
@@ -26,19 +38,13 @@ export const getRooms = () => {
     }
 }
 
-export const newRoom = data => {
+export const newChatroom = data => {
     return async dispatch => {
         try {
 
             await axios.post('http://localhost:3001/users/newchat', data);
 
-            const token = localStorage.getItem('JWT_TOKEN');
-            // Move to a reducer 
-            const res = await axios.get('http://localhost:3001/users/chat', {
-                headers: {
-                    'authorization': token
-                }
-            })
+            const res = await updateRooms();
 
             dispatch({
                 type: actionTypes.NEW_ROOM,
@@ -66,11 +72,7 @@ export const joinRoom = data => {
 
             await axios.put('http://localhost:3001/users/joinchat', data);
 
-            const res = await axios.get('http://localhost:3001/users/chat', {
-                headers: {
-                    'authorization': token
-                }
-            })
+            const res = await updateRooms();
 
             dispatch({
                 type: actionTypes.JOIN_ROOM,
@@ -86,9 +88,17 @@ export const joinRoom = data => {
 export const deleteRoom = data => {
     return async dispatch => {
         try {
+            await axios.delete('http://localhost:3001/users/deletechat', { data });
+
+            const res = await updateRooms();
+
+            dispatch({
+                type: actionTypes.DELETE_ROOM,
+                chatRooms: res.data.chatRooms
+            });
 
         } catch (err) {
-
+            console.log(err);
         }
     }
 }
