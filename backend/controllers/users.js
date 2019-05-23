@@ -141,6 +141,14 @@ module.exports = {
     deleteChat: async (req, res, next) => {
 
         const id = req.body.id;
+        const username = req.body.username
+
+        // Check if request is from owner
+        const foundOwner = await Chatroom.findOne({ "id": id });
+
+        if (username !== foundOwner.owner) {
+            return res.status(403).json({ error: "Unauthorized" })
+        }
 
         // Delete chatroom
         await Chatroom.findOneAndDelete({ "id": id });
@@ -151,7 +159,6 @@ module.exports = {
                 "local.chatRooms.owned": id
             }
         });
-
 
         // Find room clients and delete all id's
         await User.updateMany({ "local.chatRooms.joined": id }, {
