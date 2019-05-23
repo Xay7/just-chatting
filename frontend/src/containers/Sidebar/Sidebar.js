@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import styles from './Sidebar.module.scss';
 import { connect } from 'react-redux';
-import axios from 'axios';
 import * as actions from '../../store/actions/chatroom';
 import uuid4 from 'uuid4'
 
@@ -50,7 +49,7 @@ class Sidebar extends Component {
         this.setState({ chatRooms: this.props.chatRooms });
     }
 
-    addNewRoom = async () => {
+    addChatroom = async () => {
         const name = await prompt();
 
         // Add message informing user to enter correct data
@@ -64,7 +63,20 @@ class Sidebar extends Component {
             owner: this.props.name
         }
 
-        await this.props.newRoom(data);
+        await this.props.newChatroom(data);
+
+        this.setState({ chatRooms: this.props.chatRooms });
+
+    }
+
+    deleteRoom = async (id, username) => {
+
+        const data = {
+            id: id,
+            username: username
+        }
+
+        await this.props.deleteRoom(data);
 
         this.setState({ chatRooms: this.props.chatRooms });
 
@@ -92,7 +104,7 @@ class Sidebar extends Component {
                     onClick={() => this.switchChatroom(room.id, index)}
                     disabled={this.currentRoomDisable(room.id)}>{room.name}
                 </button>
-                <button>DELETE</button>
+                <button onClick={() => this.deleteRoom(room.id, this.props.name)}>DELETE</button>
             </div>
         })
 
@@ -108,7 +120,7 @@ class Sidebar extends Component {
 
         return (
             <div className={styles.Sidebar}>
-                <button onClick={this.addNewRoom}>ADD NEW ROOM</button>
+                <button onClick={this.addChatroom}>ADD NEW ROOM</button>
                 <button onClick={this.joinRoom}>JOIN ROOM</button>
                 {ownedChatrooms}
                 {joinedChatrooms}
