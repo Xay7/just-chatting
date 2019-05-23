@@ -123,8 +123,6 @@ module.exports = {
             return res.status(403).json({ error: "Chat doesn't exist" });
         }
 
-        const foundUser = await User.findOne({ "local.name": name });
-
         await User.findOneAndUpdate({ "local.name": name }, {
             "$push":
             {
@@ -141,6 +139,27 @@ module.exports = {
         res.status(200).json(chatRoomData);
     },
     deleteChat: async (req, res, next) => {
+
+        const id = req.body.id;
+
+        // Delete chatroom
+        await Chatroom.findOneAndDelete({ "id": id });
+
+        // Find owner and delete it's id
+        await User.findOneAndUpdate({ "local.chatRooms.owned": id }, {
+            $pull: {
+                "local.chatRooms.owned": id
+            }
+        });
+
+
+        // Find room clients and delete all id's
+        await User.updateMany({ "local.chatRooms.joined": id }, {
+            $pull: {
+                "local.chatRooms.joined": id
+            }
+        });
+
         res.status(200).json({ success: "Chat has been deleted" })
     },
     googleOAuth: async (req, res, next) => {
