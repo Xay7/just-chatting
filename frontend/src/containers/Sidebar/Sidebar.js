@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styles from './Sidebar.module.scss';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import * as actions from '../../store/actions/auth';
+import * as actions from '../../store/actions/chatroom';
 import uuid4 from 'uuid4'
 
 class Sidebar extends Component {
@@ -10,29 +10,53 @@ class Sidebar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            chatRooms: [],
             selectedRoom: '',
+            chatRooms: {
+                owned: [],
+                joined: []
+            }
         }
 
         this.socket = this.props.socketChat;
 
         this.switchChatroom = async (room, index) => {
-            await this.setState({ selectedRoom: index });
+            await this.setState({ selectedRoom: room });
             await this.props.changeRoom(room);
             await this.socket.emit('SWITCH_ROOMS', {
                 room: room,
                 name: this.props.name
             })
         }
+
+        this.joinRoom = async () => {
+            // Replace later with modal input
+            const id = await prompt();
+
+            let data = {
+                id: id,
+                name: this.props.name
+            }
+
+            await this.props.joinRoom(data);
+
+            await this.setState({ chatRooms: this.props.chatRooms })
+
+        }
+
     }
 
     async componentDidMount() {
-        await this.setState({ chatRooms: this.props.chatRooms });
-        await console.log(this.state);
+        await this.props.getRooms();
+        this.setState({ chatRooms: this.props.chatRooms });
     }
 
     addNewRoom = async () => {
         const name = await prompt();
+
+        // Add message informing user to enter correct data
+        if (name === "" || name === null) {
+            return;
+        }
 
         let data = {
             id: uuid4(),
@@ -40,17 +64,9 @@ class Sidebar extends Component {
             owner: this.props.name
         }
 
-        await axios.post('http://localhost:3001/users/newchat', data);
+        await this.props.newRoom(data);
 
-        const token = localStorage.getItem('JWT_TOKEN');
-
-        const res = await axios.get('http://localhost:3001/users/chat', {
-            headers: {
-                'authorization': token
-            }
-        })
-
-        this.setState({ chatRooms: res.data.chatRooms });
+        this.setState({ chatRooms: this.props.chatRooms });
 
     }
 
@@ -69,24 +85,33 @@ class Sidebar extends Component {
 
     render() {
 
-
-
-        let rooms = this.state.chatRooms.map((room, index) => {
-            return <div>
+        let ownedChatrooms = this.state.chatRooms.owned.map((room, index) => {
+            return <div key={room.id}>
                 <button
-                    style={{ color: this.currentRoomStyle(index) }}
+                    style={{ color: this.currentRoomStyle(room.id) }}
                     onClick={() => this.switchChatroom(room.id, index)}
-                    key={index}
-                    disabled={this.currentRoomDisable(index)}>{room.name}
+                    disabled={this.currentRoomDisable(room.id)}>{room.name}
                 </button>
                 <button>DELETE</button>
+            </div>
+        })
+
+        let joinedChatrooms = this.state.chatRooms.joined.map((room, index) => {
+            return <div key={room.id}>
+                <button
+                    style={{ color: this.currentRoomStyle(room.id) }}
+                    onClick={() => this.switchChatroom(room.id, index)}
+                    disabled={this.currentRoomDisable(room.id)}>{room.name}
+                </button>
             </div>
         })
 
         return (
             <div className={styles.Sidebar}>
                 <button onClick={this.addNewRoom}>ADD NEW ROOM</button>
-                {rooms}
+                <button onClick={this.joinRoom}>JOIN ROOM</button>
+                {ownedChatrooms}
+                {joinedChatrooms}
             </div>
         )
     }
@@ -95,7 +120,7 @@ class Sidebar extends Component {
 
 const mapStateToProps = state => {
     return {
-        chatRooms: state.auth.chatRooms,
+        chatRooms: state.chat.chatRooms,
         name: state.auth.name,
         socketChat: state.auth.socket
     }
