@@ -59,7 +59,7 @@ io.on("connection", function (socket) {
 
             if (io.sockets.adapter.rooms[data.room] === undefined) {
                 clients = []
-            } else clients = io.sockets.adapter.rooms[previousRoom].sockets;
+            } else clients = io.sockets.adapter.rooms[data.room].sockets;
 
             for (var k in clients) roomSocketIds.push(k);
             let usernames = roomSocketIds.map((el, index) => {
