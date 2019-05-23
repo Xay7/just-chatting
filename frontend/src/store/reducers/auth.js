@@ -10,9 +10,7 @@ const DEFAULT_STATE = {
     registerSuccess: false,
     name: '',
     tokenSuccess: false,
-    chatRooms: [],
-    socket: io('http://localhost:3001'),
-    room: ''
+    socket: io('http://localhost:3001')
 }
 const reducer = (state = DEFAULT_STATE, action) => {
     switch (action.type) {
@@ -25,7 +23,6 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 signInError: false,
                 registerSuccess: false,
                 name: action.name,
-                chatRooms: action.chatRooms,
             }
         case actionTypes.AUTH_SIGN_UP:
             return {
@@ -58,7 +55,6 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 name: action.name,
                 isAuthenticated: true,
                 tokenSuccess: true,
-                chatRooms: action.chatRooms
             }
         case actionTypes.TOKEN_ERROR:
             return {
@@ -66,11 +62,6 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 name: '',
                 isAuthenticated: false,
                 tokenSuccess: false
-            }
-        case actionTypes.CHANGE_ROOM:
-            return {
-                ...state,
-                room: action.room
             }
         default:
             return state;
