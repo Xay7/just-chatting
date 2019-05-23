@@ -54,8 +54,13 @@ io.on("connection", function (socket) {
 
         socket.on('disconnect', () => {
 
-            let clients = io.sockets.adapter.rooms[data.room].sockets;
+            let clients = [];
             let roomSocketIds = [];
+
+            if (io.sockets.adapter.rooms[data.room] === undefined) {
+                clients = []
+            } else clients = io.sockets.adapter.rooms[previousRoom].sockets;
+
             for (var k in clients) roomSocketIds.push(k);
             let usernames = roomSocketIds.map((el, index) => {
                 return io.sockets.connected[el].username
