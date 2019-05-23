@@ -36,7 +36,7 @@ router.route('/deletechat')
     .delete(UsersController.deleteChat)
 
 router.route('/joinchat')
-    .get(UsersController.joinChat)
+    .put(UsersController.joinChat)
 
 
 
