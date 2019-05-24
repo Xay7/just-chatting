@@ -8,8 +8,11 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import thunk from 'redux-thunk'
 import authReducer from './store/reducers/auth';
 import chatReducer from './store/reducers/chatroom';
+import axios from 'axios';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+axios.defaults.withCredentials = true;
 
 const reducers = combineReducers({
     auth: authReducer,
