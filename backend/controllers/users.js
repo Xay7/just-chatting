@@ -42,7 +42,10 @@ module.exports = {
         await newUser.save();
 
         const token = signToken(newUser);
-        res.status(200).json({ token: token });
+        res.cookie('access_token', token, {
+            httpOnly: true
+        });
+        res.status(200).json({ "success": "User has been registered" });
 
 
     },
@@ -56,7 +59,6 @@ module.exports = {
     chat: async (req, res, next) => {
 
         const name = req.user.local.name
-
         const findUser = await User.findOne({ "local.name": name })
         const ownedChatroomsId = findUser.local.chatRooms.owned;
         const joinedChatroomsId = findUser.local.chatRooms.joined;
