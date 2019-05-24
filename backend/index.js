@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const app = express();
+const cookieParser = require('cookie-parser');
 const socket = require("socket.io");
 const port = process.env.PORT || 3001;
 require('dotenv').config();
@@ -19,7 +20,11 @@ module.exports = io;
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
 mongoose.set('useFindAndModify', false);
 
 
