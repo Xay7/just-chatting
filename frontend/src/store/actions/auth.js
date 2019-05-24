@@ -6,8 +6,6 @@ export const signIn = data => {
         try {
             const res = await axios.post('http://localhost:3001/users/signin', data);
 
-            localStorage.setItem('JWT_TOKEN', res.data.token);
-
             dispatch({
                 type: actionTypes.AUTH_SIGN_IN,
                 payload: res.data.token,
@@ -28,12 +26,11 @@ export const signUp = data => {
         try {
 
             const res = await axios.post('http://localhost:3001/users/signup', data);
+
             dispatch({
                 type: actionTypes.AUTH_SIGN_UP,
                 payload: res.data.token
             });
-
-            localStorage.setItem('JWT_TOKEN', res.data.token);
 
         } catch (err) {
             dispatch({
@@ -48,17 +45,13 @@ export const tokenAccess = () => {
     return async dispatch => {
         try {
 
-            const token = localStorage.getItem('JWT_TOKEN');
+            const res = await axios.get('http://localhost:3001/users/chat')
 
-            const res = await axios.get('http://localhost:3001/users/chat', {
-                headers: {
-                    'authorization': token
-                }
-            })
+            console.log(res);
 
             dispatch({
                 type: actionTypes.TOKEN_ACCESS,
-                name: res.data.name,
+                name: res.data.username,
                 chatRooms: res.data.chatRooms
             });
 
