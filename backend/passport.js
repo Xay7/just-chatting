@@ -7,9 +7,17 @@ const User = require("./models/user");
 const GooglePlusTokenStrategy = require('passport-google-plus-token');
 const FacebookTokenStrategy = require('passport-facebook-token');
 
+const getCookie = req => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies['access_token'];
+  }
+  return token
+}
+
 // JSON Web tokens strategy
 passport.use(new JWTStrategy({
-  jwtFromRequest: ExtractJwt.fromHeader("authorization"),
+  jwtFromRequest: getCookie,
   secretOrKey: JWT_S
 },
   async (payload, done) => {
@@ -35,6 +43,7 @@ passport.use(new LocalStrategy({
 },
   async (email, password, done) => {
     try {
+
       const user = await User.findOne({ "local.email": email });
 
       if (!user) {
@@ -49,6 +58,7 @@ passport.use(new LocalStrategy({
 
       done(null, user);
     } catch (error) {
+      console.log(error);
       done(error, false);
     }
   }
