@@ -3,7 +3,6 @@ import io from 'socket.io-client';
 
 const DEFAULT_STATE = {
     isAuthenticated: false,
-    token: '',
     errorMessage: '',
     signInError: false,
     signUpError: false,
@@ -17,7 +16,6 @@ const reducer = (state = DEFAULT_STATE, action) => {
         case actionTypes.AUTH_SIGN_IN:
             return {
                 ...state,
-                token: action.payload,
                 isAuthenticated: true,
                 errorMessage: '',
                 signInError: false,
@@ -27,7 +25,6 @@ const reducer = (state = DEFAULT_STATE, action) => {
         case actionTypes.AUTH_SIGN_UP:
             return {
                 ...state,
-                token: action.payload,
                 isAuthenticated: false,
                 errorMessage: '',
                 signUpError: false,
