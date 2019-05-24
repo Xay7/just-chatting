@@ -24,21 +24,17 @@ router.route('/signin')
         UsersController.signIn,
     )
 
-
-
-router.route('/chat')
+router.route('/:username/chat')
     .get(passportJWT, UsersController.chat)
-
-router.route('/newchat')
-    .post(UsersController.newChat)
-
-router.route('/deletechat')
-    .delete(UsersController.deleteChat)
-
-router.route('/joinchat')
-    .put(UsersController.joinChat)
+    .post(passportJWT, UsersController.newChat)
 
 
+router.route('/:username/chat/:id')
+    .delete(passportJWT, UsersController.deleteChat)
+    .put(passportJWT, UsersController.joinChat)
+
+
+// Add support lateeeeeeeeeeer
 
 router.route('/oauth/google')
     .post(passportGoogle, UsersController.googleOAuth)

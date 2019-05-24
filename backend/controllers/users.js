@@ -42,9 +42,11 @@ module.exports = {
         await newUser.save();
 
         const token = signToken(newUser);
+
         res.cookie('access_token', token, {
             httpOnly: true
         });
+
         res.status(200).json({ "success": "User has been registered" });
 
 
@@ -53,15 +55,13 @@ module.exports = {
 
         const { email } = req.value.body
         const foundUser = await User.findOne({ "local.email": email })
-        const token = signToken(req.user);
-        res.status(200).json({ token, name: foundUser.local.name, users: io.users });
+
+        res.status(200).json({ username: foundUser.local.name, users: io.users });
     },
     chat: async (req, res, next) => {
 
-        const name = req.user.local.name
-        const findUser = await User.findOne({ "local.name": name })
-        const ownedChatroomsId = findUser.local.chatRooms.owned;
-        const joinedChatroomsId = findUser.local.chatRooms.joined;
+        const ownedChatroomsId = req.user.local.chatRooms.owned;
+        const joinedChatroomsId = req.user.local.chatRooms.joined;
 
         const ownedChatroomData = await Chatroom.find().where('id').in(ownedChatroomsId);
         const joinedChatroomData = await Chatroom.find().where('id').in(joinedChatroomsId);
@@ -81,7 +81,7 @@ module.exports = {
         })
 
         res.status(200).json({
-            username: findUser.local.name,
+            username: req.user.local.name,
             chatRooms: {
                 owned: formattedOwnedData,
                 joined: formattedJoinedData
@@ -91,6 +91,7 @@ module.exports = {
     },
     newChat: async (req, res, next) => {
 
+        console.log("XD");
 
         const id = req.body.id
         const name = req.body.name
@@ -116,8 +117,10 @@ module.exports = {
     },
     joinChat: async (req, res, next) => {
 
+        console.log(req.body);
+
         const id = req.body.id;
-        const name = req.body.name
+        const username = req.body.username
 
         const foundChatroom = await Chatroom.findOne({ "id": id });
 
@@ -125,20 +128,14 @@ module.exports = {
             return res.status(403).json({ error: "Chat doesn't exist" });
         }
 
-        await User.findOneAndUpdate({ "local.name": name }, {
+        await User.findOneAndUpdate({ "local.name": username }, {
             "$push":
             {
                 "local.chatRooms.joined": id
             }
         })
 
-
-        let chatRoomData = {
-            id: foundChatroom.id,
-            name: foundChatroom.name
-        }
-
-        res.status(200).json(chatRoomData);
+        res.status(200).json({ "success": "Joined chatroom" });
     },
     deleteChat: async (req, res, next) => {
 
