@@ -1,32 +1,24 @@
 import * as actionTypes from './actionTypes';
 import axios from 'axios';
 
-const token = localStorage.getItem('JWT_TOKEN');
+
 
 // TODO
 // ADD DISPATCH ERRORS
 
 
-const updateRooms = async () => {
-
-    const res = await axios.get('http://localhost:3001/users/chat', {
-        headers: {
-            'authorization': token
-        }
-    });
-
+const getRooms = async (username) => {
+    const res = await axios.get(`http://localhost:3001/users/${username}/chat`);
     return res;
 }
 
 
-export const getRooms = () => {
+export const updateRooms = (username) => {
     return async dispatch => {
         try {
-            const res = await axios.get('http://localhost:3001/users/chat', {
-                headers: {
-                    'authorization': token
-                }
-            });
+            console.log(username);
+            const res = await getRooms(username);
+            console.log(res);
             dispatch({
                 type: actionTypes.GET_ROOMS,
                 chatRooms: res.data.chatRooms
@@ -42,9 +34,9 @@ export const newChatroom = data => {
     return async dispatch => {
         try {
 
-            await axios.post('http://localhost:3001/users/newchat', data);
+            await axios.post(`http://localhost:3001/users/${data.owner}/chat`, data);
 
-            const res = await updateRooms();
+            const res = await getRooms(data.owner);
 
             dispatch({
                 type: actionTypes.NEW_ROOM,
@@ -70,9 +62,9 @@ export const joinRoom = data => {
     return async dispatch => {
         try {
 
-            await axios.put('http://localhost:3001/users/joinchat', data);
+            await axios.put(`http://localhost:3001/users/${data.username}/chat/${data.id}`, data);
 
-            const res = await updateRooms();
+            const res = await getRooms(data.username);
 
             dispatch({
                 type: actionTypes.JOIN_ROOM,
@@ -88,9 +80,10 @@ export const joinRoom = data => {
 export const deleteRoom = data => {
     return async dispatch => {
         try {
-            await axios.delete('http://localhost:3001/users/deletechat', { data });
 
-            const res = await updateRooms();
+            await axios.delete(`http://localhost:3001/users/${data.username}/chat/${data.id}`, { data });
+
+            const res = await getRooms(data.username);
 
             dispatch({
                 type: actionTypes.DELETE_ROOM,
