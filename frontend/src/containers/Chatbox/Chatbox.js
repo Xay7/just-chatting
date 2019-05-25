@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import styles from './Chatbox.module.scss';
 import { connect } from 'react-redux';
-import { socketChat } from '../Chat/Chat';
 import moment from 'moment';
+import * as actions from '../../store/actions/chatroom';
+
 
 
 class Chatbox extends Component {
-
-
 
     constructor(props) {
         super(props);
@@ -18,23 +17,35 @@ class Chatbox extends Component {
             sameUserMessage: false,
         };
 
-        this.socket = socketChat;
+        this.socket = this.props.socketChat;
 
-        this.sendMessage = e => {
-            this.socket.emit('SEND_MESSAGE', {
-                username: this.props.name,
-                message: this.state.message
-            })
+        this.sendMessage = async e => {
+
+            let data = {
+                author: this.props.username,
+                body: this.state.message,
+                room: this.props.room,
+                created_at: moment()
+            }
+
+            this.socket.emit('SEND_MESSAGE', data)
+
+            this.props.storeMessage(data);
+
+
         }
 
         this.socket.on('RECEIVE_MESSAGE', function (data) {
             addMessage(data);
         });
 
-        const addMessage = data => {
+        this.socket.on('NEW_ROOM', (data) => {
+            this.setState({ room: data.room, messages: this.props.messages });
+        });
 
+        const addMessage = data => {
             if (this.state.messages.length > 0) {
-                if (data.username === this.state.messages.slice(-1)[0].username) {
+                if (data.author === this.state.messages.slice(-1)[0].author) {
                     this.setState({ sameUserMessage: true })
                 }
                 else {
@@ -51,19 +62,26 @@ class Chatbox extends Component {
 
     }
 
-    enterHandler = (e) => {
+    enterHandler = async (e) => {
         if (e.keyCode === 13 && this.state.message !== '') {
-            this.sendMessage();
-            this.setState({ message: '' });
+            await this.sendMessage();
+            await this.setState({ message: '', typing: false });
+
         }
+
     }
 
-    onChangeHandler = (e) => {
-        this.setState({ message: e.target.value })
+    timeoutFunction = () => {
+        this.setState({ typing: false });
+        this.socket.emit('NOT_TYPING');
     }
 
-    componentDidMount() {
-        console.log(moment().calendar());
+
+    onChangeHandler = async (e) => {
+        await this.setState({
+            message: e.target.value,
+            typing: true
+        })
     }
 
     render() {
@@ -72,12 +90,14 @@ class Chatbox extends Component {
 
         // Makes messages continue on current user
 
+
         let messages = this.state.messages.map((message, index, arr) => {
             if (index > 0) {
-                if (message.username === arr[index - 1].username) {
+
+                if (message.author === arr[index - 1].author) {
                     return (
                         <div className={styles.Messages} key={index}>
-                            <div className={styles.Message}>{message.message}</div>
+                            <div className={styles.Message}>{message.body}</div>
                         </div>
                     )
                 }
@@ -86,10 +106,10 @@ class Chatbox extends Component {
                         <div className={styles.Messages} key={index}>
                             <hr className={styles.MessageHorizontalLine}></hr>
                             <div className={styles.NameAndDate}>
-                                <p className={styles.Username}>{message.username}</p>
-                                <p className={styles.Date}>{moment().calendar()}</p>
+                                <p className={styles.Username}>{message.author}</p>
+                                <p className={styles.Date}>{message.created_at}</p>
                             </div>
-                            <div className={styles.Message}>{message.message}</div>
+                            <div className={styles.Message}>{message.body}</div>
                         </div>
                     )
                 };
@@ -99,10 +119,10 @@ class Chatbox extends Component {
                     <div className={styles.Messages} key={index}>
                         <hr className={styles.MessageHorizontalLine}></hr>
                         <div className={styles.NameAndDate}>
-                            <p className={styles.Username}>{message.username}</p>
-                            <p className={styles.Date}>{moment().calendar()}</p>
+                            <p className={styles.Username}>{message.author}</p>
+                            <p className={styles.Date}>{message.created_at}</p>
                         </div>
-                        <div className={styles.Message}>{message.message}</div>
+                        <div className={styles.Message}>{message.body}</div>
                     </div>
                 )
             }
@@ -130,9 +150,12 @@ class Chatbox extends Component {
 
 const mapStateToProps = state => {
     return {
-        name: state.auth.name,
-        users: state.auth.users
+        username: state.auth.username,
+        users: state.auth.users,
+        socketChat: state.auth.socket,
+        room: state.chat.room,
+        messages: state.chat.messages
     }
 }
 
-export default connect(mapStateToProps)(Chatbox);
+export default connect(mapStateToProps, actions)(Chatbox);
