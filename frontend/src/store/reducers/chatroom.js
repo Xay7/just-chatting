@@ -6,6 +6,7 @@ const DEFAULT_STATE = {
         owned: [],
         joined: []
     },
+    messages: []
 }
 
 const reducer = (state = DEFAULT_STATE, action) => {
@@ -34,6 +35,11 @@ const reducer = (state = DEFAULT_STATE, action) => {
             return {
                 ...state,
                 chatRooms: action.chatRooms
+            }
+        case actionTypes.GET_MESSAGES:
+            return {
+                ...state,
+                messages: action.messages
             }
         default:
             return state;
