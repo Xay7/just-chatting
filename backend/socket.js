@@ -38,7 +38,10 @@ io.on("connection", function (socket) {
         socket.emit('NEW_ROOM', data);
 
         // Get room socket IDs 
-        let clients = io.sockets.adapter.rooms[data.room].sockets;
+
+        if (io.sockets.adapter.rooms[data.room] === undefined) {
+            clients = []
+        } else clients = io.sockets.adapter.rooms[data.room].sockets;
 
         // Format data to only have array of sockets
         let roomSocketIds = [];
