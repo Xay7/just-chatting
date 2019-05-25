@@ -16,9 +16,7 @@ const getRooms = async (username) => {
 export const updateRooms = (username) => {
     return async dispatch => {
         try {
-            console.log(username);
             const res = await getRooms(username);
-            console.log(res);
             dispatch({
                 type: actionTypes.GET_ROOMS,
                 chatRooms: res.data.chatRooms
@@ -92,6 +90,35 @@ export const deleteRoom = data => {
 
         } catch (err) {
             console.log(err);
+        }
+    }
+}
+
+export const storeMessage = data => {
+    return async dispatch => {
+        try {
+
+            await axios.put(`http://localhost:3001/users/${data.author}/chat/${data.room}/messages`, data);
+
+        } catch (error) {
+
+        }
+    }
+}
+
+export const getChatMessages = data => {
+    return async dispatch => {
+        try {
+
+            const res = await axios.get(`http://localhost:3001/users/${data.username}/chat/${data.room}/messages`)
+
+            dispatch({
+                type: actionTypes.GET_MESSAGES,
+                messages: res.data
+            })
+
+        } catch (error) {
+            console.log(error);
         }
     }
 }
