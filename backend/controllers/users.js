@@ -91,8 +91,6 @@ module.exports = {
     },
     newChat: async (req, res, next) => {
 
-        console.log("XD");
-
         const id = req.body.id
         const name = req.body.name
         const owner = req.body.owner
@@ -116,8 +114,6 @@ module.exports = {
         res.status(201).json({ success: "New chat has been created" })
     },
     joinChat: async (req, res, next) => {
-
-        console.log(req.body);
 
         const id = req.body.id;
         const username = req.body.username
@@ -167,6 +163,42 @@ module.exports = {
         });
 
         res.status(200).json({ success: "Chat has been deleted" })
+    },
+    storeMessage: async (req, res, next) => {
+
+        const username = req.params.username;
+        const id = req.params.id;
+
+        const data = {
+            author: username,
+            body: req.body.body,
+            created_at: req.body.created_at
+        }
+
+        const foundRoom = await Chatroom.findOne({ "id": id });
+
+        if (!foundRoom) {
+            res.status(400).json({ error: "Room doesn't exist" })
+        }
+
+        await Chatroom.findOneAndUpdate({ "id": id }, {
+            $push: {
+                "messages": data
+            }
+        });
+
+        res.status(200).json({ success: "Stored a message" });
+
+    },
+    getMessages: async (req, res, next) => {
+
+        const id = req.params.id
+
+        const foundRoom = await Chatroom.findOne({ "id": id })
+
+        const data = foundRoom.messages
+
+        res.status(200).json(data);
     },
     googleOAuth: async (req, res, next) => {
         const token = signToken(req.user);
