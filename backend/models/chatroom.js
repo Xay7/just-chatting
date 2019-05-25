@@ -13,7 +13,15 @@ const chatSchema = new Schema({
     id: {
         type: String,
         required: true
-    }
+    },
+    messages: [
+        {
+            author: String,
+            body: String,
+            created_at: Date,
+            _id: false
+        }
+    ]
 
 })
 
