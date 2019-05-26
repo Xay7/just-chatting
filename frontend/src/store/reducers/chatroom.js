@@ -1,7 +1,8 @@
 import * as actionTypes from '../actions/actionTypes';
 
 const DEFAULT_STATE = {
-    room: '',
+    roomID: '',
+    roomName: '',
     chatRooms: {
         owned: [],
         joined: []
@@ -24,7 +25,8 @@ const reducer = (state = DEFAULT_STATE, action) => {
         case actionTypes.CHANGE_ROOM:
             return {
                 ...state,
-                room: action.room
+                roomID: action.roomID,
+                roomName: action.roomName
             }
         case actionTypes.JOIN_ROOM:
             return {

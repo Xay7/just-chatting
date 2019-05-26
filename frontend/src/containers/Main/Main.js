@@ -6,18 +6,16 @@ import * as actions from '../../store/actions/auth';
 
 class Main extends Component {
 
+    // tokenAccess = async () => {
+    //     await this.props.tokenAccess();
+    //     if (this.props.tokenAuthSuccess) {
+    //         await this.props.history.push('/chat');
+    //     }
+    //     else {
+    //         await this.props.history.push('/signin');
+    //     }
 
-
-    tokenAccess = async () => {
-        await this.props.tokenAccess();
-        if (this.props.tokenAuthSuccess) {
-            await this.props.history.push('/chat');
-        }
-        else {
-            await this.props.history.push('/signin');
-        }
-
-    }
+    // }
 
 
 
@@ -28,7 +26,9 @@ class Main extends Component {
                 <div>
                     <h1 className={styles.Title}>Just chatting</h1>
                 </div>
-                <button className={styles.Login} onClick={this.tokenAccess}>Login</button>
+                <Link to="/signin">
+                    <button className={styles.Login} onClick={this.tokenAccess}>Login</button>
+                </Link>
                 <Link to="/signup">
                     <button className={styles.Register}>Register</button>
                 </Link>

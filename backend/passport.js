@@ -1,6 +1,5 @@
 const passport = require("passport");
 const JWTStrategy = require("passport-jwt").Strategy;
-const { ExtractJwt } = require("passport-jwt");
 const LocalStrategy = require("passport-local").Strategy;
 const { JWT_S, oauth } = require("./config/index");
 const User = require("./models/user");
@@ -8,6 +7,7 @@ const GooglePlusTokenStrategy = require('passport-google-plus-token');
 const FacebookTokenStrategy = require('passport-facebook-token');
 
 const getCookie = req => {
+
   let token = null;
   if (req && req.cookies) {
     token = req.cookies['access_token'];
@@ -22,7 +22,6 @@ passport.use(new JWTStrategy({
 },
   async (payload, done) => {
     try {
-
       const user = await User.findById(payload.sub);
       if (!user) {
         return done(null, false);

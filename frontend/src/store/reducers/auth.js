@@ -7,7 +7,7 @@ const DEFAULT_STATE = {
     signInError: false,
     signUpError: false,
     registerSuccess: false,
-    name: '',
+    username: '',
     tokenSuccess: false,
     socket: io('http://localhost:3001')
 }
@@ -20,7 +20,7 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 errorMessage: '',
                 signInError: false,
                 registerSuccess: false,
-                name: action.name,
+                username: action.username,
             }
         case actionTypes.AUTH_SIGN_UP:
             return {
@@ -49,14 +49,14 @@ const reducer = (state = DEFAULT_STATE, action) => {
         case actionTypes.TOKEN_ACCESS:
             return {
                 ...state,
-                name: action.name,
+                username: action.username,
                 isAuthenticated: true,
                 tokenSuccess: true,
             }
         case actionTypes.TOKEN_ERROR:
             return {
                 ...state,
-                name: '',
+                username: '',
                 isAuthenticated: false,
                 tokenSuccess: false
             }

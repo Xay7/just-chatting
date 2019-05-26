@@ -52,11 +52,16 @@ module.exports = {
 
     },
     signIn: async (req, res, next) => {
+        const foundUser = await User.findOne({ "local.email": req.user.local.email })
 
-        const { email } = req.value.body
-        const foundUser = await User.findOne({ "local.email": email })
 
-        res.status(200).json({ username: foundUser.local.name, users: io.users });
+        const token = signToken(req.user);
+
+        res.cookie('access_token', token, {
+            httpOnly: true
+        });
+
+        res.status(200).json({ username: req.user.local.name });
     },
     chat: async (req, res, next) => {
 

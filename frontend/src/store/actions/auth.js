@@ -9,7 +9,7 @@ export const signIn = data => {
             dispatch({
                 type: actionTypes.AUTH_SIGN_IN,
                 payload: res.data.token,
-                name: res.data.name,
+                username: res.data.username,
             });
 
         } catch (err) {
@@ -47,11 +47,9 @@ export const tokenAccess = () => {
 
             const res = await axios.get('http://localhost:3001/users/chat')
 
-            console.log(res);
-
             dispatch({
                 type: actionTypes.TOKEN_ACCESS,
-                name: res.data.username,
+                username: res.data.username,
                 chatRooms: res.data.chatRooms
             });
 

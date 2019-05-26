@@ -18,13 +18,25 @@ class Sidebar extends Component {
 
         this.socket = this.props.socketChat;
 
-        this.switchChatroom = async (room, index) => {
-            await this.setState({ selectedRoom: room });
-            await this.props.changeRoom(room);
+        this.switchChatroom = async (roomID, roomName) => {
+            await this.setState({ selectedRoom: roomID });
+
+            let data = {
+                room: roomID,
+                username: this.props.username
+            }
+
+            await this.props.changeRoom(roomID, roomName);
+            await this.props.getChatMessages(data);
             await this.socket.emit('SWITCH_ROOMS', {
-                room: room,
-                name: this.props.name
+                room: roomID,
+                name: this.props.username
             })
+
+
+
+
+
         }
 
         this.joinRoom = async () => {
@@ -33,7 +45,7 @@ class Sidebar extends Component {
 
             let data = {
                 id: id,
-                name: this.props.name
+                username: this.props.username
             }
 
             await this.props.joinRoom(data);
@@ -45,7 +57,7 @@ class Sidebar extends Component {
     }
 
     async componentDidMount() {
-        await this.props.getRooms();
+        await this.props.updateRooms(this.props.username);
         this.setState({ chatRooms: this.props.chatRooms });
     }
 
@@ -60,7 +72,7 @@ class Sidebar extends Component {
         let data = {
             id: uuid4(),
             name: name,
-            owner: this.props.name
+            owner: this.props.username
         }
 
         await this.props.newChatroom(data);
@@ -101,10 +113,10 @@ class Sidebar extends Component {
             return <div key={room.id}>
                 <button
                     style={{ color: this.currentRoomStyle(room.id) }}
-                    onClick={() => this.switchChatroom(room.id, index)}
+                    onClick={() => this.switchChatroom(room.id, room.name)}
                     disabled={this.currentRoomDisable(room.id)}>{room.name}
                 </button>
-                <button onClick={() => this.deleteRoom(room.id, this.props.name)}>DELETE</button>
+                <button onClick={() => this.deleteRoom(room.id, this.props.username)}>DELETE</button>
             </div>
         })
 
@@ -112,7 +124,7 @@ class Sidebar extends Component {
             return <div key={room.id}>
                 <button
                     style={{ color: this.currentRoomStyle(room.id) }}
-                    onClick={() => this.switchChatroom(room.id, index)}
+                    onClick={() => this.switchChatroom(room.id, room.name)}
                     disabled={this.currentRoomDisable(room.id)}>{room.name}
                 </button>
             </div>
@@ -133,7 +145,7 @@ class Sidebar extends Component {
 const mapStateToProps = state => {
     return {
         chatRooms: state.chat.chatRooms,
-        name: state.auth.name,
+        username: state.auth.username,
         socketChat: state.auth.socket
     }
 

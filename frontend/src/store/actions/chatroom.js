@@ -47,11 +47,12 @@ export const newChatroom = data => {
     }
 }
 
-export const changeRoom = room => {
+export const changeRoom = (roomID, roomName) => {
     return dispatch => {
         dispatch({
             type: actionTypes.CHANGE_ROOM,
-            room: room
+            roomID: roomID,
+            roomName: roomName
         });
     }
 }

@@ -24,6 +24,11 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
+    "settings": {
+      "react": {
+        "version": "999.999.999"
+      }
+    },
     "extends": "react-app"
   },
   "browserslist": {

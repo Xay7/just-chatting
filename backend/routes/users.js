@@ -33,6 +33,9 @@ router.route('/:username/chat/:id')
     .delete(passportJWT, UsersController.deleteChat)
     .put(passportJWT, UsersController.joinChat)
 
+router.route('/:username/chat/:id/messages')
+    .put(passportJWT, UsersController.storeMessage)
+    .get(passportJWT, UsersController.getMessages)
 
 // Add support lateeeeeeeeeeer
 

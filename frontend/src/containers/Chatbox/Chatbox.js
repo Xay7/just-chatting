@@ -24,11 +24,18 @@ class Chatbox extends Component {
             let data = {
                 author: this.props.username,
                 body: this.state.message,
-                room: this.props.room,
+                room: this.props.roomID,
                 created_at: moment()
             }
 
-            this.socket.emit('SEND_MESSAGE', data)
+            let data2 = {
+                author: this.props.username,
+                body: this.state.message,
+                room: this.props.roomID,
+                created_at: moment().calendar(null)
+            }
+
+            this.socket.emit('SEND_MESSAGE', data2)
 
             this.props.storeMessage(data);
 
@@ -40,7 +47,14 @@ class Chatbox extends Component {
         });
 
         this.socket.on('NEW_ROOM', (data) => {
-            this.setState({ room: data.room, messages: this.props.messages });
+
+
+
+            let messagesFormated = this.props.messages.map(el => {
+                el.created_at = moment(el.created_at).calendar(null);
+                return el;
+            })
+            this.setState({ room: data.room, messages: messagesFormated });
         });
 
         const addMessage = data => {
@@ -61,7 +75,6 @@ class Chatbox extends Component {
 
 
     }
-
     enterHandler = async (e) => {
         if (e.keyCode === 13 && this.state.message !== '') {
             await this.sendMessage();
@@ -70,12 +83,6 @@ class Chatbox extends Component {
         }
 
     }
-
-    timeoutFunction = () => {
-        this.setState({ typing: false });
-        this.socket.emit('NOT_TYPING');
-    }
-
 
     onChangeHandler = async (e) => {
         await this.setState({
@@ -153,7 +160,7 @@ const mapStateToProps = state => {
         username: state.auth.username,
         users: state.auth.users,
         socketChat: state.auth.socket,
-        room: state.chat.room,
+        roomID: state.chat.roomID,
         messages: state.chat.messages
     }
 }

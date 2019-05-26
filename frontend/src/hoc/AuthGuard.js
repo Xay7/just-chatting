@@ -6,13 +6,12 @@ export default (OriginalComponent) => {
 
 
         checkAuth() {
-            if (!this.props.isAuth && !this.props.jwtToken) {
+            if (!this.props.isAuth) {
                 return this.props.history.push('/');
             }
         }
 
         componentDidMount() {
-            console.log("im called");
             this.checkAuth();
         }
 
@@ -27,8 +26,7 @@ export default (OriginalComponent) => {
     }
     function mapStateToProps(state) {
         return {
-            isAuth: state.auth.isAuthenticated,
-            jwtToken: state.auth.token
+            isAuth: state.auth.isAuthenticated
         }
     }
 
