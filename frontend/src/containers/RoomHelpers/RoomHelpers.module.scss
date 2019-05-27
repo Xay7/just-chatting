@@ -1,0 +1,44 @@
+.RoomHelpers {
+    height: 60px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    box-shadow: 0 3px 3px -2px black;
+    z-index: 699;
+}
+
+.Room {
+    width: 20%;
+    height: inherit;
+    background-color: red;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1B1B1B;
+}
+
+.RoomName {
+    margin: 0;
+    margin-left: 10px;
+    color: white;
+
+}
+
+.ChannelName {
+    margin: 0;
+    margin-left: 10px;
+    color: white;
+}
+
+.RoomSettings {
+    margin-right: 10px;
+}
+
+.Channel {
+    display: flex;
+    align-items: center;
+    width: 80%;
+    height: inherit;
+    background-color: #1B1B1B;
+}

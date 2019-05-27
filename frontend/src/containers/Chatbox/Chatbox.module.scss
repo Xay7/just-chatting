@@ -1,16 +1,16 @@
 .Chatbox {
     width: 60%;
     background-color: #262626;
-    height: 100vh;
-    box-shadow: inset 25px 0px 5px -25px black, inset -25px 0px 5px -25px black;
-
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .InputContainer {
-    position: fixed;
-    width: 60%;
-    bottom: 0;
+    width: 100%;
     margin-bottom: 30px;
+    margin-top: 30px;
 }
 
 .MessageInput {
@@ -27,13 +27,12 @@
 .MessagesContainer {
     width: 90%;
     background-color: #262626;
-    height: 85%;
     margin: 0 auto;
-    margin-top: 1%;
-    padding-left: 1%;
+    margin-top: 30px;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    overflow-x: hidden;
 
 }
 
