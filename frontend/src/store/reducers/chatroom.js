@@ -7,6 +7,8 @@ const DEFAULT_STATE = {
         owned: [],
         joined: []
     },
+    channels: [],
+    channelID: '',
     messages: []
 }
 
@@ -26,7 +28,8 @@ const reducer = (state = DEFAULT_STATE, action) => {
             return {
                 ...state,
                 roomID: action.roomID,
-                roomName: action.roomName
+                roomName: action.roomName,
+                channels: action.channels
             }
         case actionTypes.JOIN_ROOM:
             return {
@@ -36,12 +39,23 @@ const reducer = (state = DEFAULT_STATE, action) => {
         case actionTypes.DELETE_ROOM:
             return {
                 ...state,
-                chatRooms: action.chatRooms
+                chatRooms: action.chatRooms,
+                channels: []
             }
         case actionTypes.GET_MESSAGES:
             return {
                 ...state,
                 messages: action.messages
+            }
+        case actionTypes.NEW_CHANNEL:
+            return {
+                ...state,
+                channels: action.channels
+            }
+        case actionTypes.CHANGE_CHANNEL:
+            return {
+                ...state,
+                channelID: action.channelID
             }
         default:
             return state;

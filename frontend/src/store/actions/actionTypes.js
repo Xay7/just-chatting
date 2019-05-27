@@ -14,3 +14,5 @@ export const CHANGE_ROOM = 'CHANGE_ROOM';
 export const JOIN_ROOM = 'JOIN_ROOM';
 export const DELETE_ROOM = 'DELETE_ROOM';
 export const GET_MESSAGES = 'GET_MESSAGES';
+export const NEW_CHANNEL = 'NEW_CHANNEL';
+export const CHANGE_CHANNEL = 'CHANGE_CHANNEL';

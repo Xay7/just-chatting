@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const chatSchema = new Schema({
+    id: {
+        type: String,
+        required: true
+    },
     name: {
         type: String,
         required: true
@@ -10,16 +14,23 @@ const chatSchema = new Schema({
         type: String,
         required: true
     },
-    id: {
-        type: String,
-        required: true
-    },
-    messages: [
+    channels: [
         {
-            author: String,
-            body: String,
-            created_at: Date,
-            _id: false
+            _id: false,
+            id: {
+                type: String
+            },
+            name: {
+                type: String
+            },
+            messages: [
+                {
+                    author: String,
+                    body: String,
+                    created_at: Date,
+                    _id: false
+                }
+            ]
         }
     ]
 

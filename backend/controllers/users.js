@@ -74,14 +74,16 @@ module.exports = {
         const formattedOwnedData = ownedChatroomData.map(el => {
             return {
                 id: el.id,
-                name: el.name
+                name: el.name,
+                channels: el.channels
             }
         })
 
         const formattedJoinedData = joinedChatroomData.map(el => {
             return {
                 id: el.id,
-                name: el.name
+                name: el.name,
+                channels: el.channels
             }
         })
 
@@ -98,7 +100,9 @@ module.exports = {
 
         const id = req.body.id
         const name = req.body.name
-        const owner = req.body.owner
+        const owner = req.params.username
+
+        console.log(owner);
 
 
         const newChatroom = new Chatroom({
@@ -140,13 +144,16 @@ module.exports = {
     },
     deleteChat: async (req, res, next) => {
 
-        const id = req.body.id;
-        const username = req.body.username
+        const id = req.params.id;
+        const username = req.params.username
+
+        console.log(username);
 
         // Check if request is from owner
         const foundOwner = await Chatroom.findOne({ "id": id });
 
         if (username !== foundOwner.owner) {
+            console.log(foundOwner.owner);
             return res.status(403).json({ error: "Unauthorized" })
         }
 
@@ -169,8 +176,36 @@ module.exports = {
 
         res.status(200).json({ success: "Chat has been deleted" })
     },
-    storeMessage: async (req, res, next) => {
+    newChannel: async (req, res, next) => {
 
+        const channelID = req.body.channelID
+        const name = req.body.name
+
+        const data = {
+            id: channelID,
+            name: name
+        }
+
+        await Chatroom.findOneAndUpdate({ "id": req.params.id }, {
+            "$push":
+            {
+                "channels": data
+            }
+        });
+
+
+
+        res.status(200).json({ success: "Created new channel" });
+    },
+    getChannels: async (req, res, next) => {
+
+        const channels = await Chatroom.findOne({ "id": req.params.id }, { "_id": 0 }).select("channels");
+
+        console.log(channels);
+
+        res.status(200).json(channels)
+    },
+    storeMessage: async (req, res, next) => {
         const username = req.params.username;
         const id = req.params.id;
 
@@ -180,15 +215,10 @@ module.exports = {
             created_at: req.body.created_at
         }
 
-        const foundRoom = await Chatroom.findOne({ "id": id });
-
-        if (!foundRoom) {
-            res.status(400).json({ error: "Room doesn't exist" })
-        }
-
-        await Chatroom.findOneAndUpdate({ "id": id }, {
-            $push: {
-                "messages": data
+        await Chatroom.findOneAndUpdate({ "id": id, "channels.id": req.params.channelID }, {
+            "$push":
+            {
+                "channels.$.messages": data
             }
         });
 
@@ -197,13 +227,18 @@ module.exports = {
     },
     getMessages: async (req, res, next) => {
 
-        const id = req.params.id
+        const id = req.params.id;
+        const channelID = req.params.channelID;
 
-        const foundRoom = await Chatroom.findOne({ "id": id })
+        await Chatroom.findOne({ "id": id }).lean().exec(function (err, docs) {
+            let channel = docs.channels.filter(el => {
+                if (el.id === channelID) {
+                    return el;
+                }
+            })
+            res.status(200).json(channel);
+        });
 
-        const data = foundRoom.messages
-
-        res.status(200).json(data);
     },
     googleOAuth: async (req, res, next) => {
         const token = signToken(req.user);

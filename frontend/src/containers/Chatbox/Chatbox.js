@@ -21,23 +21,26 @@ class Chatbox extends Component {
 
         this.sendMessage = async e => {
 
-            let data = {
+
+            let socketData = {
+                author: this.props.username,
+                body: this.state.message,
+                created_at: moment().calendar(null),
+                room: this.props.channelID,
+            }
+
+            this.socket.emit('SEND_MESSAGE', socketData)
+
+
+            let dbData = {
                 author: this.props.username,
                 body: this.state.message,
                 room: this.props.roomID,
+                channelID: this.props.channelID,
                 created_at: moment()
             }
 
-            let data2 = {
-                author: this.props.username,
-                body: this.state.message,
-                room: this.props.roomID,
-                created_at: moment().calendar(null)
-            }
-
-            this.socket.emit('SEND_MESSAGE', data2)
-
-            this.props.storeMessage(data);
+            this.props.storeMessage(dbData);
 
 
         }
@@ -47,9 +50,6 @@ class Chatbox extends Component {
         });
 
         this.socket.on('NEW_ROOM', (data) => {
-
-
-
             let messagesFormated = this.props.messages.map(el => {
                 el.created_at = moment(el.created_at).calendar(null);
                 return el;
@@ -66,6 +66,8 @@ class Chatbox extends Component {
                     this.setState({ sameUserMessage: false })
                 }
             }
+
+            console.log(data);
 
             this.setState({
                 messages: [...this.state.messages, data],
@@ -92,11 +94,6 @@ class Chatbox extends Component {
     }
 
     render() {
-
-
-
-        // Makes messages continue on current user
-
 
         let messages = this.state.messages.map((message, index, arr) => {
             if (index > 0) {
@@ -161,7 +158,8 @@ const mapStateToProps = state => {
         users: state.auth.users,
         socketChat: state.auth.socket,
         roomID: state.chat.roomID,
-        messages: state.chat.messages
+        messages: state.chat.messages,
+        channelID: state.chat.channelID
     }
 }
 

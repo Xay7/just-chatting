@@ -4,6 +4,7 @@ io.on("connection", function (socket) {
 
 
     socket.on('SEND_MESSAGE', function (data) {
+        console.log(data);
         io.in(data.room).emit('RECEIVE_MESSAGE', data);
     })
 

@@ -26,16 +26,21 @@ router.route('/signin')
 
 router.route('/:username/chat')
     .get(passportJWT, UsersController.chat)
-    .post(passportJWT, UsersController.newChat)
+    .post(UsersController.newChat)
 
 
 router.route('/:username/chat/:id')
     .delete(passportJWT, UsersController.deleteChat)
     .put(passportJWT, UsersController.joinChat)
 
-router.route('/:username/chat/:id/messages')
+router.route('/:username/chat/:id/channels')
+    .put(UsersController.newChannel)
+    .get(UsersController.getChannels);
+
+router.route('/:username/chat/:id/channels/:channelID/messages')
     .put(passportJWT, UsersController.storeMessage)
     .get(passportJWT, UsersController.getMessages)
+
 
 // Add support lateeeeeeeeeeer
 
