@@ -9,30 +9,14 @@ class Sidebar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedRoom: '',
-            chatRooms: {
-                owned: [],
-                joined: []
-            }
+            selectedChannel: '',
         }
 
         this.socket = this.props.socketChat;
 
-        this.switchChatroom = async (roomID, roomName, roomChannels) => {
-            await this.setState({ selectedRoom: roomID });
+        this.switchChannel = async (id, name) => {
 
-            let data = {
-                room: roomID,
-                username: this.props.username,
-                roomName: roomName,
-                roomChannels: roomChannels
-            }
-
-            await this.props.changeRoom(data);
-
-        }
-
-        this.switchChannel = async id => {
+            await this.setState({ selectedChannel: id });
 
             let data = {
                 channelID: id,
@@ -40,7 +24,7 @@ class Sidebar extends Component {
                 username: this.props.username
             }
 
-            await this.props.changeChannel(id);
+            await this.props.changeChannel(id, name);
             await this.props.getChatMessages(data);
             await this.socket.emit('SWITCH_ROOMS', {
                 room: id,
@@ -66,31 +50,6 @@ class Sidebar extends Component {
 
     }
 
-    async componentDidMount() {
-        await this.props.updateRooms(this.props.username);
-        this.setState({ chatRooms: this.props.chatRooms });
-    }
-
-    addChatroom = async () => {
-        const name = await prompt();
-
-        // Add message informing user to enter correct data
-        if (name === "" || name === null) {
-            return;
-        }
-
-        let data = {
-            id: uuid4(),
-            name: name,
-            owner: this.props.username
-        }
-
-        await this.props.newChatroom(data);
-
-        this.setState({ chatRooms: this.props.chatRooms });
-
-    }
-
     addChannel = async () => {
         const name = await prompt();
 
@@ -107,7 +66,6 @@ class Sidebar extends Component {
 
         await this.props.newChannel(data);
 
-        // this.setState({ chatRooms: this.props.chatRooms });
     }
 
     deleteRoom = async (id, username) => {
@@ -123,46 +81,26 @@ class Sidebar extends Component {
 
     }
 
-    // Changes selected room styles for visual clarity
-    currentRoomStyle = (index) => {
-        const isSelected = this.state.selectedRoom === index;
-        // True is room selected, rest are not
+
+    currentChannelStyle = (index) => {
+        const isSelected = this.state.selectedChannel === index;
         return isSelected ? "red" : "black";
     }
 
-    // Disables click on currect room to prevent multiple socket calls
-    currentRoomDisable = (index) => {
-        const isSelected = this.state.selectedRoom === index;
+    currentChannelDisable = (index) => {
+        const isSelected = this.state.selectedChannel === index;
         return isSelected ? true : false;
     }
 
+
     render() {
 
-        let ownedChatrooms = this.state.chatRooms.owned.map((room, index) => {
-            return <div key={room.id}>
-                <button
-                    style={{ color: this.currentRoomStyle(room.id) }}
-                    onClick={() => this.switchChatroom(room.id, room.name, room.channels)}
-                    disabled={this.currentRoomDisable(room.id)}>{room.name}
-                </button>
-                <button onClick={() => this.deleteRoom(room.id, this.props.username)}>DELETE</button>
-            </div>
-        })
-
-        let joinedChatrooms = this.state.chatRooms.joined.map((room, index) => {
-            return <div key={room.id}>
-                <button
-                    style={{ color: this.currentRoomStyle(room.id) }}
-                    onClick={() => this.switchChatroom(room.id, room.name, room.channels)}
-                    disabled={this.currentRoomDisable(room.id)}>{room.name}
-                </button>
-            </div>
-        })
-
         let channels = this.props.channels.map(el => {
-            return <div style={{ color: "white" }}>
+            return <div style={{ color: "white" }} key={el.id}>
                 <button
-                    onClick={() => this.switchChannel(el.id)}
+                    style={{ color: this.currentChannelStyle(el.id) }}
+                    onClick={() => this.switchChannel(el.id, el.name)}
+                    disabled={this.currentChannelDisable(el.id)}
                 >{el.name}</button>
             </div>
         })
@@ -170,11 +108,8 @@ class Sidebar extends Component {
 
         return (
             <div className={styles.Sidebar}>
-                <button onClick={this.addChatroom}>ADD NEW ROOM</button>
                 <button onClick={this.joinRoom}>JOIN ROOM</button>
                 <button onClick={this.addChannel}>NEW CHANNEL</button>
-                {ownedChatrooms}
-                {joinedChatrooms}
                 {channels}
             </div>
         )
