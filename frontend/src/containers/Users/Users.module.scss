@@ -1,7 +1,10 @@
+$basecolor: #fdfdfd;
+
 .Users {
-    width: 20%;
-    background-color: #1B1B1B;
+    min-width: 240px;
+    background-color: $basecolor;
     height: 100%;
+    box-shadow: 0 1px 1px 0px rgba(0, 0, 0, 0.10);
 }
 
 .User {

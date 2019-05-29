@@ -1,12 +1,16 @@
+$basecolor: #192a56;
+
 .Rooms {
     height: 100vh;
     width: 70px;
-    background-color: #1B1B1B;
+    background-color: $basecolor;
     display: flex;
     align-items: center;
     flex-direction: column;
     overflow: auto;
-    overflow-x: hidden
+    overflow-x: hidden;
+    box-shadow: 0 1px 1px 0px rgba(0, 0, 0, 0.10);
+    z-index: 42069;
 }
 
 .Rooms::-webkit-scrollbar {
