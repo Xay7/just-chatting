@@ -32,22 +32,6 @@ class Sidebar extends Component {
             })
         }
 
-
-        this.joinRoom = async () => {
-            // Replace later with modal input
-            const id = await prompt();
-
-            let data = {
-                id: id,
-                username: this.props.username
-            }
-
-            await this.props.joinRoom(data);
-
-            await this.setState({ chatRooms: this.props.chatRooms })
-
-        }
-
     }
 
     addChannel = async () => {
