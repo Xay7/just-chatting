@@ -40,8 +40,7 @@ class Chatbox extends Component {
                 created_at: moment()
             }
 
-            this.props.storeMessage(dbData);
-
+            await this.props.storeMessage(dbData);
 
         }
 
@@ -55,6 +54,7 @@ class Chatbox extends Component {
                 return el;
             })
             this.setState({ room: data.room, messages: messagesFormated });
+            this.scrollToBottom()
         });
 
         const addMessage = data => {
@@ -66,9 +66,6 @@ class Chatbox extends Component {
                     this.setState({ sameUserMessage: false })
                 }
             }
-
-            console.log(data);
-
             this.setState({
                 messages: [...this.state.messages, data],
             });
@@ -77,21 +74,29 @@ class Chatbox extends Component {
 
 
     }
+
     enterHandler = async (e) => {
         if (e.keyCode === 13 && this.state.message !== '') {
             await this.sendMessage();
             await this.setState({ message: '', typing: false });
-
+            this.scrollToBottom();
         }
 
     }
-
-    onChangeHandler = async (e) => {
-        await this.setState({
+    onChangeHandler = (e) => {
+        this.setState({
             message: e.target.value,
             typing: true
         })
     }
+
+    scrollToBottom() {
+        const scrollHeight = this.messageContainer.scrollHeight;
+        const height = this.messageContainer.clientHeight;
+        const maxScrollTop = scrollHeight - height;
+        this.messageContainer.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
+    }
+
 
     render() {
 
@@ -135,7 +140,9 @@ class Chatbox extends Component {
 
         return (
             <div className={styles.Chatbox}>
-                <div className={styles.MessagesContainer}>
+                <div className={styles.MessagesContainer} ref={(div) => {
+                    this.messageContainer = div;
+                }}>
                     {messages}
                 </div>
                 <div className={styles.InputContainer}>
