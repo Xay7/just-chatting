@@ -70,12 +70,14 @@ export const newChannel = data => {
     }
 }
 
-export const changeChannel = id => {
+export const changeChannel = (id, name) => {
     return async dispatch => {
         try {
             dispatch({
                 type: actionTypes.CHANGE_CHANNEL,
-                channelID: id
+                channelID: id,
+                channelName: "#" + name
+
             })
         } catch (error) {
             console.log(error);
@@ -84,13 +86,22 @@ export const changeChannel = id => {
 }
 
 export const changeRoom = data => {
-    return dispatch => {
-        dispatch({
-            type: actionTypes.CHANGE_ROOM,
-            roomID: data.room,
-            roomName: data.roomName,
-            channels: data.roomChannels
-        });
+    return async dispatch => {
+        try {
+
+            const res = await getChannels(data.username, data.id);
+
+            dispatch({
+                type: actionTypes.CHANGE_ROOM,
+                roomID: data.id,
+                roomName: data.roomName,
+                channels: res.data.channels,
+                channelName: ''
+            });
+        } catch (error) {
+
+        }
+
     }
 }
 
@@ -116,8 +127,6 @@ export const joinRoom = data => {
 export const deleteRoom = data => {
     return async dispatch => {
         try {
-
-            console.log(data);
 
             await axios.delete(`http://localhost:3001/users/${data.username}/chat/${data.id}`);
 
