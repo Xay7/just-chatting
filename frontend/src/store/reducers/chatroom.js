@@ -2,14 +2,16 @@ import * as actionTypes from '../actions/actionTypes';
 
 const DEFAULT_STATE = {
     roomID: '',
-    roomName: '',
+    roomName: 'Sample name',
     chatRooms: {
         owned: [],
         joined: []
     },
     channels: [],
     channelID: '',
-    messages: []
+    channelName: 'Sample channel name',
+    messages: [],
+    showRoomOptions: false
 }
 
 const reducer = (state = DEFAULT_STATE, action) => {
@@ -29,7 +31,8 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 ...state,
                 roomID: action.roomID,
                 roomName: action.roomName,
-                channels: action.channels
+                channels: action.channels,
+                channelName: action.channelName
             }
         case actionTypes.JOIN_ROOM:
             return {
@@ -55,7 +58,13 @@ const reducer = (state = DEFAULT_STATE, action) => {
         case actionTypes.CHANGE_CHANNEL:
             return {
                 ...state,
-                channelID: action.channelID
+                channelID: action.channelID,
+                channelName: action.channelName
+            }
+        case actionTypes.SHOW_ROOM_OPTIONS:
+            return {
+                ...state,
+                showRoomOptions: !state.showRoomOptions
             }
         default:
             return state;

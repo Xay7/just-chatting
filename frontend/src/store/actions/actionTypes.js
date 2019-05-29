@@ -7,7 +7,7 @@ export const AUTH_ERROR = 'AUTH_ERROR';
 export const TOKEN_ACCESS = 'TOKEN_ACCESS';
 export const TOKEN_ERROR = 'TOKEN_ERROR';
 
-// CHAT
+// CHAT 
 export const GET_ROOMS = 'GET_ROOMS';
 export const NEW_ROOM = 'NEW_ROOM';
 export const CHANGE_ROOM = 'CHANGE_ROOM';
@@ -16,3 +16,5 @@ export const DELETE_ROOM = 'DELETE_ROOM';
 export const GET_MESSAGES = 'GET_MESSAGES';
 export const NEW_CHANNEL = 'NEW_CHANNEL';
 export const CHANGE_CHANNEL = 'CHANGE_CHANNEL';
+
+export const SHOW_ROOM_OPTIONS = 'SHOW_ROOM_OPTIONS';

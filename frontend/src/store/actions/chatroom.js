@@ -1,12 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from 'axios';
 
-
-
-// TODO
-// ADD DISPATCH ERRORS
-
-
 const getRooms = async (username) => {
     const res = await axios.get(`http://localhost:3001/users/${username}/chat`);
     return res;
@@ -169,5 +163,11 @@ export const getChatMessages = data => {
         } catch (error) {
             console.log(error);
         }
+    }
+}
+
+export const showRoomOptions = () => {
+    return {
+        type: actionTypes.SHOW_ROOM_OPTIONS,
     }
 }
