@@ -4,12 +4,18 @@ io.on("connection", function (socket) {
 
 
     socket.on('SEND_MESSAGE', function (data) {
-        console.log(data);
         io.in(data.room).emit('RECEIVE_MESSAGE', data);
     })
 
+    socket.on('LEAVE_ROOM', function () {
 
-    socket.on('SWITCH_ROOMS', function (data) {
+        socket.leave(Object.keys(socket.rooms)[1])
+
+        socket.emit('LEFT_ROOM')
+
+    })
+
+    socket.on('JOIN_CHANNEL', function (data) {
 
         socket.username = data.name
 
