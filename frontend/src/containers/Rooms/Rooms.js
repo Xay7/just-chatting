@@ -4,38 +4,58 @@ import { connect } from 'react-redux';
 import * as actions from '../../store/actions/chatroom';
 import uuid4 from 'uuid4';
 import Modal from '../../components/Modal/Modal';
+import Options from '../../components/Options/Options';
+
 
 class Rooms extends Component {
 
-    state = {
-        chatRooms: {
-            owned: [],
-            joined: []
-        },
-        selectedRoom: '',
-        showAddOrJoin: false
-    }
+    constructor(props) {
+        super(props)
 
-
-    switchChatroom = async (roomID, roomName, roomChannels) => {
-        await this.setState({ selectedRoom: roomID });
-
-        let data = {
-            room: roomID,
-            username: this.props.username,
-            roomName: roomName,
-            roomChannels: roomChannels
+        this.state = {
+            chatRooms: {
+                owned: [],
+                joined: []
+            },
+            selectedRoom: '',
+            showAddOrJoin: false,
+            showAdd: false,
+            showJoin: false,
+            chatRoomName: '',
+            chatRoomId: '',
         }
 
-        await this.props.changeRoom(data);
+        this.socket = this.props.socketChat;
+
+        this.changeChatroom = async (roomID, roomName, roomChannels) => {
+
+            this.setState({ selectedRoom: roomID });
+
+            let data = {
+                id: roomID,
+                username: this.props.username,
+                roomName: roomName,
+                roomChannels: roomChannels
+            }
+
+            await this.socket.emit('LEAVE_ROOM', {
+                channelID: this.props.channelID
+            })
+
+            await this.props.changeRoom(data);
+
+        }
 
     }
 
-    addChatroom = async () => {
-        const name = await prompt();
 
-        // Add message informing user to enter correct data
-        if (name === "" || name === null) {
+
+
+    addChatroom = async () => {
+
+        const name = this.state.chatRoomName
+
+        if (name === '') {
             return;
         }
 
@@ -47,14 +67,56 @@ class Rooms extends Component {
 
         await this.props.newChatroom(data);
 
-        this.setState({ chatRooms: this.props.chatRooms });
+        this.setState({
+            chatRooms: this.props.chatRooms,
+            showAdd: false,
+        });
 
     }
 
-    CreateOrJoinRoom = () => {
-        console.log("xd");
-        this.setState({ showAddOrJoin: !this.state.showAddOrJoin })
+    joinRoom = async () => {
+        // Replace later with modal input
+        const id = this.state.chatRoomId
+
+        let data = {
+            id: id,
+            username: this.props.username
+        }
+
+        await this.props.joinRoom(data);
+
+        await this.setState({
+            chatRooms: this.props.chatRooms,
+            showJoin: false
+        })
+
     }
+
+    showAddorJoin = () => {
+        this.setState({
+            showAddOrJoin: !this.state.showAddOrJoin,
+            showAdd: false,
+            showJoin: false
+        })
+    }
+
+    showJoin = () => {
+        this.setState({
+            showJoin: !this.state.showJoin,
+            showAddOrJoin: false,
+            showAdd: false,
+
+        })
+    }
+
+    showAdd = () => {
+        this.setState({
+            showAdd: !this.state.showAdd,
+            showAddOrJoin: false,
+            showJoin: false,
+        })
+    }
+
 
     async componentDidMount() {
         await this.props.updateRooms(this.props.username);
@@ -73,13 +135,21 @@ class Rooms extends Component {
         return isSelected ? true : false;
     }
 
+    roomNameHandler = (e) => {
+        this.setState({ chatRoomName: e.target.value });
+    }
+
+    roomIdHandler = (e) => {
+        this.setState({ chatRoomId: e.target.value });
+    }
+
     render() {
 
         let ownedChatrooms = this.state.chatRooms.owned.map(room => {
             return <div key={room.id}>
                 <button
                     className={this.currentRoomStyle(room.id)}
-                    onClick={() => this.switchChatroom(room.id, room.name, room.channels)}
+                    onClick={() => this.changeChatroom(room.id, room.name, room.channels)}
                     disabled={this.currentRoomDisable(room.id)}>{room.name}
                 </button>
             </div>
@@ -89,7 +159,7 @@ class Rooms extends Component {
             return <div key={room.id}>
                 <button
                     className={this.currentRoomStyle(room.id)}
-                    onClick={() => this.switchChatroom(room.id, room.name, room.channels)}
+                    onClick={() => this.changeChatroom(room.id, room.name, room.channels)}
                     disabled={this.currentRoomDisable(room.id)}>{room.name}
                 </button>
             </div>
@@ -97,23 +167,73 @@ class Rooms extends Component {
 
         let addOrJoin = null;
 
+
         if (this.state.showAddOrJoin) {
             addOrJoin = <div >
-                <Modal onclick={this.CreateOrJoinRoom} />
+                <Modal onclick={this.showAddorJoin} />
+                <Options >
+                    <div className={styles.Wrapper}>
+                        <div className={styles.Add}>
+                            <button onClick={this.showAdd}>ADD</button>
+                        </div>
+                        <div className={styles.Join}>
+                            <button onClick={this.showJoin}>JOIN</button>
+                        </div>
+                    </div>
+                </Options>
             </div>
         }
+
+        if (this.state.showAdd) {
+            addOrJoin = <div >
+                <Modal onclick={this.showAdd} />
+                <Options >
+                    <div className={styles.Wrapper}>
+                        <div>
+                            <h1>Something about adding chatroom</h1>
+                            <input type="text" onChange={this.roomNameHandler} />
+                            <button onClick={this.addChatroom}>Submit</button>
+                        </div>
+                        <div>
+                            <button onClick={this.showAddorJoin}>GO BACK</button>
+                        </div>
+                    </div>
+
+                </Options>
+            </div>;
+        }
+
+        if (this.state.showJoin) {
+            addOrJoin = <div >
+                <Modal onclick={this.showJoin} />
+                <Options >
+                    <div className={styles.Wrapper}>
+                        <div>
+                            <h1>Something about joining chatroom</h1>
+                            <input type="text" onChange={this.roomIdHandler} />
+                            <button onClick={this.joinRoom}>Submit</button>
+                        </div>
+                        <div>
+                            <button onClick={this.showAddorJoin}>GO BACK</button>
+                        </div>
+                    </div>
+                </Options>
+            </div>;
+        }
+
 
 
         return (
             <React.Fragment>
-                {addOrJoin}
                 <div className={styles.Rooms}>
                     {ownedChatrooms}
                     {joinedChatrooms}
                     <button
-                        onClick={this.CreateOrJoinRoom}
-                        className={styles.AddChatroom}>+</button>
+                        onClick={this.showAddorJoin}
+                        className={styles.AddChatroom}>
+                        +</button>
                 </div>
+                {addOrJoin}
             </React.Fragment>
 
         )
@@ -123,7 +243,9 @@ class Rooms extends Component {
 const mapStateToProps = state => {
     return {
         username: state.auth.username,
-        chatRooms: state.chat.chatRooms
+        chatRooms: state.chat.chatRooms,
+        socketChat: state.auth.socket,
+        channelID: state.chat.channelID
     }
 }
 
