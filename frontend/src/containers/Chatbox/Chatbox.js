@@ -21,13 +21,14 @@ class Chatbox extends Component {
 
         this.sendMessage = async e => {
 
-
             let socketData = {
                 author: this.props.username,
                 body: this.state.message,
                 created_at: moment().calendar(null),
                 room: this.props.channelID,
             }
+
+            console.log(socketData);
 
             this.socket.emit('SEND_MESSAGE', socketData)
 
@@ -57,6 +58,14 @@ class Chatbox extends Component {
             this.scrollToBottom()
         });
 
+        this.socket.on('LEFT_ROOM', () => {
+            this.setState({
+                message: '',
+                messages: [],
+                sameUserMessage: false,
+            })
+        })
+
         const addMessage = data => {
             if (this.state.messages.length > 0) {
                 if (data.author === this.state.messages.slice(-1)[0].author) {
@@ -70,9 +79,17 @@ class Chatbox extends Component {
                 messages: [...this.state.messages, data],
             });
 
+            this.scrollToBottom()
+
         };
 
 
+    }
+
+    // Remove after css is done
+
+    componentDidMount() {
+        this.setState({ messages: this.props.messages })
     }
 
     enterHandler = async (e) => {
