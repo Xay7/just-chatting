@@ -13,10 +13,6 @@ class Rooms extends Component {
         super(props)
 
         this.state = {
-            chatRooms: {
-                owned: [],
-                joined: []
-            },
             selectedRoom: '',
             showAddOrJoin: false,
             showAdd: false,
@@ -47,8 +43,6 @@ class Rooms extends Component {
         }
 
     }
-
-
 
 
     addChatroom = async () => {
@@ -143,24 +137,25 @@ class Rooms extends Component {
         this.setState({ chatRoomId: e.target.value });
     }
 
+
     render() {
 
-        let ownedChatrooms = this.state.chatRooms.owned.map(room => {
+        let ownedChatrooms = this.props.chatRooms.owned.map(room => {
             return <div key={room.id}>
                 <button
                     className={this.currentRoomStyle(room.id)}
                     onClick={() => this.changeChatroom(room.id, room.name, room.channels)}
-                    disabled={this.currentRoomDisable(room.id)}>{room.name}
+                    disabled={this.currentRoomDisable(room.id)}>{room.name.charAt(0)}
                 </button>
             </div>
         })
 
-        let joinedChatrooms = this.state.chatRooms.joined.map(room => {
+        let joinedChatrooms = this.props.chatRooms.joined.map(room => {
             return <div key={room.id}>
                 <button
                     className={this.currentRoomStyle(room.id)}
                     onClick={() => this.changeChatroom(room.id, room.name, room.channels)}
-                    disabled={this.currentRoomDisable(room.id)}>{room.name}
+                    disabled={this.currentRoomDisable(room.id)}>{room.name.charAt(0)}
                 </button>
             </div>
         })
@@ -173,11 +168,15 @@ class Rooms extends Component {
                 <Modal onclick={this.showAddorJoin} />
                 <Options >
                     <div className={styles.Wrapper}>
-                        <div className={styles.Add}>
-                            <button onClick={this.showAdd}>ADD</button>
+                        <div className={styles.JoinAndAdd}>
+                            <h3>Create new room</h3>
+                            <p className={styles.Description}>Make a new room and invite whoever you want to</p>
+                            <button onClick={this.showAdd} className={styles.Btn}>Create</button>
                         </div>
-                        <div className={styles.Join}>
-                            <button onClick={this.showJoin}>JOIN</button>
+                        <div className={styles.JoinAndAdd}>
+                            <h3>Join existing room</h3>
+                            <p className={styles.Description}>Grab room ID and simply enter it to join friends room</p>
+                            <button onClick={this.showJoin} className={styles.Btn}>Join</button>
                         </div>
                     </div>
                 </Options>
@@ -188,14 +187,28 @@ class Rooms extends Component {
             addOrJoin = <div >
                 <Modal onclick={this.showAdd} />
                 <Options >
-                    <div className={styles.Wrapper}>
-                        <div>
-                            <h1>Something about adding chatroom</h1>
-                            <input type="text" onChange={this.roomNameHandler} />
-                            <button onClick={this.addChatroom}>Submit</button>
+                    <div className={styles.AddJoinWrapper}>
+                        <div className={styles.AddJoinDescription}>
+                            <h3>Create your room</h3>
                         </div>
-                        <div>
-                            <button onClick={this.showAddorJoin}>GO BACK</button>
+                        <div className={styles.InputWrapper}>
+                            <label htmlFor="room" className={styles.InputLabel}>Room name</label>
+                            <input
+                                type="text"
+                                onChange={this.roomNameHandler}
+                                className={styles.Input}
+                                placeholder="Enter room name"
+                                id="room"
+                                autoComplete="off"
+                            />
+                            <div>
+
+                            </div>
+                        </div>
+
+                        <div className={styles.AddJoinBtns}>
+                            <button onClick={this.showAddorJoin} className={styles.BackBtn}>← Back</button>
+                            <button onClick={this.addChatroom} className={styles.Confirm}>Create</button>
                         </div>
                     </div>
 
@@ -207,14 +220,26 @@ class Rooms extends Component {
             addOrJoin = <div >
                 <Modal onclick={this.showJoin} />
                 <Options >
-                    <div className={styles.Wrapper}>
-                        <div>
-                            <h1>Something about joining chatroom</h1>
-                            <input type="text" onChange={this.roomIdHandler} />
-                            <button onClick={this.joinRoom}>Submit</button>
+                    <div className={styles.AddJoinWrapper}>
+
+                        <div className={styles.AddJoinDescription}>
+                            <h3>Join existing room</h3>
                         </div>
-                        <div>
-                            <button onClick={this.showAddorJoin}>GO BACK</button>
+                        <div className={styles.InputWrapper}>
+                            <label htmlFor="room" className={styles.InputLabel} >Room ID</label>
+                            <input
+                                className={styles.Input}
+                                type="text"
+                                onChange={this.roomIdHandler}
+                                id="room"
+                                placeholder="Enter room ID" />
+                        </div>
+
+
+
+                        <div className={styles.AddJoinBtns}>
+                            <button onClick={this.showAddorJoin} className={styles.BackBtn}>← Back</button>
+                            <button onClick={this.joinRoom} className={styles.Confirm}>Join</button>
                         </div>
                     </div>
                 </Options>
@@ -245,7 +270,8 @@ const mapStateToProps = state => {
         username: state.auth.username,
         chatRooms: state.chat.chatRooms,
         socketChat: state.auth.socket,
-        channelID: state.chat.channelID
+        channelID: state.chat.channelID,
+        updateRooms: state.chat.updateRooms
     }
 }
 
