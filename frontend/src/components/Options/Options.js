@@ -7,7 +7,6 @@ const Options = (props) => {
     return (
         <div
             className={styles.Options}
-            onClick={props.onclick}
         >{props.children}</div>
     )
 }
