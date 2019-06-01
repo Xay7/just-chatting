@@ -1,4 +1,4 @@
-$basecolor: #fdfdfd;
+$basecolor: #F5F5F5;
 
 .Chatbox {
     width: 100%;
@@ -19,13 +19,17 @@ $basecolor: #fdfdfd;
 .MessageInput {
     display: block;
     margin: 0 auto;
-    border-radius: 10px;
+    border-radius: 5px;
     border: none;
     width: 80%;
     height: 50px;
     outline: none;
     padding: 0px 20px;
-    box-shadow: 0 1px 1px 0px rgba(0, 0, 0, 0.10);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.MessageInput::placeholder {
+    color: #aaa;
 }
 
 .MessagesContainer {
@@ -43,16 +47,16 @@ $basecolor: #fdfdfd;
 .MessagesContainer::-webkit-scrollbar {
     margin-left: 25px;
     background-color: transparent;
-    width: 7px;
+    width: 9px;
 }
 
 .MessagesContainer::-webkit-scrollbar-track {
-    background-color: rgb(58, 57, 57);
+    background-color: #F0F0F0;
     border-radius: 10px;
 }
 
 .MessagesContainer::-webkit-scrollbar-thumb {
-    background-color: rgb(20, 20, 20);
+    background-color: #D3D3D3;
     border-radius: 10px;
 
 }

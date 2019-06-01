@@ -1,5 +1,5 @@
 $roomColor: #182C61;
-$channelColor: #ECF0F1;
+$channelColor: #F5F5F5;
 $black: #333333;
 
 .RoomHelpers {
@@ -8,7 +8,6 @@ $black: #333333;
     display: flex;
     flex-direction: row;
     position: relative;
-    z-index: 699;
 }
 
 .Room {
@@ -21,7 +20,7 @@ $black: #333333;
 }
 
 .Room:hover {
-    background: #0e2155;
+    background-color: darken(#182C61, 3%);
 }
 
 .RoomName {

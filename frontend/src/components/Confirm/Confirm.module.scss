@@ -1,0 +1,10 @@
+.DeleteRoomWrapper {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background-color: black;
+    height: 150px;
+    width: 300px;
+}

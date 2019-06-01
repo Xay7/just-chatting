@@ -1,4 +1,5 @@
-$basecolor: #273c75;
+$basecolor: #182C61;
+$white: #F5F5F5;
 
 .Sidebar {
     min-width: 240px;
@@ -23,57 +24,97 @@ $basecolor: #273c75;
     background: transparent;
     border: none;
     width: auto;
-    color: white;
+    color: $white;
     outline: none;
 }
 
 .ChannelSelected {
-    color: #ddd;
+    color: red;
 }
 
 .ChannelTitle {
     margin: 0;
     margin-left: 20px;
-    color: white;
-}
-
-.AddChannel {
-    display: block;
-    margin: 20px auto;
-}
-
-
-.Options {
-    position: absolute;
-    width: 240px;
-    height: 100px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-around;
-    flex-direction: column;
-}
-
-
-.OptionsBtn,
-.OptionsBtnRed {
-    height: 50%;
-    border: none;
-    font-size: 1em;
-    background-color: #6d6d6d;
-    color: white;
-    outline: none;
-}
-
-.OptionsBtnRed {
-    color: red;
-}
-
-.OptionsBtn:hover,
-.OptionsBtnRed:hover {
-    background-color: #5e5d5d;
+    margin-bottom: 3px;
+    color: $white;
 }
 
 .Channels {
     display: flex;
     flex-direction: column;
+}
+
+.ChannelsHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 20px;
+}
+
+.AddChannel {
+    background-color: transparent;
+    border: none;
+    display: block;
+    color: $white;
+    font-size: 28px;
+    padding: 0;
+    margin-right: 20px;
+    outline: none;
+}
+
+.AddChannel:hover {
+    color: #CCC;
+}
+
+
+.Options {
+    box-sizing: border-box;
+    position: absolute;
+    width: 240px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.OptionsBtn,
+.OptionsBtnRed {
+    display: flex;
+    height: 40px;
+    border: none;
+    font-size: 14px;
+    background-color: #182C61;
+    color: $white;
+    outline: none;
+    text-align: start;
+
+    &:hover {
+        background-color: darken(#182C61, 3%);
+    }
+
+    //background-color: #0e2155;
+
+}
+
+.IconsWrapper {
+    display: flex;
+    width: 50px;
+    margin: auto 0;
+    margin-left: 20px;
+
+}
+
+.OptionsDescription {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+
+.OptionsBtnRed {
+    color: red;
 }

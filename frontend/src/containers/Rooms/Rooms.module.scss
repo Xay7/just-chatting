@@ -1,4 +1,5 @@
-$basecolor: #192a56;
+$basecolor: #081b50;
+$black: #333333;
 
 .Rooms {
     height: 100vh;
@@ -10,7 +11,6 @@ $basecolor: #192a56;
     overflow: auto;
     overflow-x: hidden;
     box-shadow: 0 1px 1px 0px rgba(0, 0, 0, 0.10);
-    z-index: 42069;
 }
 
 .Rooms::-webkit-scrollbar {
@@ -29,54 +29,159 @@ $basecolor: #192a56;
 
 }
 
-
-
 .RoomSelected,
 .RoomNotSelected {
     border: none;
-    border-radius: 10px;
+    border-radius: 15px;
     margin-top: 10px;
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     outline: 0;
+    background-color: #182C61;
+    font-weight: 700;
+    font-size: 18px;
 }
 
 .AddChatroom {
-    font-size: 3em;
     border: none;
     border-radius: 10px;
     margin-top: 10px;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     outline: 0;
+    background-color: #182C61;
+    color: green;
+    font-size: 32px;
 }
 
 .RoomSelected {
-    color: red;
+    color: white;
+    background-color: rgb(46, 88, 201)
 }
 
 .RoomNotSelected {
-    color: blue;
+    color: #FDFDFD;
+
 }
 
-.Wrapper {
-    height: 400px;
+.Wrapper,
+.AddJoinWrapper {
+    height: 250px;
     width: 500px;
-    border-radius: 10px;
+    border-radius: 5px;
     display: flex;
-    background-color: white
+    background-color: white;
 }
 
-.Add {
-    width: 100%;
-    height: 100%;
-    border-bottom-left-radius: inherit;
-    border-top-left-radius: inherit;
+.AddJoinWrapper {
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: flex-start;
 }
 
-.Join {
+.AddJoinBtns {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: space-between;
+    outline: none;
+
+}
+
+.AddJoinDescription {
+    height: auto;
+    width: 100%;
+    text-align: center;
+}
+
+.InputWrapper {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    margin-left: 40px;
+}
+
+.InputLabel {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 700;
+    color: grey;
+    margin-bottom: 15px;
+}
+
+.Input {
+    width: 200px;
+    border: none;
+    border-bottom: 2px solid #DDD;
+    outline: none;
+    padding: 5px 10px;
+    transition: 350ms all;
+}
+
+.Input:focus {
+    border-bottom: 2px solid green;
+}
+
+.Btn {
+    width: 160px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: blue;
+    border: none;
+    transition: 350ms all;
+    color: white;
+
+    &:hover {
+        background-color: darken(blue, 10%);
+    }
+}
+
+h3 {
+    margin: 0;
+}
+
+.BackBtn {
+    box-sizing: border-box;
+    background-color: transparent;
+    border: none;
+    color: grey;
+    margin-left: 40px;
+    border-bottom: 1px solid transparent;
+    transition: 150ms all;
+    outline: none;
+
+    &:hover {
+        color: darken(grey, 20%);
+        border-bottom: 1px solid rgb(184, 183, 183);
+    }
+}
+
+.Confirm {
+    width: 120px;
+    height: 40px;
+    color: white;
+    background-color: green;
+    border: none;
+    margin-right: 40px;
+    transition: 150ms all;
+    outline: none;
+
+    &:hover {
+        background-color: darken(green, 5%);
+    }
+}
+
+.Description {
+    width: 150px;
+    text-align: center
+}
+
+.JoinAndAdd {
     width: 100%;
     height: 100%;
-    border-top-right-radius: inherit;
-    border-bottom-right-radius: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
