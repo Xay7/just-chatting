@@ -16,6 +16,12 @@ class Users extends Component {
         this.socket.on('UPDATING_USERS', (data) => {
             this.setState({ names: data })
         })
+
+        this.socket.on('LEFT_ROOM', () => {
+            this.setState({
+                names: []
+            })
+        })
     }
 
 
