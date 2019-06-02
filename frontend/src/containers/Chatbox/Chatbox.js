@@ -3,7 +3,7 @@ import styles from './Chatbox.module.scss';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import * as actions from '../../store/actions/chatroom';
-
+import UserTyping from '../../components/UserTyping/UserTyping';
 
 
 class Chatbox extends Component {
@@ -15,6 +15,8 @@ class Chatbox extends Component {
             message: '',
             messages: [],
             sameUserMessage: false,
+            typing: false,
+            typingTimeout: 0
         };
 
         this.socket = this.props.socketChat;
@@ -66,6 +68,26 @@ class Chatbox extends Component {
             })
         })
 
+        this.socket.on('SOMEONE_IS_TYPING', () => {
+
+
+            if (this.state.typingTimeout) {
+                clearTimeout(this.state.typingTimeout);
+            }
+
+            this.setState({
+                typing: true,
+                typingTimeout: setTimeout(() => {
+                    this.setState({ typing: false })
+                }, 2000)
+            })
+
+            this.scrollToBottom();
+
+
+        })
+
+
         const addMessage = data => {
             if (this.state.messages.length > 0) {
                 if (data.author === this.state.messages.slice(-1)[0].author) {
@@ -76,7 +98,7 @@ class Chatbox extends Component {
                 }
             }
             this.setState({
-                messages: [...this.state.messages, data],
+                messages: [...this.state.messages, data], typing: false
             });
 
             this.scrollToBottom()
@@ -101,9 +123,13 @@ class Chatbox extends Component {
 
     }
     onChangeHandler = (e) => {
+
+        this.socket.emit('CLIENT_IS_TYPING', {
+            room: this.props.channelID
+        })
+
         this.setState({
             message: e.target.value,
-            typing: true
         })
     }
 
@@ -161,7 +187,9 @@ class Chatbox extends Component {
                     this.messageContainer = div;
                 }}>
                     {messages}
+                    {this.state.typing ? <UserTyping /> : null}
                 </div>
+
                 <div className={styles.InputContainer}>
                     <input type="text"
                         onKeyDown={this.enterHandler}
@@ -183,7 +211,7 @@ const mapStateToProps = state => {
         socketChat: state.auth.socket,
         roomID: state.chat.roomID,
         messages: state.chat.messages,
-        channelID: state.chat.channelID
+        channelID: state.chat.channelID,
     }
 }
 

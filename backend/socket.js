@@ -15,6 +15,11 @@ io.on("connection", function (socket) {
 
     })
 
+    socket.on('CLIENT_IS_TYPING', function (data) {
+        console.log(data);
+        socket.broadcast.to(data.room).emit('SOMEONE_IS_TYPING');
+    })
+
     socket.on('JOIN_CHANNEL', function (data) {
 
         socket.username = data.name
