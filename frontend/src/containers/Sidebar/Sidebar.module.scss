@@ -28,6 +28,10 @@ $white: #F5F5F5;
     outline: none;
 }
 
+.Channel {
+    cursor: pointer;
+}
+
 .ChannelSelected {
     color: red;
 }
@@ -61,6 +65,7 @@ $white: #F5F5F5;
     padding: 0;
     margin-right: 20px;
     outline: none;
+    cursor: pointer;
 }
 
 .AddChannel:hover {
@@ -75,6 +80,7 @@ $white: #F5F5F5;
     height: auto;
     display: flex;
     flex-direction: column;
+    cursor: pointer;
 }
 
 
