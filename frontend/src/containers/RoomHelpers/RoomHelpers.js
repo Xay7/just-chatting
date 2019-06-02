@@ -3,11 +3,21 @@ import styles from './RoomHelpers.module.scss';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/chatroom';
 class RoomHelpers extends Component {
+
+    showOptionsHandler = () => {
+
+        if (this.props.roomName === '') {
+            return;
+        }
+
+        this.props.showRoomOptions()
+    }
+
     render() {
         return (
             <React.Fragment>
                 <div className={styles.RoomHelpers} >
-                    <div className={styles.Room} onClick={this.props.showRoomOptions}>
+                    <div className={styles.Room} onClick={this.showOptionsHandler}>
                         <h2 className={styles.RoomName}>{this.props.roomName}</h2>
                         <i
                             className="fas fa-caret-down fa-lg"
