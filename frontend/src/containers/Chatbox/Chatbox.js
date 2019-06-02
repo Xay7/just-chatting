@@ -30,8 +30,6 @@ class Chatbox extends Component {
                 room: this.props.channelID,
             }
 
-            console.log(socketData);
-
             this.socket.emit('SEND_MESSAGE', socketData)
 
 
@@ -140,11 +138,50 @@ class Chatbox extends Component {
         this.messageContainer.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
     }
 
+    isUrl = string => {
+        const regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\\/]))?/
+        return regexp.test(string);
+    }
+
+    isImage = string => {
+        const regexp = /\.(gif|jpg|jpeg|tiff|png)$/i
+        return regexp.test(string);
+    }
+
+    adjustImage = ({ target: img }) => {
+        if (img.naturalHeight > 512 || img.naturalWidth > 512) {
+            img.style.maxWidth = "512px";
+            img.style.height = "auto";
+            img.style.margin = "10px 0";
+        }
+    }
+
 
     render() {
 
         let messages = this.state.messages.map((message, index, arr) => {
             if (index > 0) {
+
+                if (this.isUrl(message.body) === true) {
+                    if (this.isImage(message.body) === true) {
+
+                        message.body = (
+                            <div style={{
+                            }}>
+                                <a href={message.body} target="_blank" rel="noopener noreferrer">
+                                    <img
+                                        src={message.body}
+                                        alt={message.body}
+                                        onLoad={this.adjustImage}
+                                    />
+                                </a>
+                            </div>
+                        )
+
+                    } else message.body = <a href={message.body} target="_blank" rel="noopener noreferrer">{message.body}</a>
+                }
+
+
 
                 if (message.author === arr[index - 1].author) {
                     return (
