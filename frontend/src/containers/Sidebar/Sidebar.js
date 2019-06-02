@@ -36,6 +36,7 @@ class Sidebar extends Component {
         }
     }
 
+
     addChannel = async () => {
         const name = await prompt();
 
@@ -84,6 +85,38 @@ class Sidebar extends Component {
         this.setState({ showDeleteBox: false })
     }
 
+    componentWillMount() {
+        document.addEventListener('mousedown', this.handleClick, false);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.handleClick, false);
+    }
+
+    handleClick = (e) => {
+
+        if (this.props.showOptions) {
+            if (this.node.contains(e.target)) {
+                return;
+            }
+        }
+
+        if (e.target.parentNode.children[0].className.substring(0, 16) === "RoomHelpers_Room") {
+            return;
+        }
+
+
+        if (this.state.showDeleteBox) {
+            return;
+        }
+
+        if (this.props.showOptions === true) {
+            this.props.showRoomOptions();
+        }
+
+    }
+
+
 
     render() {
 
@@ -109,7 +142,7 @@ class Sidebar extends Component {
                     height: 80
                 }}>
                 {props => (
-                    <div className={styles.Options} style={props}>
+                    <div className={styles.Options} style={props} ref={node => this.node = node} >
                         <div className={styles.OptionsBtn}>
                             <div className={styles.IconsWrapper}>
                                 <i className="fas fa-user-plus "></i>
@@ -144,6 +177,8 @@ class Sidebar extends Component {
                         <Confirm
                             cancel={this.hideDeleteBox}
                             confirm={() => this.deleteRoom(this.props.roomID, this.props.username)}
+                            header={`Delete ${this.props.roomName}`}
+                            description={`Are you sure you want to delete ${this.props.roomName}?`}
                         />
                     </div> : null}
                 <div className={styles.Sidebar}>
