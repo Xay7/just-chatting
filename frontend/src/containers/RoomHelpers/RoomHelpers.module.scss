@@ -35,6 +35,8 @@ $black: #333333;
     margin: 0;
     margin-left: 20px;
     color: $black;
+    padding-right: 20px;
+    border-right: 1px solid #CCC;
 }
 
 .RoomSettings {
@@ -51,6 +53,15 @@ $black: #333333;
     height: inherit;
     background-color: $channelColor;
     border-bottom: 1px solid #DDD;
+}
+
+.ChannelDescription {
+    font-size: 12px;
+    margin-left: 20px;
+}
+
+.VerticalLine {
+    border-left: 1px solid #ff0000;
 }
 
 .dropdown {

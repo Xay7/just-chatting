@@ -2,6 +2,7 @@ $basecolor: #182C61;
 $white: #F5F5F5;
 
 .Sidebar {
+    position: relative;
     min-width: 240px;
     height: 100%;
     background-color: $basecolor;
@@ -27,6 +28,17 @@ $white: #F5F5F5;
     color: $white;
     outline: none;
 }
+
+.AddChannelWrapper {
+    height: 300px;
+    width: 500px;
+    border-radius: 5px;
+    display: flex;
+    background-color: white;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
 
 .Channel {
     cursor: pointer;
@@ -84,6 +96,14 @@ $white: #F5F5F5;
 }
 
 
+.AddChannelBtns {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: space-between;
+    outline: none;
+
+}
 
 .OptionsBtn,
 .OptionsBtnRed {
@@ -123,4 +143,108 @@ $white: #F5F5F5;
 
 .OptionsBtnRed {
     color: red;
+}
+
+.AddChannelDescription {
+    height: auto;
+    width: 100%;
+    text-align: center;
+}
+
+.InputWrapper {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.InputLabel {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 700;
+    color: grey;
+    margin: 10px 40px;
+}
+
+.Input {
+    width: 400px;
+    border: none;
+    border-bottom: 2px solid #DDD;
+    outline: none;
+    padding: 5px 10px;
+    transition: 350ms all;
+    margin-left: 40px;
+}
+
+.Input:focus {
+    border-bottom: 2px solid green;
+}
+
+.Btn {
+    width: 160px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: blue;
+    border: none;
+    transition: 350ms all;
+    color: white;
+
+    &:hover {
+        background-color: darken(blue, 10%);
+    }
+}
+
+.BackBtn {
+    box-sizing: border-box;
+    background-color: transparent;
+    border: none;
+    color: grey;
+    margin-left: 40px;
+    border-bottom: 1px solid transparent;
+    transition: 150ms all;
+    outline: none;
+
+    &:hover {
+        color: darken(grey, 20%);
+        border-bottom: 1px solid rgb(184, 183, 183);
+    }
+}
+
+.Confirm {
+    width: 120px;
+    height: 40px;
+    color: white;
+    background-color: green;
+    border: none;
+    margin-right: 40px;
+    transition: 150ms all;
+    outline: none;
+
+    &:hover {
+        background-color: darken(green, 5%);
+    }
+}
+
+.InviteString {
+    width: 300px;
+    height: 100px;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.User {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    background-color: rgb(22, 39, 88);
+    display: flex;
+    align-items: center;
+}
+
+.Avatar {
+    margin-left: 20px;
+    margin-right: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
 }

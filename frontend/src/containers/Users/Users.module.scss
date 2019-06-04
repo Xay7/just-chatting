@@ -13,4 +13,25 @@ $black: #333333;
     color: $black;
     text-align: center;
     text-transform: capitalize;
+    color: green;
+    font-weight: 400;
+}
+
+.NumberOfUsers {
+    font-size: 12px;
+}
+
+.Avatar {
+    margin-left: 20px;
+    margin-right: 7px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.UserWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
 }
