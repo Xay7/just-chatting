@@ -9,7 +9,30 @@ io.on("connection", function (socket) {
 
     socket.on('LEAVE_ROOM', function () {
 
+        const previousRoom = Object.keys(socket.rooms)[1];
+
         socket.leave(Object.keys(socket.rooms)[1])
+
+        let previousClients = []
+        if (io.sockets.adapter.rooms[previousRoom] === undefined) {
+            previousClients = []
+        } else previousClients = io.sockets.adapter.rooms[previousRoom].sockets;
+
+
+        let previousRoomSocketIds = [];
+
+        for (var k in previousClients) previousRoomSocketIds.push(k);
+
+        let previousRoomUsernames = previousRoomSocketIds.map((el, index) => {
+            return {
+                username: io.sockets.connected[el].username,
+                avatar: io.sockets.connected[el].avatar
+            }
+        })
+
+
+        io.in(previousRoom).emit('UPDATING_USERS', previousRoomUsernames);
+
 
         socket.emit('LEFT_ROOM')
 
@@ -43,7 +66,7 @@ io.on("connection", function (socket) {
         let previousRoomUsernames = previousRoomSocketIds.map((el, index) => {
             return {
                 username: io.sockets.connected[el].username,
-                avatar: io.sockets.connected[el].username
+                avatar: io.sockets.connected[el].avatar
             }
         })
 
@@ -95,5 +118,8 @@ io.on("connection", function (socket) {
             io.in(data.room).emit('UPDATING_USERS', usernames);
 
         })
+    })
+    socket.on('OWNER_DELETED_ROOM', function (data) {
+        io.in(data.room).emit('ROOM_DELETED');
     })
 })
