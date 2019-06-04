@@ -28,6 +28,7 @@ class RoomHelpers extends Component {
                     </div>
                     <div className={styles.Channel}>
                         <h2 className={styles.ChannelName}>{this.props.channelName}</h2>
+                        <p className={styles.ChannelDescription}>{this.props.channelDescription}</p>
                     </div>
                 </div>
             </React.Fragment>
@@ -38,7 +39,8 @@ class RoomHelpers extends Component {
 const mapStateToProps = state => {
     return {
         roomName: state.chat.roomName,
-        channelName: state.chat.channelName
+        channelName: state.chat.channelName,
+        channelDescription: state.chat.channelDescription
     }
 }
 
