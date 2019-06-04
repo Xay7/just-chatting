@@ -6,6 +6,9 @@ import uuid4 from 'uuid4'
 import { Spring } from 'react-spring/renderprops';
 import Confirm from '../../components/Confirm/Confirm';
 import Modal from '../../components/Modal/Modal';
+import Options from '../../components/Options/Options';
+import Radium from 'radium';
+import DefaultAvatar from '../../assets/default_user_avatar.png';
 
 class Sidebar extends Component {
 
@@ -13,45 +16,50 @@ class Sidebar extends Component {
         super(props);
         this.state = {
             selectedChannel: '',
-            showDeleteBox: false
+            showDeleteBox: false,
+            showAddChannel: false,
+            showInviteString: false,
+            showInviteID: false,
+            showUserSettings: false,
+            channelName: '',
+            channelDescription: ''
         }
 
         this.socket = this.props.socketChat;
 
-        this.switchChannel = async (id, name) => {
+        this.switchChannel = async (id, name, description) => {
 
             await this.setState({ selectedChannel: id });
+
             let data = {
                 channelID: id,
                 roomID: this.props.roomID,
-                username: this.props.username
+                username: this.props.username,
             }
 
-            await this.props.changeChannel(id, name);
+            await this.props.changeChannel(id, name, description);
             await this.props.getChatMessages(data);
             await this.socket.emit('JOIN_CHANNEL', {
                 room: id,
-                name: this.props.username
+                name: this.props.username,
+                avatar: this.props.avatar
             })
         }
     }
 
 
     addChannel = async () => {
-        const name = await prompt();
-
-        if (name === "" || name === null) {
-            return;
-        }
-
         let data = {
             username: this.props.username,
             id: this.props.roomID,
             channelID: uuid4(),
-            name: name
+            name: this.state.channelName,
+            description: this.state.channelDescription
         }
 
         await this.props.newChannel(data);
+
+        this.showAddChannel();
 
     }
 
@@ -116,6 +124,26 @@ class Sidebar extends Component {
 
     }
 
+    showAddChannel = () => {
+        this.setState({ showAddChannel: !this.state.showAddChannel });
+    }
+
+    channelNameHandler = (e) => {
+        this.setState({ channelName: e.target.value })
+    }
+
+    channelDescriptionHandler = (e) => {
+        this.setState({ channelDescription: e.target.value })
+    }
+
+    showInviteHandler = (e) => {
+        this.setState({ showInviteString: !this.state.showInviteString });
+    }
+
+    showUserSettings = (e) => {
+        this.setState({ showUserSettings: !this.state.showUserSettings })
+    }
+
 
 
     render() {
@@ -123,7 +151,7 @@ class Sidebar extends Component {
         let channels = this.props.channels.map(el => {
             return <div style={{ color: "white" }} key={el.id} className={styles.ChannelWrapper}>
                 <button
-                    onClick={() => this.switchChannel(el.id, el.name)}
+                    onClick={() => this.switchChannel(el.id, el.name, el.description)}
                     disabled={this.currentChannelDisable(el.id)}
                     className={this.currentChannelStyle(el.id)}
                 >{"# " + el.name}</button>
@@ -147,7 +175,7 @@ class Sidebar extends Component {
                             <div className={styles.IconsWrapper}>
                                 <i className="fas fa-user-plus "></i>
                             </div>
-                            <div className={styles.OptionsDescription}>
+                            <div className={styles.OptionsDescription} onClick={this.showInviteHandler}>
                                 Invite people
                             </div>
                         </div>
@@ -166,13 +194,51 @@ class Sidebar extends Component {
 
             </Spring>;
 
+        let addChannel = null
 
+        if (this.state.showAddChannel) {
+            addChannel = <React.Fragment >
+                <Modal onclick={this.showAddChannel} />
+                <Options >
+                    <div className={styles.AddChannelWrapper}>
+                        <div className={styles.AddChannelDescription}>
+                            <h3>Create new channel</h3>
+                        </div>
+                        <div className={styles.InputWrapper}>
+                            <label htmlFor="room" className={styles.InputLabel}>Channel name</label>
+                            <input
+                                type="text"
+                                onChange={this.channelNameHandler}
+                                className={styles.Input}
+                                placeholder="Enter room name"
+                                id="room"
+                                autoComplete="off"
+                            />
+                            <label htmlFor="room" className={styles.InputLabel}>Description</label>
+                            <input
+                                type="text"
+                                onChange={this.channelDescriptionHandler}
+                                className={styles.Input}
+                                placeholder="Tell others what is this channel about"
+                                id="room"
+                                autoComplete="off"
+                            />
+                        </div>
+
+                        <div className={styles.AddChannelBtns}>
+                            <button onClick={this.showAddChannel} className={styles.BackBtn}>← Back</button>
+                            <button onClick={this.addChannel} className={styles.Confirm}>Create</button>
+                        </div>
+                    </div>
+                </Options>
+            </React.Fragment>;
+        }
 
 
         return (
             <React.Fragment>
                 {this.state.showDeleteBox ?
-                    <div>
+                    <React.Fragment>
                         <Modal onclick={this.hideDeleteBox} />
                         <Confirm
                             cancel={this.hideDeleteBox}
@@ -180,17 +246,54 @@ class Sidebar extends Component {
                             header={`Delete ${this.props.roomName}`}
                             description={`Are you sure you want to delete ${this.props.roomName}?`}
                         />
-                    </div> : null}
+                    </React.Fragment> : null}
+                {this.state.showInviteString ?
+                    <React.Fragment>
+                        <Modal onclick={this.showInviteHandler} />
+                        <Options>
+                            <div className={styles.InviteString}>
+
+                            </div>
+                        </Options>
+                    </React.Fragment> : null}
+                {this.state.showUserSettings ?
+                    <React.Fragment>
+                        <Modal onclick={this.showUserSettings} />
+                        <Options>
+                            <div className={styles.InviteString}>
+
+                            </div>
+                        </Options>
+                    </React.Fragment> : null}
+
+                {addChannel}
                 <div className={styles.Sidebar}>
                     {roomOptions}
 
                     <div className={styles.Channels}>
                         <div className={styles.ChannelsHeader}>
                             <h3 className={styles.ChannelTitle}>Channels</h3>
-                            <button onClick={this.addChannel} className={styles.AddChannel}>+</button>
+                            {this.props.roomName ? <button onClick={this.showAddChannel} className={styles.AddChannel}>+</button> : null}
                         </div>
                         {channels}
-
+                    </div>
+                    <div className={styles.User}>
+                        {this.props.avatar ? <img src={this.props.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} /> :
+                            <img src={DefaultAvatar} alt={this.props.username + "avatar"} className={styles.Avatar} />}
+                        <p style={{ color: 'white' }}>{this.props.username}</p>
+                        <i
+                            class="fas fa-cog fa-lg"
+                            style={{
+                                position: "absolute",
+                                right: "0",
+                                marginRight: "20px",
+                                color: "white",
+                                ':hover': {
+                                    color: '#BBB',
+                                    cursor: 'pointer'
+                                },
+                            }}
+                            onClick={this.showUserSettings}></i>
                     </div>
                 </div>
             </React.Fragment>
@@ -208,9 +311,10 @@ const mapStateToProps = state => {
         channels: state.chat.channels,
         roomName: state.chat.roomName,
         showOptions: state.chat.showRoomOptions,
-        channelID: state.chat.channelID
+        channelID: state.chat.channelID,
+        avatar: state.auth.avatar
     }
 
 }
 
-export default connect(mapStateToProps, actions)(Sidebar);
+export default connect(mapStateToProps, actions)(Radium(Sidebar));
