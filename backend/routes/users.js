@@ -10,12 +10,16 @@ const passportJWT = passport.authenticate('jwt', { session: false })
 const passportGoogle = passport.authenticate('googleToken', { session: false })
 const passportFacebook = passport.authenticate('facebookToken', { session: false });
 
+
 router.route('/signup')
     .post(
         validateBody(schemas.signUpSchema),
         UsersController.signUp,
-
     )
+
+router.route('/:username/avatar')
+    .post(UsersController.postAvatar)
+
 
 router.route('/signin')
     .post(
