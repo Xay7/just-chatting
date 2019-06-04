@@ -64,14 +64,14 @@ export const newChannel = data => {
     }
 }
 
-export const changeChannel = (id, name) => {
+export const changeChannel = (id, name, description) => {
     return async dispatch => {
         try {
             dispatch({
                 type: actionTypes.CHANGE_CHANNEL,
                 channelID: id,
-                channelName: "#" + name
-
+                channelName: "#" + name,
+                description: description
             })
         } catch (error) {
             console.log(error);
@@ -154,7 +154,6 @@ export const getChatMessages = data => {
         try {
 
             const res = await axios.get(`http://localhost:3001/users/${data.username}/chat/${data.roomID}/channels/${data.channelID}/messages`)
-
             dispatch({
                 type: actionTypes.GET_MESSAGES,
                 messages: res.data[0].messages
