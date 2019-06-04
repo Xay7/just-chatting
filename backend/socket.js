@@ -16,13 +16,13 @@ io.on("connection", function (socket) {
     })
 
     socket.on('CLIENT_IS_TYPING', function (data) {
-        console.log(data);
         socket.broadcast.to(data.room).emit('SOMEONE_IS_TYPING');
     })
 
     socket.on('JOIN_CHANNEL', function (data) {
 
         socket.username = data.name
+        socket.avatar = data.avatar
 
         const previousRoom = Object.keys(socket.rooms)[1];
 
@@ -35,13 +35,18 @@ io.on("connection", function (socket) {
             previousClients = []
         } else previousClients = io.sockets.adapter.rooms[previousRoom].sockets;
 
+
         let previousRoomSocketIds = [];
 
         for (var k in previousClients) previousRoomSocketIds.push(k);
 
         let previousRoomUsernames = previousRoomSocketIds.map((el, index) => {
-            return io.sockets.connected[el].username
+            return {
+                username: io.sockets.connected[el].username,
+                avatar: io.sockets.connected[el].username
+            }
         })
+
 
         io.in(previousRoom).emit('UPDATING_USERS', previousRoomUsernames);
 
@@ -51,9 +56,12 @@ io.on("connection", function (socket) {
 
         // Get room socket IDs 
 
+        let clients = []
+
         if (io.sockets.adapter.rooms[data.room] === undefined) {
             clients = []
         } else clients = io.sockets.adapter.rooms[data.room].sockets;
+
 
         // Format data to only have array of sockets
         let roomSocketIds = [];
@@ -61,11 +69,15 @@ io.on("connection", function (socket) {
 
         // Map sockets id and find username specified in socket.username
         let usernames = roomSocketIds.map((el, index) => {
-            return io.sockets.connected[el].username
+            return {
+                username: io.sockets.connected[el].username,
+                avatar: io.sockets.connected[el].avatar
+            }
         })
 
         // Send updated list of usernames to room he is connected to
         io.in(data.room).emit('UPDATING_USERS', usernames);
+
 
         socket.on('disconnect', () => {
 
