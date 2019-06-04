@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import * as actions from '../../store/actions/chatroom';
 import UserTyping from '../../components/UserTyping/UserTyping';
+import DefaultAvatar from '../../assets/default_user_avatar.png';
 
 
 class Chatbox extends Component {
@@ -28,17 +29,18 @@ class Chatbox extends Component {
                 body: this.state.message,
                 created_at: moment().calendar(null),
                 room: this.props.channelID,
+                avatar: this.props.avatar
             }
 
             this.socket.emit('SEND_MESSAGE', socketData)
-
 
             let dbData = {
                 author: this.props.username,
                 body: this.state.message,
                 room: this.props.roomID,
                 channelID: this.props.channelID,
-                created_at: moment()
+                created_at: moment(),
+                avatar: this.props.avatar ? this.props.avatar : undefined
             }
 
             await this.props.storeMessage(dbData);
@@ -160,6 +162,7 @@ class Chatbox extends Component {
     render() {
 
         let messages = this.state.messages.map((message, index, arr) => {
+            console.log(message.avatar);
             if (index > 0) {
 
                 if (this.isUrl(message.body) === true) {
@@ -194,7 +197,9 @@ class Chatbox extends Component {
                     return (
                         <div className={styles.Messages} key={index}>
                             <hr className={styles.MessageHorizontalLine}></hr>
-                            <div className={styles.NameAndDate}>
+                            <div className={styles.MessageHeader}>
+                                {message.avatar ? <img src={message.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} /> :
+                                    <img src={DefaultAvatar} alt={this.props.username + "avatar"} className={styles.Avatar} />}
                                 <p className={styles.Username}>{message.author}</p>
                                 <p className={styles.Date}>{message.created_at}</p>
                             </div>
@@ -207,7 +212,9 @@ class Chatbox extends Component {
                 return (
                     <div className={styles.Messages} key={index}>
                         <hr className={styles.MessageHorizontalLine}></hr>
-                        <div className={styles.NameAndDate}>
+                        <div className={styles.MessageHeader}>
+                            {message.avatar ? <img src={message.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} /> :
+                                <img src={DefaultAvatar} alt={this.props.username + "avatar"} className={styles.Avatar} />}
                             <p className={styles.Username}>{message.author}</p>
                             <p className={styles.Date}>{message.created_at}</p>
                         </div>
@@ -249,6 +256,7 @@ const mapStateToProps = state => {
         roomID: state.chat.roomID,
         messages: state.chat.messages,
         channelID: state.chat.channelID,
+        avatar: state.auth.avatar
     }
 }
 

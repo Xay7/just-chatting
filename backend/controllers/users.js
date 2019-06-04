@@ -237,7 +237,8 @@ module.exports = {
         const data = {
             author: username,
             body: req.body.body,
-            created_at: req.body.created_at
+            created_at: req.body.created_at,
+            avatar: req.body.avatar ? req.body.avatar : undefined
         }
 
         await Chatroom.findOneAndUpdate({ "id": id, "channels.id": req.params.channelID }, {
