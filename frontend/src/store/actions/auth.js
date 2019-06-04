@@ -10,6 +10,7 @@ export const signIn = data => {
                 type: actionTypes.AUTH_SIGN_IN,
                 payload: res.data.token,
                 username: res.data.username,
+                avatar: res.data.avatar
             });
 
         } catch (err) {
