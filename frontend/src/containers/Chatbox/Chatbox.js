@@ -152,7 +152,7 @@ class Chatbox extends Component {
 
     adjustImage = ({ target: img }) => {
         if (img.naturalHeight > 512 || img.naturalWidth > 512) {
-            img.style.maxWidth = "512px";
+            img.style.maxWidth = "100%";
             img.style.height = "auto";
             img.style.margin = "10px 0";
         }
@@ -169,8 +169,7 @@ class Chatbox extends Component {
                     if (this.isImage(message.body) === true) {
 
                         message.body = (
-                            <div style={{
-                            }}>
+                            <div className={styles.Messages}>
                                 <a href={message.body} target="_blank" rel="noopener noreferrer">
                                     <img
                                         src={message.body}
@@ -181,7 +180,7 @@ class Chatbox extends Component {
                             </div>
                         )
 
-                    } else message.body = <a href={message.body} target="_blank" rel="noopener noreferrer">{message.body}</a>
+                    } else message.body = <a href={message.body} target="_blank" rel="noopener noreferrer" className={styles.Link}>{message.body}</a>
                 }
 
 
