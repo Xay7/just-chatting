@@ -14,7 +14,7 @@ class Chat extends Component {
             <Fragment>
                 <div className={styles.Holder}>
                     <Rooms />
-                    <div className={styles.xd}>
+                    <div>
                         <RoomHelpers />
                         <div className={styles.Chat}>
                             <Sidebar />
