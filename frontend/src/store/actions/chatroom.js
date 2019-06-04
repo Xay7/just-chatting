@@ -90,7 +90,8 @@ export const changeRoom = data => {
                 roomID: data.id,
                 roomName: data.roomName,
                 channels: res.data.channels,
-                channelName: ''
+                channelName: '',
+                roomOwner: data.roomOwner
             });
         } catch (error) {
 

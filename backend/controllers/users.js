@@ -86,7 +86,8 @@ module.exports = {
             return {
                 id: el.id,
                 name: el.name,
-                channels: el.channels
+                channels: el.channels,
+                owner: el.owner
             }
         })
 
@@ -94,7 +95,8 @@ module.exports = {
             return {
                 id: el.id,
                 name: el.name,
-                channels: el.channels
+                channels: el.channels,
+                owner: el.owner
             }
         })
 

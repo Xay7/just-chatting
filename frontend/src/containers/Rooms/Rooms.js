@@ -23,7 +23,7 @@ class Rooms extends Component {
 
         this.socket = this.props.socketChat;
 
-        this.changeChatroom = async (roomID, roomName, roomChannels) => {
+        this.changeChatroom = async (roomID, roomName, roomChannels, roomOwner) => {
 
             this.setState({ selectedRoom: roomID });
 
@@ -31,7 +31,8 @@ class Rooms extends Component {
                 id: roomID,
                 username: this.props.username,
                 roomName: roomName,
-                roomChannels: roomChannels
+                roomChannels: roomChannels,
+                roomOwner: roomOwner
             }
 
             await this.socket.emit('LEAVE_ROOM', {
@@ -144,7 +145,7 @@ class Rooms extends Component {
             return <div key={room.id}>
                 <button
                     className={this.currentRoomStyle(room.id)}
-                    onClick={() => this.changeChatroom(room.id, room.name, room.channels)}
+                    onClick={() => this.changeChatroom(room.id, room.name, room.channels, room.owner)}
                     disabled={this.currentRoomDisable(room.id)}>{room.name.charAt(0)}
                 </button>
             </div>
@@ -154,7 +155,7 @@ class Rooms extends Component {
             return <div key={room.id}>
                 <button
                     className={this.currentRoomStyle(room.id)}
-                    onClick={() => this.changeChatroom(room.id, room.name, room.channels)}
+                    onClick={() => this.changeChatroom(room.id, room.name, room.channels, room.owner)}
                     disabled={this.currentRoomDisable(room.id)}>{room.name.charAt(0)}
                 </button>
             </div>

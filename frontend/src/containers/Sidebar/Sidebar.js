@@ -3,12 +3,12 @@ import styles from './Sidebar.module.scss';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/chatroom';
 import uuid4 from 'uuid4'
-import { Spring } from 'react-spring/renderprops';
 import Confirm from '../../components/Confirm/Confirm';
 import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import Radium from 'radium';
 import DefaultAvatar from '../../assets/default_user_avatar.png';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 class Sidebar extends Component {
 
@@ -19,7 +19,6 @@ class Sidebar extends Component {
             showDeleteBox: false,
             showAddChannel: false,
             showInviteString: false,
-            showInviteID: false,
             showUserSettings: false,
             channelName: '',
             channelDescription: ''
@@ -159,40 +158,32 @@ class Sidebar extends Component {
         });
 
         let roomOptions = this.props.showOptions &&
-            <Spring
-                config={{
-                    duration: 150
-                }}
-                from={{
-                    height: 0
-                }}
-                to={{
-                    height: 80
-                }}>
-                {props => (
-                    <div className={styles.Options} style={props} ref={node => this.node = node} >
-                        <div className={styles.OptionsBtn}>
-                            <div className={styles.IconsWrapper}>
-                                <i className="fas fa-user-plus "></i>
-                            </div>
-                            <div className={styles.OptionsDescription} onClick={this.showInviteHandler}>
-                                Invite people
-                            </div>
+            (
+                <div className={styles.Options} ref={node => this.node = node} >
+                    <div className={styles.OptionsBtn}>
+                        <div className={styles.IconsWrapper}>
+                            <i className="fas fa-user-plus "></i>
                         </div>
-                        <div className={styles.OptionsBtnRed} onClick={this.deleteRoomHandler}>
-                            <div className={styles.IconsWrapper}>
-                                <i className="fas fa-trash-alt "></i>
+                        <div className={styles.OptionsDescription} onClick={this.showInviteHandler}>
+                            Invite people
                             </div>
-                            <div className={styles.OptionsDescription}>
-                                Delete room
-                            </div>
-
-                        </div>
                     </div>
-                )}
+                    {/* Render delete room only to the owner */}
+                    {this.props.roomOwner === this.props.username ? <div className={styles.OptionsBtnRed} onClick={this.deleteRoomHandler}>
+                        <div className={styles.IconsWrapper}>
+                            <i className="fas fa-trash-alt "></i>
+                        </div>
+                        <div className={styles.OptionsDescription}>
+                            Delete room
+                            </div>
+
+                    </div> : null}
+                </div>
+            )
 
 
-            </Spring>;
+
+            ;
 
         let addChannel = null
 
@@ -252,7 +243,13 @@ class Sidebar extends Component {
                         <Modal onclick={this.showInviteHandler} />
                         <Options>
                             <div className={styles.InviteString}>
-
+                                <h3 style={{ marginTop: "10px" }}>Share this room ID with friends</h3>
+                                <div className={styles.InputWithBtn}>
+                                    <input value={this.props.roomID} disabled className={styles.InviteInput} />
+                                    <CopyToClipboard text={this.props.roomID}>
+                                        <button className={styles.Copy}>Copy</button>
+                                    </CopyToClipboard>
+                                </div>
                             </div>
                         </Options>
                     </React.Fragment> : null}
@@ -282,7 +279,7 @@ class Sidebar extends Component {
                             <img src={DefaultAvatar} alt={this.props.username + "avatar"} className={styles.Avatar} />}
                         <p style={{ color: 'white' }}>{this.props.username}</p>
                         <i
-                            class="fas fa-cog fa-lg"
+                            className="fas fa-cog fa-lg"
                             style={{
                                 position: "absolute",
                                 right: "0",
@@ -312,7 +309,8 @@ const mapStateToProps = state => {
         roomName: state.chat.roomName,
         showOptions: state.chat.showRoomOptions,
         channelID: state.chat.channelID,
-        avatar: state.auth.avatar
+        avatar: state.auth.avatar,
+        roomOwner: state.chat.roomOwner
     }
 
 }
