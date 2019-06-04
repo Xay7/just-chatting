@@ -23,6 +23,9 @@ const chatSchema = new Schema({
             name: {
                 type: String
             },
+            description: {
+                type: String
+            },
             messages: [
                 {
                     author: String,
