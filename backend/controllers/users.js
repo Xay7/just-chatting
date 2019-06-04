@@ -2,6 +2,9 @@ const JWT = require('jsonwebtoken');
 const User = require('../models/user');
 const Chatroom = require('../models/chatroom');
 const { JWT_S } = require('../config/index');
+const upload = require('../services/fileupload');
+const singleUpload = upload.single('image');
+const axios = require('axios');
 
 signToken = user => {
     return token = JWT.sign({
@@ -54,6 +57,11 @@ module.exports = {
     signIn: async (req, res, next) => {
         const foundUser = await User.findOne({ "local.email": req.user.local.email })
 
+        let avatar = foundUser.local.avatar;
+
+        if (foundUser.local.avatar === undefined) {
+            avatar = ''
+        }
 
         const token = signToken(req.user);
 
@@ -61,7 +69,10 @@ module.exports = {
             httpOnly: true
         });
 
-        res.status(200).json({ username: req.user.local.name });
+        res.status(200).json({
+            username: req.user.local.name,
+            avatar: avatar
+        });
     },
     chat: async (req, res, next) => {
 
@@ -102,8 +113,6 @@ module.exports = {
         const name = req.body.name
         const owner = req.params.username
 
-        console.log(owner);
-
 
         const newChatroom = new Chatroom({
             id: id,
@@ -127,6 +136,23 @@ module.exports = {
         const id = req.body.id;
         const username = req.body.username
 
+        const foundUser = await User.findOne({ "local.name": username });
+
+        const ownedChatrooms = foundUser.local.chatRooms.owned
+        const joinedChatrooms = foundUser.local.chatRooms.joined
+
+        // Make sure user can't join arleady joined rooms
+
+        if (ownedChatrooms.includes(id)) {
+            return res.status(409).json({ error: "Can't join owned room" })
+        }
+        if (joinedChatrooms.includes(id)) {
+            return res.status(409).json({ error: "You arleady joined this room" })
+        }
+
+
+
+
         const foundChatroom = await Chatroom.findOne({ "id": id });
 
         if (!foundChatroom) {
@@ -147,13 +173,10 @@ module.exports = {
         const id = req.params.id;
         const username = req.params.username
 
-        console.log(username);
-
         // Check if request is from owner
         const foundOwner = await Chatroom.findOne({ "id": id });
 
         if (username !== foundOwner.owner) {
-            console.log(foundOwner.owner);
             return res.status(403).json({ error: "Unauthorized" })
         }
 
@@ -180,10 +203,12 @@ module.exports = {
 
         const channelID = req.body.channelID
         const name = req.body.name
+        const description = req.body.description
 
         const data = {
             id: channelID,
-            name: name
+            name: name,
+            description: description
         }
 
         await Chatroom.findOneAndUpdate({ "id": req.params.id }, {
@@ -200,8 +225,6 @@ module.exports = {
     getChannels: async (req, res, next) => {
 
         const channels = await Chatroom.findOne({ "id": req.params.id }, { "_id": 0 }).select("channels");
-
-        console.log(channels);
 
         res.status(200).json(channels)
     },
@@ -230,7 +253,9 @@ module.exports = {
         const id = req.params.id;
         const channelID = req.params.channelID;
 
+
         await Chatroom.findOne({ "id": id }).lean().exec(function (err, docs) {
+
             let channel = docs.channels.filter(el => {
                 if (el.id === channelID) {
                     return el;
@@ -239,6 +264,15 @@ module.exports = {
             res.status(200).json(channel);
         });
 
+    },
+    postAvatar: async (req, res, next) => {
+
+        const username = req.params.username
+
+        singleUpload(req, res, async function (err) {
+            await User.findOneAndUpdate({ "local.name": username }, { "local.avatar": `https://justchattingbucket.s3.eu-west-3.amazonaws.com/${username}` })
+            res.status(201);
+        })
     },
     googleOAuth: async (req, res, next) => {
         const token = signToken(req.user);
