@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import styles from './Users.module.scss';
 import { connect } from 'react-redux';
-import DefaultAvatar from '../../assets/default_user_avatar.png';
 
 class Users extends Component {
 
@@ -13,7 +12,7 @@ class Users extends Component {
         }
 
         this.socket = this.props.socketChat;
-
+        // Fix socket staying when leaving
         this.socket.on('UPDATING_USERS', (data) => {
             this.setState({ users: data });
         })
@@ -29,11 +28,9 @@ class Users extends Component {
     render() {
 
         let connectedUsers = this.state.users.map(user => {
-            console.log(user);
             return (
-                <div className={styles.UserWrapper}>
-                    {user.avatar ? <img src={user.avatar} alt={user.username + "avatar"} className={styles.Avatar} /> :
-                        <img src={DefaultAvatar} alt={user.username + "avatar"} className={styles.Avatar} />}
+                <div className={styles.UserWrapper} key={user.username}>
+                    <img src={user.avatar} alt={user.username + "avatar"} className={styles.Avatar} />
                     <p className={styles.User} key={user.username}>{user.username}</p>
 
                 </div>
