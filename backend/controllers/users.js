@@ -3,8 +3,8 @@ const User = require('../models/user');
 const Chatroom = require('../models/chatroom');
 const { JWT_S } = require('../config/index');
 const upload = require('../services/fileupload');
-const singleUpload = upload.single('image');
-const axios = require('axios');
+const uploadAvatar = upload.any();
+
 
 signToken = user => {
     return token = JWT.sign({
@@ -55,6 +55,7 @@ module.exports = {
 
     },
     signIn: async (req, res, next) => {
+
         const foundUser = await User.findOne({ "local.email": req.user.local.email })
 
         let avatar = foundUser.local.avatar;
@@ -268,14 +269,25 @@ module.exports = {
         });
 
     },
-    postAvatar: async (req, res, next) => {
+    changeAvatar: async (req, res, next) => {
 
-        const username = req.params.username
+        const currentUsername = req.params.username
 
-        singleUpload(req, res, async function (err) {
-            await User.findOneAndUpdate({ "local.name": username }, { "local.avatar": `https://justchattingbucket.s3.eu-west-3.amazonaws.com/${username}` })
-            res.status(201);
+        uploadAvatar(req, res, async function (err) {
+            await User.findOneAndUpdate({ "local.name": currentUsername }, { "local.avatar": `https://justchattingbucket.s3.eu-west-3.amazonaws.com/${currentUsername}` })
+            res.status(201).json({ success: "Updated avatar" });
         })
+    },
+    changePassword: async (req, res, next) => {
+
+        const password = req.body.newPassword
+
+        await User.findOne({ "local.name": req.body.username }, function (err, doc) {
+            doc.local.password = password;
+            doc.save();
+        });
+
+        res.status(200).json({ success: "Password has been changed" })
     },
     googleOAuth: async (req, res, next) => {
         const token = signToken(req.user);
