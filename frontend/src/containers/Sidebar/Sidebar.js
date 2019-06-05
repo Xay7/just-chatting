@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styles from './Sidebar.module.scss';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/chatroom';
+import * as authActions from '../../store/actions/auth';
 import uuid4 from 'uuid4'
 import Confirm from '../../components/Confirm/Confirm';
 import Modal from '../../components/Modal/Modal';
@@ -9,6 +10,8 @@ import Options from '../../components/Options/Options';
 import Radium from 'radium';
 import DefaultAvatar from '../../assets/default_user_avatar.png';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import ChatInput from '../../components/ChatInput/ChatInput';
+import Button from '../../components/Button/Button';
 
 class Sidebar extends Component {
 
@@ -21,7 +24,10 @@ class Sidebar extends Component {
             showInviteString: false,
             showUserSettings: false,
             channelName: '',
-            channelDescription: ''
+            channelDescription: '',
+            password: '',
+            confirmPassword: '',
+            avatar: ''
         }
 
         this.socket = this.props.socketChat;
@@ -63,10 +69,12 @@ class Sidebar extends Component {
     }
 
     deleteRoomHandler = () => {
-        this.setState({ showDeleteBox: true })
+        this.setState({ showDeleteBox: !this.state.showDeleteBox })
     }
 
     deleteRoom = async (id, username) => {
+
+        this.setState({ showDeleteBox: !this.state.showDeleteBox })
 
         const data = {
             id: id,
@@ -74,6 +82,8 @@ class Sidebar extends Component {
         }
 
         await this.props.deleteRoom(data);
+
+        this.socket.emit('OWNER_DELETED_ROOM', data);
 
     }
 
@@ -121,6 +131,57 @@ class Sidebar extends Component {
             this.props.showRoomOptions();
         }
 
+    }
+
+    uploadFile = (e) => {
+        const avatar = e.target.files[0]
+        this.setState({ avatar: avatar })
+    }
+
+    changePassword = (e) => {
+        this.setState({ password: e.target.value })
+    }
+
+
+    confirmPassword = (e) => {
+        this.setState({ confirmPassword: e.target.value })
+    }
+
+
+    submitAvatar = (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+
+        if (this.state.avatar === '') {
+            return console.log("No picture provided")
+        }
+
+        formData.append('avatar', this.state.avatar);
+
+        this.props.updateAvatar(formData);
+    }
+
+    submitPassword = (e) => {
+        e.preventDefault();
+
+        if (this.state.password === '') {
+            return console.log("No password provided");
+        }
+
+        if (this.state.password !== this.state.confirmPassword) {
+            return console.log("Passwords are not equal")
+        }
+
+        if (this.state.password.length < 6) {
+            console.log("Password must be longer than 6 characters");
+        }
+
+        const data = {
+            username: this.props.username,
+            newPassword: this.state.password
+        }
+
+        this.props.updatePassword(data);
     }
 
     showAddChannel = () => {
@@ -195,30 +256,23 @@ class Sidebar extends Component {
                         <div className={styles.AddChannelDescription}>
                             <h3>Create new channel</h3>
                         </div>
-                        <div className={styles.InputWrapper}>
-                            <label htmlFor="room" className={styles.InputLabel}>Channel name</label>
-                            <input
-                                type="text"
-                                onChange={this.channelNameHandler}
-                                className={styles.Input}
-                                placeholder="Enter room name"
-                                id="room"
-                                autoComplete="off"
-                            />
-                            <label htmlFor="room" className={styles.InputLabel}>Description</label>
-                            <input
-                                type="text"
-                                onChange={this.channelDescriptionHandler}
-                                className={styles.Input}
-                                placeholder="Tell others what is this channel about"
-                                id="room"
-                                autoComplete="off"
-                            />
-                        </div>
-
+                        <ChatInput
+                            Type="text"
+                            OnChange={this.channelNameHandler}
+                            Placeholder="Enter channel name"
+                            ID="channelName"
+                            autoComplete="off"
+                        >Room Name</ChatInput>
+                        <ChatInput
+                            Type="text"
+                            OnChange={this.channelDescriptionHandler}
+                            Placeholder="Tell others what is this channel about"
+                            ID="channelDescription"
+                            autoComplete="off"
+                        >Room Name</ChatInput>
                         <div className={styles.AddChannelBtns}>
-                            <button onClick={this.showAddChannel} className={styles.BackBtn}>← Back</button>
-                            <button onClick={this.addChannel} className={styles.Confirm}>Create</button>
+                            <Button ClassName="Cancel" OnClick={this.showAddChannel}>Cancel</Button>
+                            <Button ClassName="Confirm" OnClick={this.addChannel}>Submit</Button>
                         </div>
                     </div>
                 </Options>
@@ -257,8 +311,19 @@ class Sidebar extends Component {
                     <React.Fragment>
                         <Modal onclick={this.showUserSettings} />
                         <Options>
-                            <div className={styles.InviteString}>
-
+                            <div className={styles.UserSettings}>
+                                {this.props.avatar ? <img src={this.props.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} /> :
+                                    <img src={DefaultAvatar} alt={this.props.username + " avatar"} className={styles.Avatar} />}
+                                <input
+                                    type="file"
+                                    onChange={this.uploadFile}
+                                    accept="image/*" />
+                                <Button ClassName="Confirm" OnClick={this.submitAvatar}>Confirm</Button>
+                                <form onSubmit={this.submitPassword}>
+                                    <input type="password" onChange={this.changePassword} autoComplete="true" />
+                                    <input type="password" onChange={this.confirmPassword} autoComplete="true" />
+                                    <Button ClassName="Confirm" OnClick={this.submitPassword}>Confirm</Button>
+                                </form>
                             </div>
                         </Options>
                     </React.Fragment> : null}
@@ -299,6 +364,11 @@ class Sidebar extends Component {
 
 }
 
+const mapDispatchToProps = {
+    ...actions,
+    ...authActions
+}
+
 const mapStateToProps = state => {
     return {
         chatRooms: state.chat.chatRooms,
@@ -315,4 +385,4 @@ const mapStateToProps = state => {
 
 }
 
-export default connect(mapStateToProps, actions)(Radium(Sidebar));
+export default connect(mapStateToProps, mapDispatchToProps)(Radium(Sidebar));
