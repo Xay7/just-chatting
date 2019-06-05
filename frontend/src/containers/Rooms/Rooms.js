@@ -5,6 +5,8 @@ import * as actions from '../../store/actions/chatroom';
 import uuid4 from 'uuid4';
 import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
+import ChatInput from '../../components/ChatInput/ChatInput';
+import Button from '../../components/Button/Button';
 
 
 class Rooms extends Component {
@@ -192,27 +194,18 @@ class Rooms extends Component {
                         <div className={styles.AddJoinDescription}>
                             <h3>Create your room</h3>
                         </div>
-                        <div className={styles.InputWrapper}>
-                            <label htmlFor="room" className={styles.InputLabel}>Room name</label>
-                            <input
-                                type="text"
-                                onChange={this.roomNameHandler}
-                                className={styles.Input}
-                                placeholder="Enter room name"
-                                id="room"
-                                autoComplete="off"
-                            />
-                            <div>
-
-                            </div>
-                        </div>
-
+                        <ChatInput
+                            Type="text"
+                            OnChange={this.roomNameHandler}
+                            Placeholder="Enter room name"
+                            ID="room"
+                            autoComplete="off"
+                        >Room Name</ChatInput>
                         <div className={styles.AddJoinBtns}>
-                            <button onClick={this.showAddorJoin} className={styles.BackBtn}>← Back</button>
-                            <button onClick={this.addChatroom} className={styles.Confirm}>Create</button>
+                            <Button ClassName="Cancel" OnClick={this.showAddorJoin}>Cancel</Button>
+                            <Button ClassName="Confirm" OnClick={this.addChatroom}>Submit</Button>
                         </div>
                     </div>
-
                 </Options>
             </div>;
         }
@@ -222,25 +215,19 @@ class Rooms extends Component {
                 <Modal onclick={this.showJoin} />
                 <Options >
                     <div className={styles.AddJoinWrapper}>
-
                         <div className={styles.AddJoinDescription}>
                             <h3>Join existing room</h3>
                         </div>
-                        <div className={styles.InputWrapper}>
-                            <label htmlFor="room" className={styles.InputLabel} >Room ID</label>
-                            <input
-                                className={styles.Input}
-                                type="text"
-                                onChange={this.roomIdHandler}
-                                id="room"
-                                placeholder="Enter room ID" />
-                        </div>
-
-
-
+                        <ChatInput
+                            Type="text"
+                            OnChange={this.roomIdHandler}
+                            Placeholder="Enter room ID"
+                            ID="room"
+                            autoComplete="off"
+                        >Room ID</ChatInput>
                         <div className={styles.AddJoinBtns}>
-                            <button onClick={this.showAddorJoin} className={styles.BackBtn}>← Back</button>
-                            <button onClick={this.joinRoom} className={styles.Confirm}>Join</button>
+                            <Button ClassName="Cancel" OnClick={this.showAddorJoin}>Cancel</Button>
+                            <Button ClassName="Confirm" OnClick={this.joinRoom}>Submit</Button>
                         </div>
                     </div>
                 </Options>
