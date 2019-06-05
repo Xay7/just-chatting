@@ -18,7 +18,9 @@ router.route('/signup')
     )
 
 router.route('/:username/avatar')
-    .post(UsersController.postAvatar)
+    .put(passportJWT, UsersController.changeAvatar)
+router.route('/:username/password')
+    .put(passportJWT, UsersController.changePassword)
 
 
 router.route('/signin')
@@ -30,7 +32,7 @@ router.route('/signin')
 
 router.route('/:username/chat')
     .get(passportJWT, UsersController.chat)
-    .post(UsersController.newChat)
+    .post(passportJWT, UsersController.newChat)
 
 
 router.route('/:username/chat/:id')
@@ -38,8 +40,8 @@ router.route('/:username/chat/:id')
     .put(passportJWT, UsersController.joinChat)
 
 router.route('/:username/chat/:id/channels')
-    .put(UsersController.newChannel)
-    .get(UsersController.getChannels);
+    .put(passportJWT, UsersController.newChannel)
+    .get(passportJWT, UsersController.getChannels);
 
 router.route('/:username/chat/:id/channels/:channelID/messages')
     .put(passportJWT, UsersController.storeMessage)
