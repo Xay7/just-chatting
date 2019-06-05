@@ -31,7 +31,8 @@ const chatSchema = new Schema({
                     author: String,
                     body: String,
                     created_at: Date,
-                    _id: false
+                    _id: false,
+                    avatar: String
                 }
             ]
         }
