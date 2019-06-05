@@ -53,6 +53,7 @@ $black: #333333;
     height: inherit;
     background-color: $channelColor;
     border-bottom: 1px solid #DDD;
+    z-index: 1;
 }
 
 .ChannelDescription {

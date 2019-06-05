@@ -82,12 +82,12 @@ $black: #333333;
 }
 
 .AddJoinBtns {
-    width: 100%;
+    width: calc(100% - 60px);
     height: auto;
     display: flex;
     justify-content: space-between;
     outline: none;
-
+    margin: 0 30px;
 }
 
 .AddJoinDescription {
