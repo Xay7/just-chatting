@@ -8,7 +8,6 @@ import Confirm from '../../components/Confirm/Confirm';
 import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import Radium from 'radium';
-import DefaultAvatar from '../../assets/default_user_avatar.png';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import ChatInput from '../../components/ChatInput/ChatInput';
 import Button from '../../components/Button/Button';
@@ -23,11 +22,14 @@ class Sidebar extends Component {
             showAddChannel: false,
             showInviteString: false,
             showUserSettings: false,
+            fileUploaded: false,
             channelName: '',
             channelDescription: '',
             password: '',
             confirmPassword: '',
-            avatar: ''
+            avatar: '',
+            avatarPreview: '',
+            passwordError: ''
         }
 
         this.socket = this.props.socketChat;
@@ -47,7 +49,7 @@ class Sidebar extends Component {
             await this.socket.emit('JOIN_CHANNEL', {
                 room: id,
                 name: this.props.username,
-                avatar: this.props.avatar
+                avatar: this.props.avatar.length > 20 ? this.props.avatar : undefined
             })
         }
     }
@@ -135,7 +137,18 @@ class Sidebar extends Component {
 
     uploadFile = (e) => {
         const avatar = e.target.files[0]
-        this.setState({ avatar: avatar })
+
+        if (avatar.size > 1000000) {
+            return console.log("File must be less than 1MB");
+        }
+
+        let url = URL.createObjectURL(avatar);
+
+        this.setState({
+            avatar: avatar,
+            fileUploaded: true,
+            avatarPreview: url
+        })
     }
 
     changePassword = (e) => {
@@ -148,24 +161,30 @@ class Sidebar extends Component {
     }
 
 
-    submitAvatar = (e) => {
+    submitAvatar = async (e) => {
+
         e.preventDefault();
         const formData = new FormData();
 
         if (this.state.avatar === '') {
-            return console.log("No picture provided")
+            return console.log("No picture provided");
+        }
+
+        if (this.state.avatar.size > 1000000) {
+            return console.log("File must be less than 1MB");
         }
 
         formData.append('avatar', this.state.avatar);
 
-        this.props.updateAvatar(formData);
+        await this.props.updateAvatar(formData, this.props.username);
+
     }
 
     submitPassword = (e) => {
         e.preventDefault();
 
         if (this.state.password === '') {
-            return console.log("No password provided");
+            return console.log("Password field can't be empty");
         }
 
         if (this.state.password !== this.state.confirmPassword) {
@@ -173,7 +192,7 @@ class Sidebar extends Component {
         }
 
         if (this.state.password.length < 6) {
-            console.log("Password must be longer than 6 characters");
+            return console.log("Password must be longer than 6 characters");
         }
 
         const data = {
@@ -201,7 +220,7 @@ class Sidebar extends Component {
     }
 
     showUserSettings = (e) => {
-        this.setState({ showUserSettings: !this.state.showUserSettings })
+        this.setState({ showUserSettings: !this.state.showUserSettings, fileUploaded: false })
     }
 
 
@@ -243,10 +262,10 @@ class Sidebar extends Component {
             )
 
 
-
-            ;
-
         let addChannel = null
+        let deleteBox = null;
+        let inviteString = null;
+        let userSettings = null;
 
         if (this.state.showAddChannel) {
             addChannel = <React.Fragment >
@@ -280,54 +299,90 @@ class Sidebar extends Component {
         }
 
 
+        if (this.state.showDeleteBox) {
+            deleteBox = <React.Fragment>
+                <Modal onclick={this.hideDeleteBox} />
+                <Confirm
+                    cancel={this.hideDeleteBox}
+                    confirm={() => this.deleteRoom(this.props.roomID, this.props.username)}
+                    header={`Delete ${this.props.roomName}`}
+                    description={`Are you sure you want to delete ${this.props.roomName}?`}
+                />
+            </React.Fragment>
+
+        }
+
+        if (this.state.showInviteString) {
+            inviteString = <React.Fragment>
+                <Modal onclick={this.showInviteHandler} />
+                <Options>
+                    <div className={styles.InviteString}>
+                        <h3 style={{ marginTop: "10px" }}>Share this room ID with friends</h3>
+                        <div className={styles.InputWithBtn}>
+                            <input value={this.props.roomID} disabled className={styles.InviteInput} />
+                            <CopyToClipboard text={this.props.roomID}>
+                                <button className={styles.Copy}>Copy</button>
+                            </CopyToClipboard>
+                        </div>
+                    </div>
+                </Options>
+            </React.Fragment>
+        }
+
+        if (this.state.showUserSettings) {
+            userSettings = <React.Fragment>
+                <Modal onclick={this.showUserSettings} />
+                <Options>
+                    <div className={styles.UserSettings}>
+                        <h3>Click on the image to change your avatar</h3>
+                        <label htmlFor="upload" style={{
+                            backgroundImage: `url(${this.state.fileUploaded ? this.state.avatarPreview : this.props.avatar})`,
+                            backgroundSize: 'cover',
+                            width: '128px',
+                            height: '128px',
+                            borderRadius: '50%',
+                            transition: '150ms all ease-in'
+
+                        }} className={styles.AvatarPreview}>
+                            <input
+                                id="upload"
+                                type="file"
+                                onChange={this.uploadFile}
+                                accept="image/*"
+                                style={{
+                                    display: 'none'
+                                }} />
+                        </label>
+                        <Button ClassName="Confirm" OnClick={this.submitAvatar}>Confirm</Button>
+                        <h3>Change password</h3>
+                        <form onSubmit={this.submitPassword} style={{ width: '100%' }}>
+                            <ChatInput
+                                Type="password"
+                                OnChange={this.changePassword}
+                                Placeholder="New password"
+                                ID="password"
+                                AutoComplete="on"
+                            >New password</ChatInput>
+                            <ChatInput
+                                Type="password"
+                                OnChange={this.confirmPassword}
+                                Placeholder="Confirm password"
+                                ID="confirmPassword"
+                                AutoComplete="on"
+                            >Confirm password</ChatInput>
+                        </form>
+                        <Button ClassName="Confirm" OnClick={this.submitPassword}>Confirm</Button>
+                    </div>
+                </Options>
+            </React.Fragment>
+        }
+
+
         return (
             <React.Fragment>
-                {this.state.showDeleteBox ?
-                    <React.Fragment>
-                        <Modal onclick={this.hideDeleteBox} />
-                        <Confirm
-                            cancel={this.hideDeleteBox}
-                            confirm={() => this.deleteRoom(this.props.roomID, this.props.username)}
-                            header={`Delete ${this.props.roomName}`}
-                            description={`Are you sure you want to delete ${this.props.roomName}?`}
-                        />
-                    </React.Fragment> : null}
-                {this.state.showInviteString ?
-                    <React.Fragment>
-                        <Modal onclick={this.showInviteHandler} />
-                        <Options>
-                            <div className={styles.InviteString}>
-                                <h3 style={{ marginTop: "10px" }}>Share this room ID with friends</h3>
-                                <div className={styles.InputWithBtn}>
-                                    <input value={this.props.roomID} disabled className={styles.InviteInput} />
-                                    <CopyToClipboard text={this.props.roomID}>
-                                        <button className={styles.Copy}>Copy</button>
-                                    </CopyToClipboard>
-                                </div>
-                            </div>
-                        </Options>
-                    </React.Fragment> : null}
-                {this.state.showUserSettings ?
-                    <React.Fragment>
-                        <Modal onclick={this.showUserSettings} />
-                        <Options>
-                            <div className={styles.UserSettings}>
-                                {this.props.avatar ? <img src={this.props.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} /> :
-                                    <img src={DefaultAvatar} alt={this.props.username + " avatar"} className={styles.Avatar} />}
-                                <input
-                                    type="file"
-                                    onChange={this.uploadFile}
-                                    accept="image/*" />
-                                <Button ClassName="Confirm" OnClick={this.submitAvatar}>Confirm</Button>
-                                <form onSubmit={this.submitPassword}>
-                                    <input type="password" onChange={this.changePassword} autoComplete="true" />
-                                    <input type="password" onChange={this.confirmPassword} autoComplete="true" />
-                                    <Button ClassName="Confirm" OnClick={this.submitPassword}>Confirm</Button>
-                                </form>
-                            </div>
-                        </Options>
-                    </React.Fragment> : null}
-
+                {deleteBox}
+                {inviteString}
+                {userSettings}
                 {addChannel}
                 <div className={styles.Sidebar}>
                     {roomOptions}
@@ -340,8 +395,7 @@ class Sidebar extends Component {
                         {channels}
                     </div>
                     <div className={styles.User}>
-                        {this.props.avatar ? <img src={this.props.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} /> :
-                            <img src={DefaultAvatar} alt={this.props.username + "avatar"} className={styles.Avatar} />}
+                        <img src={this.props.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} />
                         <p style={{ color: 'white' }}>{this.props.username}</p>
                         <i
                             className="fas fa-cog fa-lg"
