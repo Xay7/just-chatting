@@ -16,6 +16,7 @@ const upload = multer({
         s3: s3,
         bucket: 'justchattingbucket',
         acl: 'public-read',
+        cacheControl: "max-age 0,no-cache,no-store,must-revalidate",
         metadata: function (req, file, cb) {
             cb(null, { fieldName: "avatar" });
         },
