@@ -1,0 +1,30 @@
+.Cancel {
+    box-sizing: border-box;
+    background-color: transparent;
+    border: none;
+    color: grey;
+    margin-left: 40px;
+    border-bottom: 1px solid transparent;
+    transition: 150ms all;
+    outline: none;
+
+    &:hover {
+        color: darken(grey, 20%);
+        border-bottom: 1px solid rgb(184, 183, 183);
+    }
+}
+
+.Confirm {
+    width: 120px;
+    height: 40px;
+    color: white;
+    background-color: green;
+    border: none;
+    margin-right: 40px;
+    transition: 150ms all;
+    outline: none;
+
+    &:hover {
+        background-color: darken(green, 5%);
+    }
+}
