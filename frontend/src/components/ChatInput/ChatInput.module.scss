@@ -1,0 +1,30 @@
+.InputWrapper {
+    box-sizing: border-box;
+    width: calc(100% - 60px);
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    margin: 0 30px;
+}
+
+.InputLabel {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 700;
+    color: grey;
+    margin-bottom: 15px;
+}
+
+.Input {
+    box-sizing: inherit;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #DDD;
+    outline: none;
+    padding: 5px 10px;
+    transition: 250ms all ease-in-out;
+}
+
+.Input:focus {
+    border-bottom: 2px solid green;
+}
