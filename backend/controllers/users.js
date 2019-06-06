@@ -3,7 +3,7 @@ const User = require('../models/user');
 const Chatroom = require('../models/chatroom');
 const { JWT_S } = require('../config/index');
 const upload = require('../services/fileupload');
-const uploadAvatar = upload.any();
+const uploadAvatar = upload.single('avatar');
 
 
 signToken = user => {
@@ -32,6 +32,7 @@ module.exports = {
             return res.status(403).send({ error: "Username arleady in use" })
         }
 
+
         // Create new user
 
         const newUser = new User({
@@ -39,7 +40,8 @@ module.exports = {
             local: {
                 email: email,
                 password: password,
-                name: name
+                name: name,
+                avatar: 'https://justchattingbucket.s3.eu-west-3.amazonaws.com/DefaultUserAvatar'
             }
         });
         await newUser.save();
@@ -56,11 +58,11 @@ module.exports = {
     },
     signIn: async (req, res, next) => {
 
-        const foundUser = await User.findOne({ "local.email": req.user.local.email })
+        let avatar = req.user.local.avatar;
 
-        let avatar = foundUser.local.avatar;
+        let username = req.user.local.name;
 
-        if (foundUser.local.avatar === undefined) {
+        if (req.user.local.avatar === undefined) {
             avatar = ''
         }
 
@@ -71,7 +73,7 @@ module.exports = {
         });
 
         res.status(200).json({
-            username: req.user.local.name,
+            username: username,
             avatar: avatar
         });
     },
@@ -271,18 +273,22 @@ module.exports = {
     },
     changeAvatar: async (req, res, next) => {
 
-        const currentUsername = req.params.username
+        const username = req.params.username
 
-        uploadAvatar(req, res, async function (err) {
-            await User.findOneAndUpdate({ "local.name": currentUsername }, { "local.avatar": `https://justchattingbucket.s3.eu-west-3.amazonaws.com/${currentUsername}` })
+        await User.findOneAndUpdate({ "local.name": username }, { "local.avatar": `https://justchattingbucket.s3.eu-west-3.amazonaws.com/${username}` })
+
+        await uploadAvatar(req, res, function (err) {
+            if (err) {
+                return res.status(403).json({ error: err.message });
+            }
+
             res.status(201).json({ success: "Updated avatar" });
         })
     },
     changePassword: async (req, res, next) => {
 
-        const password = req.body.newPassword
-
-        await User.findOne({ "local.name": req.body.username }, function (err, doc) {
+        const password = req.body.password
+        await User.findOne({ "local.name": req.params.username }, function (err, doc) {
             doc.local.password = password;
             doc.save();
         });
