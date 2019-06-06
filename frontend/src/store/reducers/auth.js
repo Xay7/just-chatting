@@ -4,6 +4,7 @@ import io from 'socket.io-client';
 const DEFAULT_STATE = {
     isAuthenticated: false,
     errorMessage: '',
+    successMessage: '',
     registerSuccess: false,
     username: '',
     avatar: '',
@@ -44,11 +45,6 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 signUpError: true,
                 registerSuccess: false
             }
-        case actionTypes.AUTH_CHANGED_AVATAR:
-            return {
-                ...state,
-                avatar: action.avatar
-            }
         case actionTypes.TOKEN_ACCESS:
             return {
                 ...state,
@@ -63,10 +59,37 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 isAuthenticated: false,
                 tokenSuccess: false
             }
-        case actionTypes.CLEAR_ERROR_MESSAGE:
+        case actionTypes.AUTH_CHANGED_PASSWORD:
             return {
                 ...state,
-                errorMessage: ''
+                errorMessage: '',
+                successMessage: action.errorMessage
+            }
+        case actionTypes.AUTH_CHANGED_PASSWORD_ERROR:
+            return {
+                ...state,
+                errorMessage: action.errorMessage,
+                successMessage: ''
+            }
+        case actionTypes.AUTH_CHANGED_AVATAR:
+            return {
+                ...state,
+                avatar: action.avatar,
+                errorMessage: '',
+                successMessage: action.errorMessage
+            }
+
+        case actionTypes.AUTH_CHANGED_AVATAR_ERROR:
+            return {
+                ...state,
+                errorMessage: action.errorMessage,
+                successMessage: ''
+            }
+        case actionTypes.CLEAR_FETCH_MESSAGE:
+            return {
+                ...state,
+                errorMessage: '',
+                successMessage: ''
             }
         default:
             return state;

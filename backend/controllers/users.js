@@ -233,6 +233,30 @@ module.exports = {
 
         res.status(200).json(channels)
     },
+    changeChannelData: async (req, res, next) => {
+
+        const roomID = req.body.room;
+        const channelID = req.body.channel;
+
+        const newChannelName = req.body.channelName;
+        const newChannelDescription = req.body.channelDescription
+
+        await Chatroom.findOneAndUpdate({ "id": roomID, "channels.id": channelID },
+            {
+                $set: {
+                    "channels.$.name": newChannelName,
+                    "channels.$.description": newChannelDescription
+                }
+            },
+            { new: true }
+        ).exec(function (error, post) {
+            if (error) {
+                return res.status(400).send({ error: 'Update failed' });
+            }
+
+            return res.status(200).send({ success: "Channel has been updated" });
+        });
+    },
     storeMessage: async (req, res, next) => {
         const username = req.params.username;
         const id = req.params.id;

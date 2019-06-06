@@ -47,6 +47,9 @@ router.route('/:username/chat/:id/channels')
     .put(passportJWT, UsersController.newChannel)
     .get(passportJWT, UsersController.getChannels);
 
+router.route('/:username/chat/:id/channels/:channelID')
+    .put(passportJWT, UsersController.changeChannelData);
+
 router.route('/:username/chat/:id/channels/:channelID/messages')
     .put(passportJWT, UsersController.storeMessage)
     .get(passportJWT, UsersController.getMessages)

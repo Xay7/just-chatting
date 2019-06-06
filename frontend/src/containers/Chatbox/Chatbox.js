@@ -100,6 +100,10 @@ class Chatbox extends Component {
                 messages: [...this.state.messages, data], typing: false
             });
 
+            if (this.state.messages === []) {
+                return;
+            }
+
             this.scrollToBottom()
 
         };
@@ -133,6 +137,7 @@ class Chatbox extends Component {
     }
 
     scrollToBottom() {
+        if (this.messageContainer === null) return;
         const scrollHeight = this.messageContainer.scrollHeight;
         const height = this.messageContainer.clientHeight;
         const maxScrollTop = scrollHeight - height;

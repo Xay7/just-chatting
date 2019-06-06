@@ -26,3 +26,17 @@
         background-color: darken(green, 5%);
     }
 }
+
+.Danger {
+    width: 120px;
+    height: 40px;
+    color: white;
+    background-color: red;
+    border: none;
+    transition: 150ms all;
+    outline: none;
+
+    &:hover {
+        background-color: darken(red, 5%);
+    }
+}
