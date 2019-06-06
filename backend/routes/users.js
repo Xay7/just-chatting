@@ -19,8 +19,12 @@ router.route('/signup')
 
 router.route('/:username/avatar')
     .put(passportJWT, UsersController.changeAvatar)
+
 router.route('/:username/password')
-    .put(passportJWT, UsersController.changePassword)
+    .put(
+        validateBody(schemas.changePassword),
+        passportJWT,
+        UsersController.changePassword)
 
 
 router.route('/signin')
