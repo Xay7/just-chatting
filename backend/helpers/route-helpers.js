@@ -5,7 +5,7 @@ module.exports = {
         return (req, res, next) => {
             const result = Joi.validate(req.body, schema);
             if (result.error) {
-                return res.status(400).json(result.error);
+                return res.status(400).json(result.error.details[0].message);
             }
 
             if (!req.value) { req.value = {}; }
@@ -23,6 +23,10 @@ module.exports = {
         signInSchema: Joi.object().keys({
             email: Joi.string().email().required(),
             password: Joi.string().min(6).required()
+        }),
+        changePassword: Joi.object().keys({
+            password: Joi.string().min(6).required(),
+            confirmPassword: Joi.string().min(6).required().valid(Joi.ref('password')).options({ language: { any: { allowOnly: 'must match password' } } })
         })
     }
 }
