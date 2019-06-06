@@ -1,7 +1,8 @@
 const aws = require('aws-sdk')
 const multer = require('multer')
-const multerS3 = require('multer-s3')
+const multerS3 = require('multer-s3-transform')
 const config = require('../config/index');
+const sharp = require('sharp');
 
 aws.config.update({
     secretAccessKey: config.aws.secretAccessKey,
@@ -16,14 +17,25 @@ const upload = multer({
         s3: s3,
         bucket: 'justchattingbucket',
         acl: 'public-read',
+        contentType: multerS3.AUTO_CONTENT_TYPE,
         cacheControl: "max-age 0,no-cache,no-store,must-revalidate",
-        metadata: function (req, file, cb) {
-            cb(null, { fieldName: "avatar" });
+        shouldTransform: function (req, file, cb) {
+            cb(null, /^image/i.test(file.mimetype))
         },
-        key: function (req, file, cb) {
-            cb(null, req.params.username)
-        }
+        transforms: [{
+            id: 'original',
+            key: function (req, file, cb) {
+                cb(null, req.params.username)
+            },
+            transform: function (req, file, cb) {
+                cb(null, sharp().resize({
+                    width: 128,
+                    height: 128,
+                    fit: sharp.fit.cover
+                }))
+            }
+        }]
     })
-})
+});
 
 module.exports = upload;
