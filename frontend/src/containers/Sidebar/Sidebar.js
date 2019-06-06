@@ -29,7 +29,8 @@ class Sidebar extends Component {
             confirmPassword: '',
             avatar: '',
             avatarPreview: '',
-            passwordError: ''
+            avatarError: '',
+            avatarSuccess: ''
         }
 
         this.socket = this.props.socketChat;
@@ -138,17 +139,28 @@ class Sidebar extends Component {
     uploadFile = (e) => {
         const avatar = e.target.files[0]
 
-        if (avatar.size > 1000000) {
-            return console.log("File must be less than 1MB");
+        if (avatar.type === "image/jpeg" || avatar.type === "image/jpg" || avatar.type === "image/png") {
+
+            if (avatar.size > 1048576) {
+                return this.setState({
+                    avatarError: "File size must be less than 1MB",
+                    avatarSuccess: ''
+                })
+            }
+
+            let url = URL.createObjectURL(avatar);
+
+            this.setState({
+                avatar: avatar,
+                fileUploaded: true,
+                avatarPreview: url
+            })
+        } else {
+            this.setState({
+                avatarError: "File must me .jpg/.jpeg/.png",
+                avatarSuccess: ''
+            })
         }
-
-        let url = URL.createObjectURL(avatar);
-
-        this.setState({
-            avatar: avatar,
-            fileUploaded: true,
-            avatarPreview: url
-        })
     }
 
     changePassword = (e) => {
@@ -166,41 +178,33 @@ class Sidebar extends Component {
         e.preventDefault();
         const formData = new FormData();
 
-        if (this.state.avatar === '') {
-            return console.log("No picture provided");
-        }
-
-        if (this.state.avatar.size > 1000000) {
-            return console.log("File must be less than 1MB");
+        if (this.state.avatar === ``) {
+            return this.setState({
+                avatarError: "No file provided",
+                avatarSuccess: ''
+            })
         }
 
         formData.append('avatar', this.state.avatar);
 
         await this.props.updateAvatar(formData, this.props.username);
 
+        this.setState({
+            avatarSuccess: "Your avatar has been updated",
+            avatarError: ''
+        });
+
     }
 
     submitPassword = (e) => {
         e.preventDefault();
 
-        if (this.state.password === '') {
-            return console.log("Password field can't be empty");
-        }
-
-        if (this.state.password !== this.state.confirmPassword) {
-            return console.log("Passwords are not equal")
-        }
-
-        if (this.state.password.length < 6) {
-            return console.log("Password must be longer than 6 characters");
-        }
-
         const data = {
-            username: this.props.username,
-            newPassword: this.state.password
+            password: this.state.password,
+            confirmPassword: this.state.confirmPassword
         }
 
-        this.props.updatePassword(data);
+        this.props.updatePassword(data, this.props.username);
     }
 
     showAddChannel = () => {
@@ -220,7 +224,14 @@ class Sidebar extends Component {
     }
 
     showUserSettings = (e) => {
-        this.setState({ showUserSettings: !this.state.showUserSettings, fileUploaded: false })
+        this.props.clearFetchMessage();
+        this.setState({
+            showUserSettings: !this.state.showUserSettings,
+            fileUploaded: false,
+            avatarError: '',
+            avatarSuccess: '',
+            avatar: ''
+        })
     }
 
 
@@ -353,6 +364,8 @@ class Sidebar extends Component {
                                     display: 'none'
                                 }} />
                         </label>
+                        {this.state.avatarError && <p style={{ color: "red" }}>{this.state.avatarError}</p>}
+                        {this.state.avatarSuccess && <p style={{ color: "green" }}>{this.state.avatarSuccess}</p>}
                         <Button ClassName="Confirm" OnClick={this.submitAvatar}>Confirm</Button>
                         <h3>Change password</h3>
                         <form onSubmit={this.submitPassword} style={{ width: '100%' }}>
@@ -371,6 +384,8 @@ class Sidebar extends Component {
                                 AutoComplete="on"
                             >Confirm password</ChatInput>
                         </form>
+                        {this.props.errorMessage && <p style={{ color: "red" }}>{this.props.errorMessage}</p>}
+                        {this.props.successMessage && <p style={{ color: "green" }}>{this.props.successMessage}</p>}
                         <Button ClassName="Confirm" OnClick={this.submitPassword}>Confirm</Button>
                     </div>
                 </Options>
@@ -434,7 +449,9 @@ const mapStateToProps = state => {
         showOptions: state.chat.showRoomOptions,
         channelID: state.chat.channelID,
         avatar: state.auth.avatar,
-        roomOwner: state.chat.roomOwner
+        roomOwner: state.chat.roomOwner,
+        errorMessage: state.auth.errorMessage,
+        successMessage: state.auth.successMessage
     }
 
 }
