@@ -65,15 +65,24 @@ export const updateAvatar = (data, username) => {
     }
 }
 
-export const updatePassword = data => {
-    return async () => {
+export const updatePassword = (data, username) => {
+    return async dispatch => {
         try {
+            let res = await axios.put(`http://localhost:3001/users/${username}/password`, data);
 
-            await axios.put(`http://localhost:3001/users/${data.username}/password`, data);
-
+            dispatch({
+                type: actionTypes.AUTH_CHANGED_PASSWORD,
+                errorMessage: res.data.success
+            })
         }
         catch (err) {
-            console.log("something bad happened");
+
+            const errorMessage = err.response.data.replace(/[/"]+/g, "");
+
+            dispatch({
+                type: actionTypes.AUTH_CHANGED_PASSWORD_ERROR,
+                errorMessage: errorMessage
+            })
         }
     }
 }
@@ -100,10 +109,10 @@ export const tokenAccess = () => {
     }
 }
 
-export const clearErrorMessage = () => {
+export const clearFetchMessage = () => {
     return dispatch => {
         dispatch({
-            type: actionTypes.CLEAR_ERROR_MESSAGE
+            type: actionTypes.CLEAR_FETCH_MESSAGE
         })
     }
 }
