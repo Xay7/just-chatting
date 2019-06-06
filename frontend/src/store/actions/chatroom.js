@@ -171,3 +171,31 @@ export const showRoomOptions = () => {
         type: actionTypes.SHOW_ROOM_OPTIONS,
     }
 }
+
+export const changeChannelSettings = data => {
+    return async dispatch => {
+        try {
+            const res = await axios.put(`http://localhost:3001/users/${data.username}/chat/${data.room}/channels/${data.channel}`, data)
+
+            console.log(res);
+
+            dispatch({
+                type: actionTypes.CHANGE_CHANNEL_SETTINGS,
+                successMessage: res.data.success
+            })
+        } catch (error) {
+            dispatch({
+                type: actionTypes.CHANGE_CHANNEL_SETTINGS_ERROR,
+                errorMessage: error.response.data.error
+            })
+        }
+    }
+}
+
+export const clearFetchMessage = () => {
+    return dispatch => {
+        dispatch({
+            type: actionTypes.CLEAR_FETCH_MESSAGE
+        })
+    }
+}
