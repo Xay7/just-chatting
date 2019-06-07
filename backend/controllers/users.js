@@ -32,7 +32,6 @@ module.exports = {
             return res.status(403).send({ error: "Username arleady in use" })
         }
 
-
         // Create new user
 
         const newUser = new User({
@@ -40,8 +39,7 @@ module.exports = {
             local: {
                 email: email,
                 password: password,
-                name: name,
-                avatar: 'https://justchattingbucket.s3.eu-west-3.amazonaws.com/DefaultUserAvatar'
+                name: name
             }
         });
         await newUser.save();
