@@ -6,6 +6,11 @@ const getRooms = async (username) => {
     return res;
 }
 
+const getRoomData = async (username, id) => {
+    const res = await axios.get(`http://localhost:3001/users/${username}/chat/${id}`);
+    return res;
+}
+
 const getChannels = async (username, id) => {
     const res = await axios.get(`http://localhost:3001/users/${username}/chat/${id}/channels`)
     return res;
@@ -88,13 +93,14 @@ export const changeRoom = data => {
     return async dispatch => {
         try {
 
-            const res = await getChannels(data.username, data.id);
+            const res = await getRoomData(data.username, data.id);
 
             dispatch({
                 type: actionTypes.CHANGE_ROOM,
                 roomID: data.id,
                 roomName: data.roomName,
                 channels: res.data.channels,
+                subscribers: res.data.subscribers,
                 channelName: '',
                 roomOwner: data.roomOwner
             });

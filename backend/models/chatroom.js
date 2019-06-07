@@ -14,6 +14,12 @@ const chatSchema = new Schema({
         type: String,
         required: true
     },
+    subscribers: [
+        {
+            subscriber: String,
+            joined_at: String
+        }
+    ],
     channels: [
         {
             _id: false,

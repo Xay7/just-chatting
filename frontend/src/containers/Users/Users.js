@@ -37,10 +37,16 @@ class Users extends Component {
             )
         })
 
+        let subscribers = this.props.subscribers.map(data => {
+            return <div>{data.subscriber}</div>
+        })
+
 
         return (
             <div className={styles.Users}>
+                {this.props.owner}
                 {connectedUsers}
+                {subscribers}
             </div>
         )
     }
@@ -52,7 +58,9 @@ const mapStateToProps = state => {
     return {
         name: state.auth.name,
         socketChat: state.auth.socket,
-        room: state.auth.room
+        room: state.auth.room,
+        subscribers: state.chat.subscribers,
+        owner: state.chat.roomOwner
     }
 
 }

@@ -122,7 +122,7 @@ module.exports = {
         const newChatroom = new Chatroom({
             id: id,
             name: name,
-            owner: owner,
+            owner: owner
         })
 
         await newChatroom.save();
@@ -155,9 +155,6 @@ module.exports = {
             return res.status(409).json({ error: "You arleady joined this room" })
         }
 
-
-
-
         const foundChatroom = await Chatroom.findOne({ "id": id });
 
         if (!foundChatroom) {
@@ -168,6 +165,16 @@ module.exports = {
             "$push":
             {
                 "local.chatRooms.joined": id
+            }
+        })
+
+        await Chatroom.findOneAndUpdate({ "id": id }, {
+            "$push":
+            {
+                "subscribers": {
+                    subscriber: username,
+                    joined_at: new Date()
+                }
             }
         })
 
@@ -204,6 +211,20 @@ module.exports = {
 
         res.status(200).json({ success: "Chat has been deleted" })
     },
+    getChatData: async (req, res, next) => {
+
+        const roomID = req.params.id;
+
+        const roomData = await Chatroom.find({ "id": roomID }, { "_id": 0 }).lean().select("channels subscribers");
+
+        const formattedData = {
+            channels: roomData[0].channels,
+            subscribers: roomData[0].subscribers
+        }
+
+        res.status(200).json(formattedData);
+
+    },
     newChannel: async (req, res, next) => {
 
         const channelID = req.body.channelID
@@ -229,7 +250,9 @@ module.exports = {
     },
     getChannels: async (req, res, next) => {
 
-        const channels = await Chatroom.findOne({ "id": req.params.id }, { "_id": 0 }).select("channels");
+        const channels = await Chatroom.findOne({ "id": req.params.id }, { "_id": 0 }).select("channels")
+
+        console.log(channels);
 
 
         res.status(200).json(channels)

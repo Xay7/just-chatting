@@ -7,6 +7,7 @@ const DEFAULT_STATE = {
         owned: [],
         joined: []
     },
+    subscribers: [],
     channels: [],
     channelID: '',
     channelName: '',
@@ -39,7 +40,8 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 channels: action.channels,
                 channelName: action.channelName,
                 channelID: '',
-                roomOwner: action.roomOwner
+                roomOwner: action.roomOwner,
+                subscribers: action.subscribers
             }
         case actionTypes.JOIN_ROOM:
             return {

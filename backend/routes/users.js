@@ -40,7 +40,8 @@ router.route('/:username/chat')
 
 router.route('/:username/chat/:id')
     .delete(passportJWT, UsersController.deleteChat)
-    .put(passportJWT, UsersController.joinChat);
+    .put(passportJWT, UsersController.joinChat)
+    .get(passportJWT, UsersController.getChatData);
 
 router.route('/:username/chat/:id/channels')
     .put(passportJWT, UsersController.newChannel)
