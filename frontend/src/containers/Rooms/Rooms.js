@@ -200,6 +200,7 @@ class Rooms extends Component {
                             Placeholder="Enter room name"
                             ID="room"
                             autoComplete="off"
+                            ClassName={this.props.errorMessage ? "InputError" : "Input"}
                         >Room Name</ChatInput>
                         <div className={styles.AddJoinBtns}>
                             <Button ClassName="Cancel" OnClick={this.showAddorJoin}>Cancel</Button>

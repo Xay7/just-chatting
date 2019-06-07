@@ -5,14 +5,16 @@ import { connect } from 'react-redux';
 import * as actions from '../../store/actions/auth';
 import { Link } from 'react-router-dom';
 import Spinner from '../../components/Spinner/Spinner';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 
 class SignUp extends Component {
 
     state = {
-        name: null,
-        email: null,
-        password: null,
+        name: '',
+        email: '',
+        password: '',
         loading: false,
+        submitError: false
     }
 
     onSubmit = async () => {
@@ -32,6 +34,9 @@ class SignUp extends Component {
         if (this.props.registered) {
             this.props.history.push('/signin');
         }
+        else {
+            this.setState({ submitError: true })
+        }
     }
 
     onChangeHandler = (e) => {
@@ -41,7 +46,7 @@ class SignUp extends Component {
 
     render() {
 
-        let inputStyle = this.props.error ? styles.InputError : styles.Input;
+        let inputStyle = this.props.errorMessage ? styles.InputError : styles.Input;
 
         let errorMessage = <div className={styles.Information}>
             <p className={styles.ErrorParagraph}>Name must be longer than 3 characters</p>
@@ -51,7 +56,7 @@ class SignUp extends Component {
 
         if (this.props.error) {
             errorMessage = <div className={styles.ErrorMessage}>
-                <p className={styles.ErrorInUse}>{this.props.errorMessage}</p>
+                <ErrorMessage>{this.props.errorMessage}</ErrorMessage>
                 <p className={styles.ErrorParagraph}>Name must be longer than 3 characters</p>
                 <p className={styles.ErrorParagraph}>Password must be longer than 6 characters</p>
             </div>
@@ -72,11 +77,16 @@ class SignUp extends Component {
                         <Input inputClass={inputStyle} inputPlaceholder="Name" inputType="text" onchange={this.onChangeHandler} inputName="name">Username</Input>
                         <Input inputClass={inputStyle} inputPlaceholder="Email" inputType="email" onchange={this.onChangeHandler} inputName="email">Email</Input>
                         <Input inputClass={inputStyle} inputPlaceholder="Password" inputType="password" onchange={this.onChangeHandler} inputName="password">Password</Input>
+                        {this.state.submitError ?
+                            !this.state.name ? <ErrorMessage>Username field can't be empty</ErrorMessage> :
+                                !this.state.email ? <ErrorMessage>Email field can't be empty</ErrorMessage> :
+                                    !this.state.password ? <ErrorMessage>Password field can't be empty</ErrorMessage> : null : null}
                         {errorMessage}
+
                     </form>
                     {submitButton}
                 </div>
-                <Link to='/signin' className={styles.Link}>If you have an account sign in here</Link>
+                <Link to='/signin' className={styles.Link} onClick={this.props.clearFetchMessage}>If you have an account sign in here</Link>
             </div >
         )
     }

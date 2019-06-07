@@ -231,15 +231,26 @@ module.exports = {
 
         const channels = await Chatroom.findOne({ "id": req.params.id }, { "_id": 0 }).select("channels");
 
+
         res.status(200).json(channels)
+    },
+    getChannel: async (req, res, next) => {
+
+        const channel = "xd";
+
+        res.status(200).json(channel);
     },
     changeChannelData: async (req, res, next) => {
 
         const roomID = req.body.room;
         const channelID = req.body.channel;
 
-        const newChannelName = req.body.channelName;
+        let newChannelName = req.body.channelName;
         const newChannelDescription = req.body.channelDescription
+
+        if (newChannelName == '') {
+            newChannelName = req.body.oldChannelName;
+        }
 
         await Chatroom.findOneAndUpdate({ "id": roomID, "channels.id": channelID },
             {
@@ -256,6 +267,9 @@ module.exports = {
 
             return res.status(200).send({ success: "Channel has been updated" });
         });
+    },
+    deleteChannel: async (req, res, next) => {
+        res.status(200).json({ success: "Channel has been deleted" })
     },
     storeMessage: async (req, res, next) => {
         const username = req.params.username;

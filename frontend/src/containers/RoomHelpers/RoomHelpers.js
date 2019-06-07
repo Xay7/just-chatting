@@ -7,6 +7,7 @@ import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import ChatInput from '../../components/ChatInput/ChatInput';
 import Button from '../../components/Button/Button';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 
 class RoomHelpers extends Component {
 
@@ -37,6 +38,7 @@ class RoomHelpers extends Component {
             channelName: this.state.channelName,
             channelDescription: this.state.channelDescription,
             channel: this.props.channelID,
+            oldChannelName: this.props.channelName.substring(1),
             username: this.props.username,
             room: this.props.roomID
         }
@@ -67,6 +69,7 @@ class RoomHelpers extends Component {
                                     Placeholder="New channel name"
                                     ID="channelName"
                                     autoComplete="off"
+                                    ClassName={this.props.errorMessage ? "InputError" : "Input"}
                                 >Room Name</ChatInput>
                                 <ChatInput
                                     Type="text"
@@ -74,15 +77,16 @@ class RoomHelpers extends Component {
                                     Placeholder="New description"
                                     ID="channelDescription"
                                     autoComplete="off"
+                                    ClassName={this.props.errorMessage ? "InputError" : "Input"}
                                 >Room description</ChatInput>
-                                {this.props.errorMessage && <p style={{ color: "red" }}>{this.props.errorMessage}</p>}
-                                {this.props.successMessage && <p style={{ color: "green" }}>{this.props.successMessage}</p>}
+                                {this.props.errorMessage && <ErrorMessage>{this.props.errorMessage}</ErrorMessage>}
+                                {this.props.successMessage && <ErrorMessage>{this.props.successMessage}</ErrorMessage>}
                                 <div className={styles.Btns}>
 
                                     <Button ClassName="Cancel" OnClick={this.showChannelSettings}>Cancel</Button>
                                     <Button ClassName="Confirm" OnClick={this.changeChannelSettings}>Submit</Button>
                                 </div>
-                                <Button ClassName="Danger" OnClick={this.showAddChannel}>Delete Channel</Button>
+                                <Button ClassName="Danger" OnClick={this.showDeleteChannelBox}>Delete Channel</Button>
                             </div>
                         </Options>
                     </React.Fragment>

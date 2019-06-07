@@ -15,8 +15,9 @@
     margin: 15px 0;
 }
 
-.Input {
-    font-size: 16px;
+.Input,
+.InputError {
+    font-size: 14px;
     box-sizing: inherit;
     width: 100%;
     border: none;
@@ -24,6 +25,10 @@
     outline: none;
     padding: 5px 10px;
     transition: 250ms all ease-in-out;
+}
+
+.InputError {
+    border-bottom: 2px solid red;
 }
 
 .Input:focus {

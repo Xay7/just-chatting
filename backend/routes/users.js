@@ -15,44 +15,45 @@ router.route('/signup')
     .post(
         validateBody(schemas.signUpSchema),
         UsersController.signUp,
-    )
+    );
 
 router.route('/:username/avatar')
-    .put(passportJWT, UsersController.changeAvatar)
+    .put(passportJWT, UsersController.changeAvatar);
 
 router.route('/:username/password')
     .put(
         validateBody(schemas.changePassword),
         passportJWT,
-        UsersController.changePassword)
+        UsersController.changePassword);
 
 
 router.route('/signin')
     .post(
-        validateBody(schemas.signInSchema),
         passportSignIn,
         UsersController.signIn,
-    )
+    );
 
 router.route('/:username/chat')
     .get(passportJWT, UsersController.chat)
-    .post(passportJWT, UsersController.newChat)
+    .post(passportJWT, UsersController.newChat);
 
 
 router.route('/:username/chat/:id')
     .delete(passportJWT, UsersController.deleteChat)
-    .put(passportJWT, UsersController.joinChat)
+    .put(passportJWT, UsersController.joinChat);
 
 router.route('/:username/chat/:id/channels')
     .put(passportJWT, UsersController.newChannel)
     .get(passportJWT, UsersController.getChannels);
 
 router.route('/:username/chat/:id/channels/:channelID')
-    .put(passportJWT, UsersController.changeChannelData);
+    .put(passportJWT, UsersController.changeChannelData)
+    .get(passportJWT, UsersController.getChannel)
+    .delete(passportJWT, UsersController.deleteChannel)
 
 router.route('/:username/chat/:id/channels/:channelID/messages')
     .put(passportJWT, UsersController.storeMessage)
-    .get(passportJWT, UsersController.getMessages)
+    .get(passportJWT, UsersController.getMessages);
 
 
 // Add support lateeeeeeeeeeer

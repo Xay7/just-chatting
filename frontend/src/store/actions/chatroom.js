@@ -11,6 +11,11 @@ const getChannels = async (username, id) => {
     return res;
 }
 
+const getChannel = async (username, roomID, channelID) => {
+    const res = await axios.get(`http://localhost:3001/users/${username}/chat/${roomID}/channels/${channelID}`)
+    return res;
+}
+
 
 export const updateRooms = (username) => {
     return async dispatch => {
@@ -177,8 +182,6 @@ export const changeChannelSettings = data => {
         try {
             const res = await axios.put(`http://localhost:3001/users/${data.username}/chat/${data.room}/channels/${data.channel}`, data)
 
-            console.log(res);
-
             dispatch({
                 type: actionTypes.CHANGE_CHANNEL_SETTINGS,
                 successMessage: res.data.success
@@ -186,7 +189,7 @@ export const changeChannelSettings = data => {
         } catch (error) {
             dispatch({
                 type: actionTypes.CHANGE_CHANNEL_SETTINGS_ERROR,
-                errorMessage: error.response.data.error
+                errorMessage: error.response.data
             })
         }
     }

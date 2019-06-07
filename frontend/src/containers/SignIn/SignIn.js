@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import * as actions from '../../store/actions/auth';
 import { Link } from 'react-router-dom';
 import Spinner from '../../components/Spinner/Spinner';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 
 class SignIn extends Component {
 
@@ -39,15 +40,13 @@ class SignIn extends Component {
 
     render() {
 
-        let inputStyle = this.props.error ? styles.InputError : styles.Input;
+        let inputStyle = this.props.errorMessage ? styles.InputError : styles.Input;
 
 
         let errorMessage = null;
 
-        if (this.props.error) {
-            errorMessage = <div className={styles.ErrorMessage}>
-                <p className={styles.ErrorParagraph}>Invalid email or password</p>
-            </div>
+        if (this.props.errorMessage) {
+            errorMessage = <ErrorMessage>{this.props.errorMessage}</ErrorMessage>
         }
 
         let registerSuccess = null;
@@ -75,7 +74,7 @@ class SignIn extends Component {
                         {submitButton}
                     </form>
                 </div>
-                <Link to='/signup' className={styles.Link}>Click here to register</Link>
+                <Link to='/signup' className={styles.Link} onClick={this.props.clearFetchMessage}>Click here to register</Link>
             </div >
         )
     }
@@ -84,7 +83,7 @@ class SignIn extends Component {
 const mapStateToProps = state => {
     return {
         isAuth: state.auth.isAuthenticated,
-        error: state.auth.signInError,
+        errorMessage: state.auth.errorMessage,
         registered: state.auth.registerSuccess
     }
 }

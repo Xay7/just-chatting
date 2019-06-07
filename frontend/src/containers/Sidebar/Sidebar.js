@@ -11,6 +11,7 @@ import Radium from 'radium';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import ChatInput from '../../components/ChatInput/ChatInput';
 import Button from '../../components/Button/Button';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 
 class Sidebar extends Component {
 
@@ -137,7 +138,12 @@ class Sidebar extends Component {
     }
 
     uploadFile = (e) => {
+
         const avatar = e.target.files[0]
+
+        if (avatar === undefined) {
+            return;
+        }
 
         if (avatar.type === "image/jpeg" || avatar.type === "image/jpg" || avatar.type === "image/png") {
 
@@ -292,6 +298,7 @@ class Sidebar extends Component {
                             Placeholder="Enter channel name"
                             ID="channelName"
                             autoComplete="off"
+                            ClassName={this.props.errorMessage ? "InputError" : "Input"}
                         >Room Name</ChatInput>
                         <ChatInput
                             Type="text"
@@ -299,6 +306,7 @@ class Sidebar extends Component {
                             Placeholder="Tell others what is this channel about"
                             ID="channelDescription"
                             autoComplete="off"
+                            ClassName={this.props.errorMessage ? "InputError" : "Input"}
                         >Room Name</ChatInput>
                         <div className={styles.AddChannelBtns}>
                             <Button ClassName="Cancel" OnClick={this.showAddChannel}>Cancel</Button>
@@ -345,48 +353,55 @@ class Sidebar extends Component {
                 <Modal onclick={this.showUserSettings} />
                 <Options>
                     <div className={styles.UserSettings}>
-                        <h3>Click on the image to change your avatar</h3>
-                        <label htmlFor="upload" style={{
-                            backgroundImage: `url(${this.state.fileUploaded ? this.state.avatarPreview : this.props.avatar})`,
-                            backgroundSize: 'cover',
-                            width: '128px',
-                            height: '128px',
-                            borderRadius: '50%',
-                            transition: '150ms all ease-in'
+                        <div className={styles.ChangeUserSettings}>
+                            <h3>Change your avatar</h3>
+                            <label htmlFor="upload" style={{
+                                backgroundImage: `url(${this.state.fileUploaded ? this.state.avatarPreview : this.props.avatar})`,
+                                backgroundSize: 'cover',
+                                width: '128px',
+                                height: '128px',
+                                borderRadius: '50%',
+                                transition: '150ms all ease-in'
 
-                        }} className={styles.AvatarPreview}>
-                            <input
-                                id="upload"
-                                type="file"
-                                onChange={this.uploadFile}
-                                accept="image/*"
-                                style={{
-                                    display: 'none'
-                                }} />
-                        </label>
-                        {this.state.avatarError && <p style={{ color: "red" }}>{this.state.avatarError}</p>}
-                        {this.state.avatarSuccess && <p style={{ color: "green" }}>{this.state.avatarSuccess}</p>}
-                        <Button ClassName="Confirm" OnClick={this.submitAvatar}>Confirm</Button>
-                        <h3>Change password</h3>
-                        <form onSubmit={this.submitPassword} style={{ width: '100%' }}>
-                            <ChatInput
-                                Type="password"
-                                OnChange={this.changePassword}
-                                Placeholder="New password"
-                                ID="password"
-                                AutoComplete="on"
-                            >New password</ChatInput>
-                            <ChatInput
-                                Type="password"
-                                OnChange={this.confirmPassword}
-                                Placeholder="Confirm password"
-                                ID="confirmPassword"
-                                AutoComplete="on"
-                            >Confirm password</ChatInput>
-                        </form>
-                        {this.props.errorMessage && <p style={{ color: "red" }}>{this.props.errorMessage}</p>}
-                        {this.props.successMessage && <p style={{ color: "green" }}>{this.props.successMessage}</p>}
-                        <Button ClassName="Confirm" OnClick={this.submitPassword}>Confirm</Button>
+                            }} className={styles.AvatarPreview}>
+                                <input
+                                    id="upload"
+                                    type="file"
+                                    onChange={this.uploadFile}
+                                    accept="image/*"
+                                    style={{
+                                        display: 'none'
+                                    }} />
+                            </label>
+
+                            {this.state.avatarError && <p style={{ color: "red", fontSize: "10px", margin: "0" }}>{this.state.avatarError}</p>}
+                            {this.state.avatarSuccess && <p style={{ color: "green", fontSize: "10px", margin: "0" }}>{this.state.avatarSuccess}</p>}
+                            <Button ClassName="Confirm" OnClick={this.submitAvatar}>Confirm</Button>
+                        </div>
+                        <div className={styles.ChangeUserSettings}>
+                            <h3>Change password</h3>
+                            <form onSubmit={this.submitPassword} style={{ width: '100%' }}>
+                                <ChatInput
+                                    Type="password"
+                                    OnChange={this.changePassword}
+                                    Placeholder="New password"
+                                    ID="password"
+                                    AutoComplete="on"
+                                    ClassName={this.props.errorMessage ? "InputError" : "Input"}
+                                >New password</ChatInput>
+                                <ChatInput
+                                    Type="password"
+                                    OnChange={this.confirmPassword}
+                                    Placeholder="Confirm password"
+                                    ID="confirmPassword"
+                                    AutoComplete="on"
+                                    ClassName={this.props.errorMessage ? "InputError" : "Input"}
+                                >Confirm password</ChatInput>
+                            </form>
+                            {this.props.errorMessage && <ErrorMessage>{this.props.errorMessage}</ErrorMessage>}
+                            {this.props.successMessage && <ErrorMessage>{this.props.successMessage}</ErrorMessage>}
+                            <Button ClassName="Confirm" OnClick={this.submitPassword}>Confirm</Button>
+                        </div>
                     </div>
                 </Options>
             </React.Fragment>

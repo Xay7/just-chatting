@@ -54,7 +54,7 @@ export const updateAvatar = (data, username) => {
 
             dispatch({
                 type: actionTypes.AUTH_CHANGED_AVATAR,
-                avatar: `https://justchattingbucket.s3.eu-west-3.amazonaws.com/Xay?` + Date.now()
+                avatar: `https://justchattingbucket.s3.eu-west-3.amazonaws.com/${username}`
             })
 
 
@@ -72,7 +72,7 @@ export const updatePassword = (data, username) => {
 
             dispatch({
                 type: actionTypes.AUTH_CHANGED_PASSWORD,
-                errorMessage: res.data.success
+                successMessage: res.data.success
             })
         }
         catch (err) {

@@ -7,7 +7,7 @@ const ChatInput = (props) => (
         <input
             type={props.Type}
             onChange={props.OnChange}
-            className={styles.Input}
+            className={styles[props.ClassName]}
             placeholder={props.Placeholder}
             id={props.ID}
             autoComplete={props.AutoComplete}

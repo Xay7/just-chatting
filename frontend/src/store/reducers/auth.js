@@ -63,7 +63,7 @@ const reducer = (state = DEFAULT_STATE, action) => {
             return {
                 ...state,
                 errorMessage: '',
-                successMessage: action.errorMessage
+                successMessage: action.successMessage
             }
         case actionTypes.AUTH_CHANGED_PASSWORD_ERROR:
             return {
