@@ -9,6 +9,7 @@ class Users extends Component {
 
         this.state = {
             users: [],
+            subscribers: []
         }
 
         this.socket = this.props.socketChat;
@@ -24,13 +25,12 @@ class Users extends Component {
         })
     }
 
-
     render() {
 
         let connectedUsers = this.state.users.map(user => {
             return (
                 <div className={styles.UserWrapper} key={user.username}>
-                    <img src={user.avatar} alt={user.username + "avatar"} className={styles.Avatar} />
+                    <img src={user.avatar} alt={user.username + " avatar"} className={styles.Avatar} />
                     <p className={styles.User} key={user.username}>{user.username}</p>
 
                 </div>
@@ -38,9 +38,14 @@ class Users extends Component {
         })
 
         let subscribers = this.props.subscribers.map(data => {
-            return <div>{data.subscriber}</div>
-        })
+            const isOnline = this.state.users.some((el) => {
+                return el.username === data.subscriber;
+            })
+            if (isOnline) {
+                return null;
+            } else return <div>{data.subscriber}</div>
 
+        })
 
         return (
             <div className={styles.Users}>
