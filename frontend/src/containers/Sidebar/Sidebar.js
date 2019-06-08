@@ -3,7 +3,6 @@ import styles from './Sidebar.module.scss';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/chatroom';
 import * as authActions from '../../store/actions/auth';
-import uuid4 from 'uuid4'
 import Confirm from '../../components/Confirm/Confirm';
 import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
@@ -12,64 +11,22 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import ChatInput from '../../components/ChatInput/ChatInput';
 import Button from '../../components/Button/Button';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import Channels from '../Channels/Channels'
 
 class Sidebar extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            selectedChannel: '',
-            showDeleteBox: false,
-            showAddChannel: false,
-            showInviteString: false,
-            showUserSettings: false,
-            fileUploaded: false,
-            channelName: '',
-            channelDescription: '',
-            password: '',
-            confirmPassword: '',
-            avatar: '',
-            avatarPreview: '',
-            avatarError: '',
-            avatarSuccess: ''
-        }
-
-        this.socket = this.props.socketChat;
-
-        this.switchChannel = async (id, name, description) => {
-
-            await this.setState({ selectedChannel: id });
-
-            let data = {
-                channelID: id,
-                roomID: this.props.roomID,
-                username: this.props.username,
-            }
-
-            await this.props.changeChannel(id, name, description);
-            await this.props.getChatMessages(data);
-            await this.socket.emit('JOIN_CHANNEL', {
-                room: id,
-                name: this.props.username,
-                avatar: this.props.avatar.length > 20 ? this.props.avatar : undefined
-            })
-        }
-    }
-
-
-    addChannel = async () => {
-        let data = {
-            username: this.props.username,
-            id: this.props.roomID,
-            channelID: uuid4(),
-            name: this.state.channelName,
-            description: this.state.channelDescription
-        }
-
-        await this.props.newChannel(data);
-
-        this.showAddChannel();
-
+    state = {
+        showDeleteBox: false,
+        showInviteString: false,
+        showUserSettings: false,
+        fileUploaded: false,
+        noChannels: false,
+        password: '',
+        confirmPassword: '',
+        avatar: '',
+        avatarPreview: '',
+        avatarError: '',
+        avatarSuccess: '',
     }
 
     deleteRoomHandler = () => {
@@ -89,17 +46,6 @@ class Sidebar extends Component {
 
         this.socket.emit('OWNER_DELETED_ROOM', data);
 
-    }
-
-
-    currentChannelStyle = (index) => {
-        const isSelected = this.props.channelID === index;
-        return isSelected ? styles.ChannelSelected : styles.Channel
-    }
-
-    currentChannelDisable = (index) => {
-        const isSelected = this.props.channelID === index;
-        return isSelected ? true : false;
     }
 
     hideDeleteBox = () => {
@@ -213,18 +159,6 @@ class Sidebar extends Component {
         this.props.updatePassword(data, this.props.username);
     }
 
-    showAddChannel = () => {
-        this.setState({ showAddChannel: !this.state.showAddChannel });
-    }
-
-    channelNameHandler = (e) => {
-        this.setState({ channelName: e.target.value })
-    }
-
-    channelDescriptionHandler = (e) => {
-        this.setState({ channelDescription: e.target.value })
-    }
-
     showInviteHandler = (e) => {
         this.setState({ showInviteString: !this.state.showInviteString });
     }
@@ -240,19 +174,7 @@ class Sidebar extends Component {
         })
     }
 
-
-
     render() {
-
-        let channels = this.props.channels.map(el => {
-            return <div style={{ color: "white" }} key={el.id} className={styles.ChannelWrapper}>
-                <button
-                    onClick={() => this.switchChannel(el.id, el.name, el.description)}
-                    disabled={this.currentChannelDisable(el.id)}
-                    className={this.currentChannelStyle(el.id)}
-                >{"# " + el.name}</button>
-            </div>
-        });
 
         let roomOptions = this.props.showOptions &&
             (
@@ -278,45 +200,9 @@ class Sidebar extends Component {
                 </div>
             )
 
-
-        let addChannel = null
         let deleteBox = null;
         let inviteString = null;
         let userSettings = null;
-
-        if (this.state.showAddChannel) {
-            addChannel = <React.Fragment >
-                <Modal onclick={this.showAddChannel} />
-                <Options >
-                    <div className={styles.AddChannelWrapper}>
-                        <div className={styles.AddChannelDescription}>
-                            <h3>Create new channel</h3>
-                        </div>
-                        <ChatInput
-                            Type="text"
-                            OnChange={this.channelNameHandler}
-                            Placeholder="Enter channel name"
-                            ID="channelName"
-                            autoComplete="off"
-                            ClassName={this.props.errorMessage ? "InputError" : "Input"}
-                        >Room Name</ChatInput>
-                        <ChatInput
-                            Type="text"
-                            OnChange={this.channelDescriptionHandler}
-                            Placeholder="Tell others what is this channel about"
-                            ID="channelDescription"
-                            autoComplete="off"
-                            ClassName={this.props.errorMessage ? "InputError" : "Input"}
-                        >Room Name</ChatInput>
-                        <div className={styles.AddChannelBtns}>
-                            <Button ClassName="Cancel" OnClick={this.showAddChannel}>Cancel</Button>
-                            <Button ClassName="Confirm" OnClick={this.addChannel}>Submit</Button>
-                        </div>
-                    </div>
-                </Options>
-            </React.Fragment>;
-        }
-
 
         if (this.state.showDeleteBox) {
             deleteBox = <React.Fragment>
@@ -413,19 +299,11 @@ class Sidebar extends Component {
                 {deleteBox}
                 {inviteString}
                 {userSettings}
-                {addChannel}
                 <div className={styles.Sidebar}>
                     {roomOptions}
-
-                    <div className={styles.Channels}>
-                        <div className={styles.ChannelsHeader}>
-                            <h3 className={styles.ChannelTitle}>Channels</h3>
-                            {this.props.roomName ? <button onClick={this.showAddChannel} className={styles.AddChannel}>+</button> : null}
-                        </div>
-                        {channels}
-                    </div>
+                    {this.props.roomID && <Channels />}
                     <div className={styles.User}>
-                        <img src={this.props.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} />
+                        <img src={this.props.avatar} alt={this.props.username + " avatar"} className={styles.Avatar} />
                         <p style={{ color: 'white' }}>{this.props.username}</p>
                         <i
                             className="fas fa-cog fa-lg"
@@ -457,12 +335,9 @@ const mapStateToProps = state => {
     return {
         chatRooms: state.chat.chatRooms,
         username: state.auth.username,
-        socketChat: state.auth.socket,
         roomID: state.chat.roomID,
-        channels: state.chat.channels,
         roomName: state.chat.roomName,
         showOptions: state.chat.showRoomOptions,
-        channelID: state.chat.channelID,
         avatar: state.auth.avatar,
         roomOwner: state.chat.roomOwner,
         errorMessage: state.auth.errorMessage,
