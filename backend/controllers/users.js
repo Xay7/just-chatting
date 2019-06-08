@@ -39,7 +39,8 @@ module.exports = {
             local: {
                 email: email,
                 password: password,
-                name: name
+                name: name,
+                avatar: 'https://justchattingbucket.s3.eu-west-3.amazonaws.com/DefaultUserAvatar'
             }
         });
         await newUser.save();
@@ -213,14 +214,32 @@ module.exports = {
 
         const roomID = req.params.id;
 
-        const roomData = await Chatroom.find({ "id": roomID }, { "_id": 0 }).lean().select("channels subscribers");
+        let formattedData = null;
 
-        const formattedData = {
-            channels: roomData[0].channels,
-            subscribers: roomData[0].subscribers
-        }
+        await Chatroom.find({ "id": roomID }, { "_id": 0 }).lean().select("channels subscribers -_id").exec(async function (err, doc) {
 
-        res.status(200).json(formattedData);
+            let subscribers = doc[0].subscribers.map(el => {
+                return el.subscriber;
+            })
+
+            let foundAvatar = await User.find().where("local.name").in(subscribers).select('local.avatar -_id');
+
+            for (let i = 0; i < foundAvatar.length; i++) {
+                doc[0].subscribers[i].avatar = foundAvatar[i].local.avatar;
+            }
+
+            console.log(doc[0].subscribers);
+
+            formattedData = {
+                channels: doc[0].channels,
+                subscribers: doc[0].subscribers
+            }
+            res.status(200).json(formattedData);
+        });
+
+
+
+
 
     },
     newChannel: async (req, res, next) => {
