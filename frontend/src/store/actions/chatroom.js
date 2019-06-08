@@ -21,6 +21,13 @@ const getChannel = async (username, roomID, channelID) => {
     return res;
 }
 
+export const isFetching = () => {
+    return dispatch => {
+        dispatch({
+            type: actionTypes.IS_FETCHING
+        })
+    }
+}
 
 export const updateRooms = (username) => {
     return async dispatch => {
@@ -102,12 +109,20 @@ export const changeRoom = data => {
                 channels: res.data.channels,
                 subscribers: res.data.subscribers,
                 channelName: '',
-                roomOwner: data.roomOwner
+                roomOwner: res.data.owner
             });
         } catch (error) {
 
         }
 
+    }
+}
+
+export const changedRoomUI = () => {
+    return dispatch => {
+        dispatch({
+            type: actionTypes.CHANGE_ROOM_UI
+        })
     }
 }
 

@@ -6,10 +6,6 @@ export const signIn = data => {
         try {
             const res = await axios.post('http://localhost:3001/users/signin', data);
 
-            if (res.data.avatar === '') {
-                res.data.avatar = 'https://justchattingbucket.s3.eu-west-3.amazonaws.com/DefaultUserAvatar';
-            }
-
             dispatch({
                 type: actionTypes.AUTH_SIGN_IN,
                 payload: res.data.token,

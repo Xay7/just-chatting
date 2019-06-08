@@ -17,7 +17,9 @@ const DEFAULT_STATE = {
     channelDescription: '',
     roomOwner: '',
     errorMessage: '',
-    successMessage: ''
+    successMessage: '',
+    changedRoom: false,
+    loading: false
 }
 
 const reducer = (state = DEFAULT_STATE, action) => {
@@ -41,7 +43,14 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 channelName: action.channelName,
                 channelID: '',
                 roomOwner: action.roomOwner,
-                subscribers: action.subscribers
+                subscribers: action.subscribers,
+                changedRoom: true,
+                loading: false
+            }
+        case actionTypes.CHANGE_ROOM_UI:
+            return {
+                ...state,
+                changedRoom: false
             }
         case actionTypes.JOIN_ROOM:
             return {
@@ -98,6 +107,11 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 ...state,
                 errorMessage: '',
                 successMessage: ''
+            }
+        case actionTypes.IS_FETCHING:
+            return {
+                ...state,
+                loading: true
             }
         default:
             return state;
