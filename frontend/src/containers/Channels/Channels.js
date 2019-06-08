@@ -21,26 +21,40 @@ class Channels extends Component {
 
         this.socket = this.props.socketChat;
 
-        this.switchChannel = async (id, name, description) => {
-
-            await this.setState({ selectedChannel: id });
-
-            let data = {
-                channelID: id,
-                roomID: this.props.roomID,
-                username: this.props.username,
-            }
-
-            await this.props.changeChannel(id, name, description);
-            await this.props.getChatMessages(data);
-            await this.socket.emit('JOIN_CHANNEL', {
-                room: id,
-                name: this.props.username,
-                avatar: this.props.avatar
-            })
-        }
 
     }
+
+    componentDidMount() {
+        if (this.props.channels[0]) {
+            this.switchChannel(this.props.channels[0].id, this.props.channels[0].name, this.props.channels[0].description);
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.roomID !== this.props.roomID && this.props.channels[0]) {
+            this.switchChannel(this.props.channels[0].id, this.props.channels[0].name, this.props.channels[0].description);
+        }
+    }
+
+    switchChannel = async (id, name, description) => {
+
+        await this.setState({ selectedChannel: id });
+
+        let data = {
+            channelID: id,
+            roomID: this.props.roomID,
+            username: this.props.username,
+        }
+
+        await this.props.changeChannel(id, name, description);
+        await this.props.getChatMessages(data);
+        await this.socket.emit('JOIN_CHANNEL', {
+            room: id,
+            name: this.props.username,
+            avatar: this.props.avatar
+        })
+    }
+
 
     addChannel = async () => {
         let data = {
