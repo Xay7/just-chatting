@@ -4,6 +4,7 @@ const Chatroom = require('../models/chatroom');
 const { JWT_S } = require('../config/index');
 const upload = require('../services/fileupload');
 const uploadAvatar = upload.single('avatar');
+const uuid4 = require('uuid4');
 
 
 signToken = user => {
@@ -121,7 +122,16 @@ module.exports = {
         const newChatroom = new Chatroom({
             id: id,
             name: name,
-            owner: owner
+            owner: owner,
+            subscribers: {
+                subscriber: owner,
+                joined_at: new Date(),
+            },
+            channels: {
+                id: uuid4(),
+                name: "General"
+            }
+
         })
 
         await newChatroom.save();
@@ -172,7 +182,7 @@ module.exports = {
             {
                 "subscribers": {
                     subscriber: username,
-                    joined_at: new Date()
+                    joined_at: new Date(),
                 }
             }
         })
@@ -216,23 +226,24 @@ module.exports = {
 
         let formattedData = null;
 
-        await Chatroom.find({ "id": roomID }, { "_id": 0 }).lean().select("channels subscribers -_id").exec(async function (err, doc) {
+        await Chatroom.find({ "id": roomID }, { "_id": 0 }).lean().select("channels subscribers -_id owner").exec(async function (err, doc) {
 
-            let subscribers = doc[0].subscribers.map(el => {
+            const subscribers = doc[0].subscribers.map(el => {
                 return el.subscriber;
             })
 
-            let foundAvatar = await User.find().where("local.name").in(subscribers).select('local.avatar -_id');
+            const foundAvatars = await User.find().where("local.name").in(subscribers).select('local.avatar -_id');
 
-            for (let i = 0; i < foundAvatar.length; i++) {
-                doc[0].subscribers[i].avatar = foundAvatar[i].local.avatar;
+            const foundOwner = await User.findOne({ "local.name": doc[0].owner });
+
+            for (let i = 0; i < foundAvatars.length; i++) {
+                doc[0].subscribers[i].avatar = foundAvatars[i].local.avatar;
             }
-
-            console.log(doc[0].subscribers);
 
             formattedData = {
                 channels: doc[0].channels,
-                subscribers: doc[0].subscribers
+                subscribers: doc[0].subscribers,
+                owner: foundOwner.local.name
             }
             res.status(200).json(formattedData);
         });
@@ -319,7 +330,7 @@ module.exports = {
             author: username,
             body: req.body.body,
             created_at: req.body.created_at,
-            avatar: req.body.avatar ? req.body.avatar : undefined
+            avatar: req.body.avatar
         }
 
         await Chatroom.findOneAndUpdate({ "id": id, "channels.id": req.params.channelID }, {

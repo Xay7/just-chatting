@@ -17,6 +17,7 @@ const chatSchema = new Schema({
     subscribers: [
         {
             subscriber: String,
+            role: String,
             joined_at: String
         }
     ],
