@@ -320,6 +320,14 @@ module.exports = {
         });
     },
     deleteChannel: async (req, res, next) => {
+
+        const roomID = req.params.id;
+        const channelID = req.params.channelID;
+
+        await Chatroom.updateOne({ "id": roomID }, {
+            "$pull": { "channels": { "id": channelID } }
+        })
+
         res.status(200).json({ success: "Channel has been deleted" })
     },
     storeMessage: async (req, res, next) => {
