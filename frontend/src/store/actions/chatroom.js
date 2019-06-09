@@ -6,18 +6,13 @@ const getRooms = async (username) => {
     return res;
 }
 
-const getRoomData = async (username, id) => {
+const getRoom = async (username, id) => {
     const res = await axios.get(`http://localhost:3001/users/${username}/chat/${id}`);
     return res;
 }
 
 const getChannels = async (username, id) => {
     const res = await axios.get(`http://localhost:3001/users/${username}/chat/${id}/channels`)
-    return res;
-}
-
-const getChannel = async (username, roomID, channelID) => {
-    const res = await axios.get(`http://localhost:3001/users/${username}/chat/${roomID}/channels/${channelID}`)
     return res;
 }
 
@@ -39,7 +34,9 @@ export const updateRooms = (username) => {
             })
         }
         catch (err) {
-            console.log(err);
+            dispatch({
+                type: actionTypes.GET_ROOMS_ERROR
+            })
         }
     }
 }
@@ -96,11 +93,31 @@ export const changeChannel = (id, name, description) => {
     }
 }
 
+export const deleteChannel = (roomID, channelID, username) => {
+    return async dispatch => {
+        try {
+
+            await axios.delete(`http://localhost:3001/users/${username}/chat/${roomID}/channels/${channelID}`)
+
+            const res = await getChannels(username, roomID);
+
+            dispatch({
+                type: actionTypes.DELETE_CHANNEL,
+                channels: res.data.channels
+            })
+
+        } catch (error) {
+
+        }
+    }
+
+}
+
 export const changeRoom = data => {
     return async dispatch => {
         try {
 
-            const res = await getRoomData(data.username, data.id);
+            const res = await getRoom(data.username, data.id);
 
             dispatch({
                 type: actionTypes.CHANGE_ROOM,
