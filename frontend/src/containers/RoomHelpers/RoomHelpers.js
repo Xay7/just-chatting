@@ -3,11 +3,7 @@ import styles from './RoomHelpers.module.scss';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/chatroom';
 import Radium from 'radium';
-import Modal from '../../components/Modal/Modal';
-import Options from '../../components/Options/Options';
-import ChatInput from '../../components/ChatInput/ChatInput';
-import Button from '../../components/Button/Button';
-import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import ChannelSettings from '../ChannelSettings/ChannelSettings';
 
 class RoomHelpers extends Component {
 
@@ -46,51 +42,10 @@ class RoomHelpers extends Component {
         await this.props.changeChannelSettings(data);
     }
 
-    channelNameHandler = (e) => {
-        this.setState({ channelName: e.target.value })
-    }
-
-    channelDescriptionHandler = (e) => {
-        this.setState({ channelDescription: e.target.value })
-    }
-
     render() {
         return (
             <React.Fragment>
-                {this.state.showChannelSettings &&
-                    <React.Fragment>
-                        <Modal onclick={this.showChannelSettings} />
-                        <Options>
-                            <div className={styles.ChannelSettingsWrapper}>
-                                <h3>Edit channel settings</h3>
-                                <ChatInput
-                                    Type="text"
-                                    OnChange={this.channelNameHandler}
-                                    Placeholder="New channel name"
-                                    ID="channelName"
-                                    autoComplete="off"
-                                    ClassName={this.props.errorMessage ? "InputError" : "Input"}
-                                >Room Name</ChatInput>
-                                <ChatInput
-                                    Type="text"
-                                    OnChange={this.channelDescriptionHandler}
-                                    Placeholder="New description"
-                                    ID="channelDescription"
-                                    autoComplete="off"
-                                    ClassName={this.props.errorMessage ? "InputError" : "Input"}
-                                >Room description</ChatInput>
-                                {this.props.errorMessage && <ErrorMessage>{this.props.errorMessage}</ErrorMessage>}
-                                {this.props.successMessage && <ErrorMessage>{this.props.successMessage}</ErrorMessage>}
-                                <div className={styles.Btns}>
-
-                                    <Button ClassName="Cancel" OnClick={this.showChannelSettings}>Cancel</Button>
-                                    <Button ClassName="Confirm" OnClick={this.changeChannelSettings}>Submit</Button>
-                                </div>
-                                <Button ClassName="Danger" OnClick={this.showDeleteChannelBox}>Delete Channel</Button>
-                            </div>
-                        </Options>
-                    </React.Fragment>
-                }
+                {this.state.showChannelSettings && <ChannelSettings display={this.showChannelSettings} />}
                 <div className={styles.RoomHelpers} >
                     <div className={styles.Room} onClick={this.showOptionsHandler}>
                         <h2 className={styles.RoomName}>{this.props.roomName}</h2>
@@ -128,11 +83,7 @@ class RoomHelpers extends Component {
 const mapStateToProps = state => {
     return {
         roomName: state.chat.roomName,
-        channelName: state.chat.channelName,
         channelDescription: state.chat.channelDescription,
-        channelID: state.chat.channelID,
-        username: state.auth.username,
-        roomID: state.chat.roomID,
         errorMessage: state.chat.errorMessage,
         successMessage: state.chat.successMessage
     }
