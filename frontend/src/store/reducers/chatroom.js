@@ -3,10 +3,7 @@ import * as actionTypes from '../actions/actionTypes';
 const DEFAULT_STATE = {
     roomID: '',
     roomName: '',
-    chatRooms: {
-        owned: [],
-        joined: []
-    },
+    chatRooms: [],
     subscribers: [],
     channels: [],
     channelID: '',

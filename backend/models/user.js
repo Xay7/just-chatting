@@ -23,12 +23,7 @@ const userSchema = new Schema({
             type: String,
         },
         chatRooms: {
-            owned: {
-                type: Array
-            },
-            joined: {
-                type: Array
-            },
+            type: Array
         }
     },
     google: {

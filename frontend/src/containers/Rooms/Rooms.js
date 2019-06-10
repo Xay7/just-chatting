@@ -123,8 +123,6 @@ class Rooms extends Component {
 
     async componentDidMount() {
         await this.props.updateRooms(this.props.username);
-        this.setState({ chatRooms: this.props.chatRooms });
-        console.log(this.props.chatRooms);
         this.socket.emit("USER_LOGGED_IN");
     }
 
@@ -151,17 +149,7 @@ class Rooms extends Component {
 
     render() {
 
-        let ownedChatrooms = this.props.chatRooms.owned.map(room => {
-            return <div key={room.id}>
-                <button
-                    className={this.currentRoomStyle(room.id)}
-                    onClick={() => this.changeChatroom(room.id, room.name, room.channels, room.owner)}
-                    disabled={this.currentRoomDisable(room.id)}>{room.name.charAt(0)}
-                </button>
-            </div>
-        })
-
-        let joinedChatrooms = this.props.chatRooms.joined.map(room => {
+        let chatRooms = this.props.chatRooms.map(room => {
             return <div key={room.id}>
                 <button
                     className={this.currentRoomStyle(room.id)}
@@ -260,8 +248,7 @@ class Rooms extends Component {
             <React.Fragment>
                 {noChannels}
                 <div className={styles.Rooms}>
-                    {ownedChatrooms}
-                    {joinedChatrooms}
+                    {chatRooms}
                     <button
                         onClick={this.showAddorJoin}
                         className={styles.AddChatroom}>

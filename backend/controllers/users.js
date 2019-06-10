@@ -79,22 +79,11 @@ module.exports = {
     },
     chat: async (req, res, next) => {
 
-        const ownedChatroomsId = req.user.local.chatRooms.owned;
-        const joinedChatroomsId = req.user.local.chatRooms.joined;
+        const chatrooms = req.user.local.chatRooms
 
-        const ownedChatroomData = await Chatroom.find().where('id').in(ownedChatroomsId);
-        const joinedChatroomData = await Chatroom.find().where('id').in(joinedChatroomsId);
+        const foundChatrooms = await Chatroom.find().where('id').in(chatrooms);
 
-        const formattedOwnedData = ownedChatroomData.map(el => {
-            return {
-                id: el.id,
-                name: el.name,
-                channels: el.channels,
-                owner: el.owner
-            }
-        })
-
-        const formattedJoinedData = joinedChatroomData.map(el => {
+        const formattedChatrooms = foundChatrooms.map(el => {
             return {
                 id: el.id,
                 name: el.name,
@@ -105,10 +94,7 @@ module.exports = {
 
         res.status(200).json({
             username: req.user.local.name,
-            chatRooms: {
-                owned: formattedOwnedData,
-                joined: formattedJoinedData
-            }
+            chatRooms: formattedChatrooms
         })
 
     },
@@ -139,7 +125,7 @@ module.exports = {
         await User.findOneAndUpdate({ "local.name": owner }, {
             "$push":
             {
-                "local.chatRooms.owned": id
+                "local.chatRooms": id
             }
         })
 
@@ -152,16 +138,12 @@ module.exports = {
 
         const foundUser = await User.findOne({ "local.name": username });
 
-        const ownedChatrooms = foundUser.local.chatRooms.owned
-        const joinedChatrooms = foundUser.local.chatRooms.joined
+        const userChatrooms = foundUser.local.chatRooms
 
         // Make sure user can't join arleady joined rooms
 
-        if (ownedChatrooms.includes(id)) {
+        if (userChatrooms.includes(id)) {
             return res.status(409).json({ error: "Can't join owned room" })
-        }
-        if (joinedChatrooms.includes(id)) {
-            return res.status(409).json({ error: "You arleady joined this room" })
         }
 
         const foundChatroom = await Chatroom.findOne({ "id": id });
@@ -173,7 +155,7 @@ module.exports = {
         await User.findOneAndUpdate({ "local.name": username }, {
             "$push":
             {
-                "local.chatRooms.joined": id
+                "local.chatRooms": id
             }
         })
 
@@ -204,17 +186,10 @@ module.exports = {
         // Delete chatroom
         await Chatroom.findOneAndDelete({ "id": id });
 
-        // Find owner and delete it's id
-        await User.findOneAndUpdate({ "local.chatRooms.owned": id }, {
-            $pull: {
-                "local.chatRooms.owned": id
-            }
-        });
-
         // Find room clients and delete all id's
-        await User.updateMany({ "local.chatRooms.joined": id }, {
+        await User.updateMany({ "local.chatRooms": id }, {
             $pull: {
-                "local.chatRooms.joined": id
+                "local.chatRooms": id
             }
         });
 
@@ -247,10 +222,6 @@ module.exports = {
             }
             res.status(200).json(formattedData);
         });
-
-
-
-
 
     },
     newChannel: async (req, res, next) => {
