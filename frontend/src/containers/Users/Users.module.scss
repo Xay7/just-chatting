@@ -1,16 +1,16 @@
-$basecolor: #F5F5F5;
-$black: #333333;
+$black: #444444;
+$white: #F5F5F5;
 
 .Users {
     position: relative;
     min-width: 240px;
-    background-color: $basecolor;
+    background-color: $white;
     height: 100%;
-    border-left: 1px solid #DDD;
+    border-left: 1px solid #DCDCDC;
 }
 
 .User {
-    font-size: 16px;
+    font-size: 18px;
     color: $black;
     text-align: center;
     text-transform: capitalize;
@@ -38,4 +38,13 @@ $black: #333333;
     width: 100%;
     margin-top: 10px;
     height: 30px;
+}
+
+.UserRole {
+    margin: 0;
+    margin-left: 20px;
+    margin-top: 10px;
+    color: rgb(114, 114, 114);
+    text-transform: uppercase;
+
 }

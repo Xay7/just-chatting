@@ -31,8 +31,17 @@ class Channels extends Component {
     }
 
     componentDidUpdate(prevProps) {
+        // Initial channel join
         if (prevProps.roomID !== this.props.roomID && this.props.channels[0]) {
-            this.switchChannel(this.props.channels[0].id, this.props.channels[0].name, this.props.channels[0].description);
+            return this.switchChannel(this.props.channels[0].id, this.props.channels[0].name, this.props.channels[0].description);
+        }
+        // Check if channel is deleted and automatically join first one
+        if (this.props.channels.length < prevProps.channels.length && this.props.channels[0]) {
+            return this.switchChannel(this.props.channels[0].id, this.props.channels[0].name, this.props.channels[0].description);
+        }
+        // Auto join when there's no channels and user add new one
+        if (prevProps.channels.length === 0 && this.props.channels.length > 0) {
+            return this.switchChannel(this.props.channels[0].id, this.props.channels[0].name, this.props.channels[0].description);
         }
     }
 
@@ -97,16 +106,25 @@ class Channels extends Component {
     render() {
 
         let channels = this.props.channels.map((el, index) => {
-            return <div style={{ color: "white" }} key={el.id} className={styles.ChannelWrapper}>
+            return <div key={el.id} className={this.currentChannelStyle(el.id)}>
                 <button
                     onClick={() => this.switchChannel(el.id, el.name, el.description)}
                     disabled={this.currentChannelDisable(el.id)}
-                    className={this.currentChannelStyle(el.id)}
                 >{"# " + el.name}</button>
             </div>
         });
 
         let addChannel = null;
+        let noChannels = null;
+
+        if (this.props.channels.length === 0) {
+            noChannels = <div className={styles.NoChannel}>
+                <div className={styles.NoChannelsTextWrapper}>
+                    <h1>No channels detected</h1>
+                    <p>You can add channel by pressing plus button in the sidebar</p>
+                </div>
+            </div>
+        }
 
         if (this.state.showAddChannel) {
             addChannel = <React.Fragment >
@@ -121,7 +139,7 @@ class Channels extends Component {
                             OnChange={this.channelNameHandler}
                             Placeholder="Enter channel name"
                             ID="channelName"
-                            autoComplete="off"
+                            AutoComplete="off"
                             ClassName={this.props.errorMessage ? "InputError" : "Input"}
                         >Room Name</ChatInput>
                         <ChatInput
@@ -129,7 +147,7 @@ class Channels extends Component {
                             OnChange={this.channelDescriptionHandler}
                             Placeholder="Tell others what is this channel about"
                             ID="channelDescription"
-                            autoComplete="off"
+                            AutoComplete="off"
                             ClassName={this.props.errorMessage ? "InputError" : "Input"}
                         >Room Name</ChatInput>
                         <div className={styles.AddChannelBtns}>
@@ -145,7 +163,9 @@ class Channels extends Component {
         return (
             <React.Fragment>
                 {addChannel}
+
                 <div className={styles.Channels}>
+                    {noChannels}
                     <div className={styles.ChannelsHeader}>
                         <h3 className={styles.ChannelTitle}>Channels</h3>
                         {this.props.roomName ? <button onClick={this.showAddChannel} className={styles.AddChannel}>+</button> : null}

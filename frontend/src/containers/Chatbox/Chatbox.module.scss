@@ -1,9 +1,10 @@
-$basecolor: #F5F5F5;
+$white: #F5F5F5;
+$black: #444444;
 
 .Chatbox {
     position: relative;
     width: 100%;
-    background-color: $basecolor;
+    background-color: $white;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -34,14 +35,17 @@ $basecolor: #F5F5F5;
 }
 
 .MessagesContainer {
+    box-sizing: border-box;
     width: 100%;
-    background-color: $basecolor;
+    background-color: $white;
     margin: 0 auto;
+    padding-bottom: 10px;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
     flex: 2;
+    border-bottom: 1px solid #DCDCDC;
 }
 
 .MessagesContainer::-webkit-scrollbar {
@@ -51,12 +55,12 @@ $basecolor: #F5F5F5;
 }
 
 .MessagesContainer::-webkit-scrollbar-track {
-    background-color: #F0F0F0;
+    background-color: #eeeeee;
     border-radius: 10px;
 }
 
 .MessagesContainer::-webkit-scrollbar-thumb {
-    background-color: #D3D3D3;
+    background-color: #dbdbdb;
     border-radius: 10px;
 
 }
@@ -69,7 +73,7 @@ $basecolor: #F5F5F5;
 .Messages {
     font-size: 14px;
     width: 100%;
-    color: #333333;
+    color: $black;
     background-color: inherit;
     word-wrap: break-word;
 }
@@ -83,7 +87,7 @@ $basecolor: #F5F5F5;
 
 .MessageHorizontalLine {
     width: 90%;
-    border: 1px solid rgb(233, 234, 235);
+    border: 0.5px solid #DCDCDC;
     margin-top: 15px;
     margin-bottom: 15px;
 }
@@ -96,21 +100,19 @@ $basecolor: #F5F5F5;
 }
 
 .MessageHeader {
-    color: #333333;
+    color: $black;
     display: flex;
     flex-direction: row;
     align-items: center;
-    text-transform: capitalize;
 }
 
 .Date {
-    color: #aaa;
+    color: #B0B0B0;
     margin: 0;
     margin-bottom: 7px;
     margin-left: 10px;
     font-size: 10px;
 }
-
 
 .Avatar {
     margin: 0 15px;
@@ -125,5 +127,5 @@ $basecolor: #F5F5F5;
 }
 
 .Link:visited {
-    color: blue;
+    color: rgb(0, 217, 255);
 }

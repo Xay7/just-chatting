@@ -50,7 +50,7 @@ class Chatbox extends Component {
             addMessage(data);
         });
 
-        this.socket.on('NEW_ROOM', (data) => {
+        this.socket.on('UPDATING_MESSAGES', (data) => {
             let messagesFormated = this.props.messages.map(el => {
                 el.created_at = moment(el.created_at).calendar(null);
                 return el;
@@ -59,7 +59,7 @@ class Chatbox extends Component {
             this.scrollToBottom()
         });
 
-        this.socket.on('LEFT_ROOM', () => {
+        this.socket.on('CHANGED_ROOM', () => {
             this.setState({
                 message: '',
                 messages: [],
@@ -128,7 +128,7 @@ class Chatbox extends Component {
     onChangeHandler = (e) => {
 
         this.socket.emit('CLIENT_IS_TYPING', {
-            room: this.props.channelID
+            channel: this.props.channelID
         })
 
         this.setState({
@@ -226,23 +226,27 @@ class Chatbox extends Component {
 
 
         return (
-            <div className={styles.Chatbox}>
-                <div className={styles.MessagesContainer} ref={(div) => {
-                    this.messageContainer = div;
-                }}>
-                    {messages}
-                    {this.state.typing ? <UserTyping /> : null}
-                </div>
+            <React.Fragment>
+                {!this.props.roomID || this.props.channels.length === 0 ? null :
+                    <div className={styles.Chatbox}>
+                        <div className={styles.MessagesContainer} ref={(div) => {
+                            this.messageContainer = div;
+                        }}>
+                            {messages}
+                            {this.state.typing ? <UserTyping /> : null}
+                        </div>
 
-                <div className={styles.InputContainer}>
-                    <input type="text"
-                        onKeyDown={this.enterHandler}
-                        placeholder="Enter your message"
-                        className={styles.MessageInput}
-                        value={this.state.message}
-                        onChange={this.onChangeHandler} />
-                </div>
-            </div>
+                        <div className={styles.InputContainer}>
+                            <input type="text"
+                                onKeyDown={this.enterHandler}
+                                placeholder="Enter your message"
+                                className={styles.MessageInput}
+                                value={this.state.message}
+                                onChange={this.onChangeHandler} />
+                        </div>
+                    </div>
+                }
+            </React.Fragment>
         )
     }
 
@@ -256,7 +260,9 @@ const mapStateToProps = state => {
         roomID: state.chat.roomID,
         messages: state.chat.messages,
         channelID: state.chat.channelID,
-        avatar: state.auth.avatar
+        avatar: state.auth.avatar,
+        channels: state.chat.channels,
+
     }
 }
 

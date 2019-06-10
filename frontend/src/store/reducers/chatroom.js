@@ -29,6 +29,10 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 ...state,
                 chatRooms: action.chatRooms
             }
+        case actionTypes.GET_ROOMS_ERROR:
+            return {
+                ...state,
+            }
         case actionTypes.NEW_ROOM:
             return {
                 ...state,
@@ -63,6 +67,7 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 chatRooms: action.chatRooms,
                 channels: [],
                 roomName: '',
+                roomID: '',
                 channelDescription: '',
                 updateRooms: true,
                 showRoomOptions: false,
@@ -95,6 +100,11 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 ...state,
                 errorMessage: action.errorMessage,
                 successMessage: ''
+            }
+        case actionTypes.DELETE_CHANNEL:
+            return {
+                ...state,
+                channels: action.channels
             }
         case actionTypes.SHOW_ROOM_OPTIONS:
             return {

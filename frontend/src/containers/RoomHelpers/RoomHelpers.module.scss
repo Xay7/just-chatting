@@ -1,6 +1,6 @@
 $roomColor: #182C61;
-$channelColor: #F5F5F5;
-$black: #333333;
+$black: #444444;
+$white: #F5F5F5;
 
 .RoomHelpers {
     height: 50px;
@@ -8,6 +8,7 @@ $black: #333333;
     display: flex;
     flex-direction: row;
     position: relative;
+    z-index: 2;
 }
 
 .Room {
@@ -28,7 +29,6 @@ $black: #333333;
     margin: 0;
     margin-left: 20px;
     color: white;
-
 }
 
 .ChannelName {
@@ -51,22 +51,15 @@ $black: #333333;
     align-items: center;
     width: calc(100vw - 310px);
     height: inherit;
-    background-color: $channelColor;
-    border-bottom: 1px solid #DDD;
+    background-color: $white;
     z-index: 1;
+    border-bottom: 1px solid #DCDCDC;
 }
 
 .ChannelDescription {
+    color: $black;
     font-size: 12px;
     margin-left: 20px;
-}
-
-.VerticalLine {
-    border-left: 1px solid #ff0000;
-}
-
-.dropdown {
-    color: white
 }
 
 .ChannelSettingsWrapper {

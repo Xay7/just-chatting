@@ -27,6 +27,8 @@ class Rooms extends Component {
 
         this.changeChatroom = async (roomID, roomName, roomChannels, roomOwner) => {
 
+            this.props.isFetching();
+
             this.setState({ selectedRoom: roomID });
 
             let data = {
@@ -37,11 +39,15 @@ class Rooms extends Component {
                 roomOwner: roomOwner
             }
 
-            await this.socket.emit('LEAVE_ROOM', {
-                channelID: this.props.channelID
+            await this.props.changeRoom(data);
+
+            await this.socket.emit('CHANGE_ROOM', {
+                roomID: this.props.roomID,
+                username: this.props.username,
+                avatar: this.props.avatar
             })
 
-            await this.props.changeRoom(data);
+
 
         }
 
@@ -118,6 +124,8 @@ class Rooms extends Component {
     async componentDidMount() {
         await this.props.updateRooms(this.props.username);
         this.setState({ chatRooms: this.props.chatRooms });
+        console.log(this.props.chatRooms);
+        this.socket.emit("USER_LOGGED_IN");
     }
 
     // Changes selected room styles for visual clarity
@@ -164,6 +172,16 @@ class Rooms extends Component {
         })
 
         let addOrJoin = null;
+        let noChannels = !this.props.roomID;
+
+        if (!this.props.roomID) {
+            noChannels = <div className={styles.NoRooms}>
+                <div className={styles.NoRoomsTextWrapper}>
+                    <h1>Waiting to join a room</h1>
+                    <p>You can join or add room at the left sidebar</p>
+                </div>
+            </div>
+        } else noChannels = null;
 
 
         if (this.state.showAddOrJoin) {
@@ -199,7 +217,7 @@ class Rooms extends Component {
                             OnChange={this.roomNameHandler}
                             Placeholder="Enter room name"
                             ID="room"
-                            autoComplete="off"
+                            AutoComplete="off"
                             ClassName={this.props.errorMessage ? "InputError" : "Input"}
                         >Room Name</ChatInput>
                         <div className={styles.AddJoinBtns}>
@@ -224,7 +242,8 @@ class Rooms extends Component {
                             OnChange={this.roomIdHandler}
                             Placeholder="Enter room ID"
                             ID="room"
-                            autoComplete="off"
+                            AutoComplete="off"
+                            ClassName={this.props.errorMessage ? "InputError" : "Input"}
                         >Room ID</ChatInput>
                         <div className={styles.AddJoinBtns}>
                             <Button ClassName="Cancel" OnClick={this.showAddorJoin}>Cancel</Button>
@@ -239,6 +258,7 @@ class Rooms extends Component {
 
         return (
             <React.Fragment>
+                {noChannels}
                 <div className={styles.Rooms}>
                     {ownedChatrooms}
                     {joinedChatrooms}
@@ -260,7 +280,9 @@ const mapStateToProps = state => {
         chatRooms: state.chat.chatRooms,
         socketChat: state.auth.socket,
         channelID: state.chat.channelID,
-        updateRooms: state.chat.updateRooms
+        updateRooms: state.chat.updateRooms,
+        roomID: state.chat.roomID,
+        avatar: state.auth.avatar
     }
 }
 

@@ -45,35 +45,42 @@ class RoomHelpers extends Component {
     render() {
         return (
             <React.Fragment>
-                {this.state.showChannelSettings && <ChannelSettings display={this.showChannelSettings} />}
-                <div className={styles.RoomHelpers} >
-                    <div className={styles.Room} onClick={this.showOptionsHandler}>
-                        <h2 className={styles.RoomName}>{this.props.roomName}</h2>
-                        <i
-                            className="fas fa-caret-down fa-lg"
-                            style={{
-                                color: "white",
-                                marginRight: '22px'
-                            }}></i>
-                    </div>
-                    <div className={styles.Channel}>
-                        <h2 className={styles.ChannelName}>{this.props.channelName}</h2>
-                        <p className={styles.ChannelDescription}>{this.props.channelDescription}</p>
-                        <i
-                            className="fas fa-cog fa-lg"
-                            style={{
-                                position: "absolute",
-                                right: "0",
-                                marginRight: "20px",
-                                color: "black",
-                                ':hover': {
-                                    color: '#BBB',
-                                    cursor: 'pointer'
-                                },
-                            }}
-                            onClick={this.showChannelSettings}></i>
-                    </div>
-                </div>
+                {!this.props.roomID ? null :
+                    <React.Fragment>
+                        {this.state.showChannelSettings && <ChannelSettings display={this.showChannelSettings} />}
+                        <div className={styles.RoomHelpers} >
+                            <div className={styles.Room} onClick={this.showOptionsHandler}>
+                                <h2 className={styles.RoomName}>{this.props.roomName}</h2>
+                                {this.props.roomID && <i
+                                    className="fas fa-caret-down fa-lg"
+                                    style={{
+                                        color: "white",
+                                        marginRight: '22px'
+                                    }}></i>}
+
+                            </div>
+                            {this.props.channels.length === 0 ? null :
+                                <div className={styles.Channel}>
+                                    <h2 className={styles.ChannelName}>{this.props.channelName}</h2>
+                                    <p className={styles.ChannelDescription}>{this.props.channelDescription}</p>
+                                    <i
+                                        className="fas fa-cog fa-lg"
+                                        style={{
+                                            position: "absolute",
+                                            right: "0",
+                                            marginRight: "20px",
+                                            color: "#444444",
+                                            ':hover': {
+                                                color: '#BBB',
+                                                cursor: 'pointer'
+                                            },
+                                        }}
+                                        onClick={this.showChannelSettings}></i>
+                                </div>
+                            }
+                        </div>
+                    </React.Fragment>
+                }
             </React.Fragment>
         )
     }
@@ -83,9 +90,12 @@ class RoomHelpers extends Component {
 const mapStateToProps = state => {
     return {
         roomName: state.chat.roomName,
+        roomID: state.chat.roomID,
+        channels: state.chat.channels,
         channelDescription: state.chat.channelDescription,
         errorMessage: state.chat.errorMessage,
-        successMessage: state.chat.successMessage
+        successMessage: state.chat.successMessage,
+        channelName: state.chat.channelName
     }
 }
 

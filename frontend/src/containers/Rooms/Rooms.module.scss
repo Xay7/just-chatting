@@ -1,5 +1,6 @@
 $basecolor: #081b50;
-$black: #333333;
+$black: #444444;
+$white: #F5F5F5;
 
 .Rooms {
     height: 100vh;
@@ -58,12 +59,16 @@ $black: #333333;
 
 .RoomSelected {
     color: white;
-    background-color: rgb(46, 88, 201)
+    background-color: hsl(224, 63%, 48%)
 }
 
 .RoomNotSelected {
     color: #FDFDFD;
+    transition: 350ms all ease-out;
 
+    &:hover {
+        background-color: rgb(46, 88, 201)
+    }
 }
 
 .Wrapper,
@@ -126,4 +131,31 @@ h3 {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.NoRooms {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    width: calc(100% - 310px);
+    margin-left: 310px;
+    background-color: $white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.NoRoomsTextWrapper h1 {
+    font-weight: bold;
+    font-size: 48px;
+    text-align: center;
+    color: $black;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.NoRoomsTextWrapper p {
+    margin: 0;
+    color: $black;
+    text-align: center;
 }

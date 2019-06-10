@@ -20,7 +20,7 @@ const userSchema = new Schema({
             type: String,
         },
         avatar: {
-            type: String
+            type: String,
         },
         chatRooms: {
             owned: {

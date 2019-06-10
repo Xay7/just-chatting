@@ -24,7 +24,7 @@ class SignUp extends Component {
         const userInfo = {
             name: this.state.name,
             email: this.state.email,
-            password: this.state.password
+            password: this.state.password,
         }
 
         await this.props.signUp(userInfo);

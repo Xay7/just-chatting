@@ -6,6 +6,9 @@ const Modal = (props) => {
         <div
             className={styles.Modal}
             onClick={props.onclick}
+            style={{
+                zIndex: props.zIndex
+            }}
         ></div>
     )
 }

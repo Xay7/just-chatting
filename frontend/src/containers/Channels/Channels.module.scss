@@ -1,4 +1,6 @@
 $white: #F5F5F5;
+$black: #444444;
+
 
 .Channels {
     display: flex;
@@ -8,19 +10,29 @@ $white: #F5F5F5;
 
 .Channel,
 .ChannelSelected {
-    margin-top: 5px;
-    margin-left: 20px;
-    padding: 0;
-    font-size: 1em;
-    background: transparent;
-    border: none;
-    width: auto;
+    width: 200px;
+    margin: 0 auto;
+    padding: 7px;
     color: $white;
+    border-radius: 5px;
+}
+
+.Channel button,
+.ChannelSelected button {
+    color: $white;
+    font-size: 1em;
     outline: none;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.ChannelSelected button {
+    cursor: auto;
 }
 
 .ChannelSelected {
-    color: red;
+    background-color: #2e58c9;
 }
 
 .ChannelTitle {
@@ -79,4 +91,31 @@ $white: #F5F5F5;
     justify-content: space-between;
     outline: none;
     margin: 0 30px;
+}
+
+.NoChannel {
+    top: 0;
+    position: fixed;
+    height: 100vh;
+    width: calc(100% - 240px);
+    margin-left: 240px;
+    background-color: $white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.NoChannelsTextWrapper h1 {
+    font-weight: bold;
+    font-size: 48px;
+    text-align: center;
+    color: $black;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.NoChannelsTextWrapper p {
+    margin: 0;
+    color: $black;
+    text-align: center;
 }

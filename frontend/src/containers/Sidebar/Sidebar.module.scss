@@ -1,13 +1,12 @@
 $basecolor: #182C61;
 $white: #F5F5F5;
+$black: #444444;
 
 .Sidebar {
-    position: relative;
     min-width: 240px;
-    height: 100%;
+    min-height: 100%;
     background-color: $basecolor;
     box-shadow: 0 1px 1px 0px rgba(0, 0, 0, 0.10);
-    z-index: 1;
 }
 
 .ChannelWrapper {
@@ -111,7 +110,7 @@ $white: #F5F5F5;
 
 .InviteString {
     width: 450px;
-    height: 120px;
+    height: 150px;
     background-color: white;
     border-radius: 5px;
     display: flex;
@@ -128,7 +127,6 @@ $white: #F5F5F5;
     height: 30px;
     background-color: white;
     padding: 5px;
-    margin-bottom: 10px;
 }
 
 .Copy {
@@ -150,6 +148,7 @@ $white: #F5F5F5;
 .User {
     width: 100%;
     position: absolute;
+    width: 240px;
     bottom: 0;
     background-color: rgb(22, 39, 88);
     display: flex;

@@ -15,19 +15,28 @@ import Channels from '../Channels/Channels'
 
 class Sidebar extends Component {
 
-    state = {
-        showDeleteBox: false,
-        showInviteString: false,
-        showUserSettings: false,
-        fileUploaded: false,
-        noChannels: false,
-        password: '',
-        confirmPassword: '',
-        avatar: '',
-        avatarPreview: '',
-        avatarError: '',
-        avatarSuccess: '',
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            showDeleteBox: false,
+            showInviteString: false,
+            copiedInviteString: false,
+            showUserSettings: false,
+            fileUploaded: false,
+            noChannels: false,
+            password: '',
+            confirmPassword: '',
+            avatar: '',
+            avatarPreview: '',
+            avatarError: '',
+            avatarSuccess: '',
+        }
+
+        this.socket = this.props.socketChat;
     }
+
 
     deleteRoomHandler = () => {
         this.setState({ showDeleteBox: !this.state.showDeleteBox })
@@ -160,7 +169,10 @@ class Sidebar extends Component {
     }
 
     showInviteHandler = (e) => {
-        this.setState({ showInviteString: !this.state.showInviteString });
+        this.setState({
+            showInviteString: !this.state.showInviteString,
+            copiedInviteString: false
+        })
     }
 
     showUserSettings = (e) => {
@@ -172,6 +184,10 @@ class Sidebar extends Component {
             avatarSuccess: '',
             avatar: ''
         })
+    }
+
+    copiedInviteString = () => {
+        this.setState({ copiedInviteString: true });
     }
 
     render() {
@@ -226,9 +242,11 @@ class Sidebar extends Component {
                         <div className={styles.InputWithBtn}>
                             <input value={this.props.roomID} disabled className={styles.InviteInput} />
                             <CopyToClipboard text={this.props.roomID}>
-                                <button className={styles.Copy}>Copy</button>
+                                <button className={styles.Copy} onClick={this.copiedInviteString}>Copy</button>
                             </CopyToClipboard>
                         </div>
+                        {this.state.copiedInviteString ? <p style={{ margin: 0 }}>Copied <span role="img" aria-label="thumbs up">👍</span></p> :
+                            <span style={{ margin: 0, visibility: "hidden" }}>Copied <span role="img" aria-label="thumbs up">👍</span></span>}
                     </div>
                 </Options>
             </React.Fragment>
@@ -335,6 +353,7 @@ const mapStateToProps = state => {
     return {
         chatRooms: state.chat.chatRooms,
         username: state.auth.username,
+        socketChat: state.auth.socket,
         roomID: state.chat.roomID,
         roomName: state.chat.roomName,
         showOptions: state.chat.showRoomOptions,

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styles from './Users.module.scss';
 import { connect } from 'react-redux';
+import Loader from '../../components/Loader/Loader';
 
 class Users extends Component {
 
@@ -13,16 +14,12 @@ class Users extends Component {
         }
 
         this.socket = this.props.socketChat;
-        // Fix socket staying when leaving
+
         this.socket.on('UPDATING_USERS', (data) => {
+            console.log(data);
             this.setState({ users: data });
         })
 
-        this.socket.on('LEFT_ROOM', () => {
-            this.setState({
-                users: []
-            })
-        })
     }
 
     render() {
@@ -30,29 +27,41 @@ class Users extends Component {
         let connectedUsers = this.state.users.map(user => {
             return (
                 <div className={styles.UserWrapper} key={user.username}>
-                    <img src={user.avatar} alt={user.username + " avatar"} className={styles.Avatar} />
+                    <img src={user.avatar} alt={user.username + " avatar"} className={styles.Avatar} s />
                     <p className={styles.User} key={user.username}>{user.username}</p>
-
                 </div>
             )
         })
 
-        let subscribers = this.props.subscribers.map(data => {
+        let subscribers = null;
+
+        if (this.props.loading) {
+            subscribers = <Loader />
+        } else subscribers = this.props.subscribers.map(data => {
             const isOnline = this.state.users.some((el) => {
                 return el.username === data.subscriber;
             })
             if (isOnline) {
                 return null;
-            } else return <div>{data.subscriber}</div>
-
+            } else return (
+                <div className={styles.UserWrapper} key={data.subscriber}>
+                    <img src={data.avatar} alt={data.avatar + " avatar"} className={styles.Avatar} />
+                    <div>{data.subscriber}</div>
+                </div>
+            )
         })
 
         return (
-            <div className={styles.Users}>
-                {this.props.owner}
-                {connectedUsers}
-                {subscribers}
-            </div>
+            <React.Fragment>
+                {!this.props.roomID || this.props.channels.length === 0 ? null :
+                    <div className={styles.Users}>
+                        <h5 className={styles.UserRole}>Online</h5>
+                        {connectedUsers}
+                        <h5 className={styles.UserRole}>Offline</h5>
+                        {subscribers}
+                    </div>
+                }
+            </React.Fragment>
         )
     }
 }
@@ -65,7 +74,11 @@ const mapStateToProps = state => {
         socketChat: state.auth.socket,
         room: state.auth.room,
         subscribers: state.chat.subscribers,
-        owner: state.chat.roomOwner
+        roomOwner: state.chat.roomOwner,
+        channel: state.chat.channelID,
+        loading: state.chat.loading,
+        roomID: state.chat.roomID,
+        channels: state.chat.channels
     }
 
 }

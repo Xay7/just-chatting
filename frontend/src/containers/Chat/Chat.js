@@ -8,7 +8,6 @@ import Rooms from '../Rooms/Rooms';
 
 class Chat extends Component {
 
-
     render() {
         return (
             <Fragment>

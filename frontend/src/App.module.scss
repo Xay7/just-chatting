@@ -37,6 +37,7 @@
         url('./fonts/rubik-v8-latin-500.svg#Rubik') format('svg');
     /* Legacy iOS */
 }
+
 /* rubik-700 - latin */
 @font-face {
     font-family: 'Rubik';
@@ -66,7 +67,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     width: 100vw;
     height: 100vh;
-    background-color: #192a56;
+    background-color: white;
     box-sizing: border-box;
 }
 

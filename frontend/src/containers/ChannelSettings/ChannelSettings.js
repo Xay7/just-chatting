@@ -72,7 +72,7 @@ class ChannelSettings extends Component {
                             OnChange={this.channelNameHandler}
                             Placeholder="New channel name"
                             ID="channelName"
-                            autoComplete="off"
+                            AutoComplete="off"
                             ClassName={this.props.errorMessage ? "InputError" : "Input"}
                         >Room Name</ChatInput>
                         <ChatInput
@@ -80,7 +80,7 @@ class ChannelSettings extends Component {
                             OnChange={this.channelDescriptionHandler}
                             Placeholder="New description"
                             ID="channelDescription"
-                            autoComplete="off"
+                            AutoComplete="off"
                             ClassName={this.props.errorMessage ? "InputError" : "Input"}
                         >Room description</ChatInput>
                         {this.props.errorMessage && <ErrorMessage>{this.props.errorMessage}</ErrorMessage>}
