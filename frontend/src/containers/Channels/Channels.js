@@ -17,6 +17,7 @@ class Channels extends Component {
             showAddChannel: false,
             channelName: '',
             channelDescription: '',
+            selectedChannel: ''
         }
 
         this.socket = this.props.socketChat;
@@ -47,7 +48,7 @@ class Channels extends Component {
 
     switchChannel = async (id, name, description) => {
 
-        await this.setState({ selectedChannel: id });
+        const previousChannel = this.state.selectedChannel
 
         let data = {
             channelID: id,
@@ -55,10 +56,14 @@ class Channels extends Component {
             username: this.props.username,
         }
 
+        await this.setState({ selectedChannel: id });
+
+
         await this.props.changeChannel(id, name, description);
         await this.props.getChatMessages(data);
         await this.socket.emit('JOIN_CHANNEL', {
-            room: id,
+            channelID: id,
+            previousChannelID: previousChannel,
             name: this.props.username,
             avatar: this.props.avatar
         })

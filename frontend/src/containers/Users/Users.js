@@ -15,9 +15,28 @@ class Users extends Component {
 
         this.socket = this.props.socketChat;
 
-        this.socket.on('UPDATING_USERS', (data) => {
-            console.log(data);
+        this.socket.on('ROOM_USER_LIST', (data) => {
             this.setState({ users: data });
+        })
+
+        this.socket.on('USER_LOGGED_IN', (data) => {
+
+            const userExists = this.state.users.some(el => {
+                return el.username === data.username;
+            })
+
+            if (userExists) {
+                return;
+            }
+
+            this.setState({ users: [...this.state.users, data] })
+        })
+
+        this.socket.on('USER_DISCONNECTED', data => {
+            let updatedUsers = this.state.users.filter(el => {
+                return el.username !== data
+            })
+            this.setState({ users: updatedUsers });
         })
 
     }

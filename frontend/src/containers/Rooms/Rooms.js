@@ -123,7 +123,18 @@ class Rooms extends Component {
 
     async componentDidMount() {
         await this.props.updateRooms(this.props.username);
-        this.socket.emit("USER_LOGGED_IN");
+
+        const roomIDs = this.props.chatRooms.map(el => {
+            return el.id
+        })
+
+        const data = {
+            roomIDs: roomIDs,
+            username: this.props.username,
+            avatar: this.props.avatar
+        }
+
+        this.socket.emit("USER_LOGGED_IN", data);
     }
 
     // Changes selected room styles for visual clarity
