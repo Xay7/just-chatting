@@ -1,5 +1,4 @@
-$black: #444444;
-$white: #F5F5F5;
+@import '../../index.scss';
 
 .Users {
     position: relative;
@@ -14,7 +13,6 @@ $white: #F5F5F5;
     color: $black;
     text-align: center;
     text-transform: capitalize;
-    color: green;
     font-weight: 400;
 }
 
@@ -30,7 +28,20 @@ $white: #F5F5F5;
     border-radius: 50%;
 }
 
+.xd::after {
+    content: "";
+    position: absolute;
+    top: 18.5px;
+    left: 41px;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    border: 1px solid $white;
+    background-color: green;
+}
+
 .UserWrapper {
+    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;

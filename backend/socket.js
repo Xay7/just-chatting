@@ -42,10 +42,6 @@ io.on("connection", function (socket) {
         const usernames = users[data.roomID];
         io.in(data.roomID).emit('ROOM_USER_LIST', usernames);
 
-        socket.on('disconnect', () => {
-            io.in(data.roomID).emit('USER_DISCONNECTED', socket.username);
-        })
-
     })
 
     socket.on('CLIENT_IS_TYPING', function (data) {
@@ -72,7 +68,7 @@ io.on("connection", function (socket) {
             users[el] = users[el].filter(el => {
                 return el.username !== socket.username
             })
-            // io.in(el).emit('USER_DISCONNECTED', socket.username);
+            io.in(el).emit('USER_DISCONNECTED', socket.username);
         })
     })
 })

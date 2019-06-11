@@ -1,12 +1,13 @@
 .spinner {
+    margin-left: 62px;
     margin-top: 5px;
     width: 70px;
 }
 
 .spinner>div {
-    width: 12px;
-    height: 12px;
-    background-color: #BBB;
+    width: 9px;
+    height: 9px;
+    background-color: #adadad;
     margin-left: 3px;
     border-radius: 100%;
     display: inline-block;

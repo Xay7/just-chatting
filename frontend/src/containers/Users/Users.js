@@ -46,7 +46,9 @@ class Users extends Component {
         let connectedUsers = this.state.users.map(user => {
             return (
                 <div className={styles.UserWrapper} key={user.username}>
-                    <img src={user.avatar} alt={user.username + " avatar"} className={styles.Avatar} s />
+                    <div className={styles.xd}>
+                        <img src={user.avatar} alt={user.username + " avatar"} className={styles.Avatar} s />
+                    </div>
                     <p className={styles.User} key={user.username}>{user.username}</p>
                 </div>
             )
