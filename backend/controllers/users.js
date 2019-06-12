@@ -251,9 +251,6 @@ module.exports = {
 
         const channels = await Chatroom.findOne({ "id": req.params.id }, { "_id": 0 }).select("channels")
 
-        console.log(channels);
-
-
         res.status(200).json(channels)
     },
     getChannel: async (req, res, next) => {
@@ -326,17 +323,48 @@ module.exports = {
 
         const id = req.params.id;
         const channelID = req.params.channelID;
+        const skip = +req.query.skip;
+        const amount = +req.query.amount + skip;
 
+        const result = await Chatroom.aggregate(
+            (
+                [
+                    {
+                        "$match": {
+                            "id": id
+                        }
+                    },
+                    {
+                        "$unwind": "$channels"
+                    },
+                    {
+                        "$match": {
+                            "channels.id": channelID
+                        }
+                    },
+                    {
+                        "$project": {
+                            "_id": 0,
+                            "messages": {
+                                "$slice": [
+                                    {
+                                        "$reverseArray": "$channels.messages"
+                                    },
+                                    skip,
+                                    amount
+                                ]
+                            }
+                        }
+                    }
+                ]
+            )
+        )
 
-        await Chatroom.findOne({ "id": id }).lean().exec(function (err, docs) {
+        if (result[0].messages.length === 0) {
+            return res.status(204).json({ error: "There are no more chat messages in this channel" });
+        }
 
-            let channel = docs.channels.filter(el => {
-                if (el.id === channelID) {
-                    return el;
-                }
-            })
-            res.status(200).json(channel);
-        });
+        res.status(200).json(result[0]);
 
     },
     changeAvatar: async (req, res, next) => {
