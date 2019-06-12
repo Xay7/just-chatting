@@ -27,6 +27,8 @@ class Rooms extends Component {
 
         this.changeChatroom = async (roomID, roomName, roomChannels, roomOwner) => {
 
+            const previousRoom = this.props.roomID;
+
             this.props.isFetching();
 
             this.setState({ selectedRoom: roomID });
@@ -42,6 +44,7 @@ class Rooms extends Component {
             await this.props.changeRoom(data);
 
             await this.socket.emit('CHANGE_ROOM', {
+                previousRoom: previousRoom,
                 roomID: this.props.roomID,
                 username: this.props.username,
                 avatar: this.props.avatar
@@ -98,6 +101,12 @@ class Rooms extends Component {
             chatRooms: this.props.chatRooms,
             showJoin: false
         })
+
+        this.socket.emit('JOIN_ROOM', {
+            roomID: data.id,
+            username: this.props.username,
+            avatar: this.props.avatar
+        });
 
     }
 
