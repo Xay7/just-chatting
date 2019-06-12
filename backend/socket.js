@@ -1,6 +1,7 @@
 const io = require('./index.js');
 
 let users = {};
+const namespacesCreated = {};
 
 io.on("connection", function (socket) {
 
@@ -15,13 +16,6 @@ io.on("connection", function (socket) {
 
         data.roomIDs.map(el => {
 
-            io.in(el).emit("USER_LOGGED_IN", {
-                username: data.username,
-                avatar: data.avatar
-            });
-
-            socket.join(el);
-
             if (users[el] === undefined) {
                 users[el] = [];
                 users[el].push({
@@ -33,6 +27,11 @@ io.on("connection", function (socket) {
                 avatar: data.avatar
             });
 
+            io.in(el).emit("USER_LOGGED_IN", {
+                username: data.username,
+                avatar: data.avatar
+            });
+
         })
 
     })
@@ -40,6 +39,11 @@ io.on("connection", function (socket) {
     socket.on('CHANGE_ROOM', function (data) {
 
         const usernames = users[data.roomID];
+
+        socket.leave(data.previousRoom)
+
+        socket.join(data.roomID);
+
         io.in(data.roomID).emit('ROOM_USER_LIST', usernames);
 
     })
@@ -60,10 +64,21 @@ io.on("connection", function (socket) {
 
     })
 
+    socket.on('JOIN_ROOM', function (data) {
+
+        socket.join(data.roomID);
+
+        users[data.roomID].push({
+            username: data.username,
+            avatar: data.avatar
+        });
+
+    })
+
     socket.on('JOIN_CHANNEL', function (data) {
 
         if (data.previousChannelID) {
-            socket.leave(data.previousChannelID);
+            socket.leave(data.previousChannelID)
         }
 
         socket.join(data.channelID);
@@ -76,6 +91,11 @@ io.on("connection", function (socket) {
     })
 
     socket.on('disconnect', function () {
+
+        if (socket.roomIDs === undefined) {
+            return;
+        }
+
         socket.roomIDs.map(el => {
             users[el] = users[el].filter(el => {
                 return el.username !== socket.username
