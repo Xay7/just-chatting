@@ -75,6 +75,12 @@ class Rooms extends Component {
             showAdd: false,
         });
 
+        this.socket.emit('NEW_ROOM', {
+            roomID: data.id,
+            username: this.props.username,
+            avatar: this.props.avatar
+        });
+
     }
 
     joinRoom = async () => {
