@@ -16,7 +16,8 @@ const DEFAULT_STATE = {
     errorMessage: '',
     successMessage: '',
     changedRoom: false,
-    loading: false
+    loading: false,
+    skip: 0
 }
 
 const reducer = (state = DEFAULT_STATE, action) => {
@@ -70,9 +71,17 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 showRoomOptions: false,
             }
         case actionTypes.GET_MESSAGES:
+
+            let reverse = action.messages.reverse();
+
+            let updatedMessages = reverse.concat(state.messages);
+
+            const updatedSkip = state.skip + 50;
+
             return {
                 ...state,
-                messages: action.messages
+                messages: updatedMessages,
+                skip: updatedSkip
             }
         case actionTypes.NEW_CHANNEL:
             return {
@@ -84,7 +93,9 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 ...state,
                 channelID: action.channelID,
                 channelName: action.channelName,
-                channelDescription: action.description
+                channelDescription: action.description,
+                messages: [],
+                skip: 0
             }
         case actionTypes.CHANGE_CHANNEL_SETTINGS:
             return {
