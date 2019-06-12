@@ -16,22 +16,23 @@ class Chatbox extends Component {
             messages: [],
             sameUserMessage: false,
             typing: false,
-            typingTimeout: 0
+            typingTimeout: 0,
+            skipMessages: 50
         };
 
         this.socket = this.props.socketChat;
 
         this.sendMessage = async e => {
 
-            let socketData = {
+            let socketMessage = {
                 author: this.props.username,
                 body: this.state.message,
                 created_at: moment().calendar(null),
-                room: this.props.channelID,
-                avatar: this.props.avatar
+                avatar: this.props.avatar,
+                room: this.props.roomID
             }
 
-            this.socket.emit('SEND_MESSAGE', socketData)
+            this.socket.emit('SEND_MESSAGE', socketMessage)
 
             let dbData = {
                 author: this.props.username,
@@ -51,6 +52,7 @@ class Chatbox extends Component {
         });
 
         this.socket.on('UPDATING_MESSAGES', (data) => {
+
             let messagesFormated = this.props.messages.map(el => {
                 el.created_at = moment(el.created_at).calendar(null);
                 return el;
@@ -68,7 +70,6 @@ class Chatbox extends Component {
         })
 
         this.socket.on('SOMEONE_IS_TYPING', () => {
-
 
             if (this.state.typingTimeout) {
                 clearTimeout(this.state.typingTimeout);
@@ -88,7 +89,7 @@ class Chatbox extends Component {
 
 
         const addMessage = data => {
-            if (this.state.messages.length > 0) {
+            if (this.state.length > 0) {
                 if (data.author === this.state.messages.slice(-1)[0].author) {
                     this.setState({ sameUserMessage: true })
                 }
@@ -111,12 +112,6 @@ class Chatbox extends Component {
 
     }
 
-    // Remove after css is done
-
-    componentDidMount() {
-        this.setState({ messages: this.props.messages })
-    }
-
     enterHandler = async (e) => {
         if (e.keyCode === 13 && this.state.message !== '') {
             await this.sendMessage();
@@ -137,7 +132,7 @@ class Chatbox extends Component {
     }
 
     scrollToBottom() {
-        if (this.messageContainer === null) return;
+        if (this.messageContainer === undefined) return;
         const scrollHeight = this.messageContainer.scrollHeight;
         const height = this.messageContainer.clientHeight;
         const maxScrollTop = scrollHeight - height;
@@ -155,43 +150,61 @@ class Chatbox extends Component {
     }
 
     adjustImage = ({ target: img }) => {
+        img.style.marginLeft = "62px";
+        img.style.marginBottom = "5px";
         if (img.naturalHeight > 512 || img.naturalWidth > 512) {
             img.style.maxWidth = "100%";
             img.style.height = "auto";
-            img.style.margin = "10px 0";
+        }
+    }
+
+    getMoreMessages = async () => {
+        if (this.messageContainer.scrollTop === 0) {
+
+            let data = {
+                channelID: this.props.channelID,
+                roomID: this.props.roomID,
+                username: this.props.username,
+                skipMessages: this.props.skip
+            }
+
+            await this.props.getChatMessages(data)
+
+            this.setState({
+                messages: this.props.messages
+            })
         }
     }
 
 
     render() {
 
-        let messages = this.state.messages.map((message, index, arr) => {
+        let messages = this.state.messages.map((data, index, arr) => {
             if (index > 0) {
+                if (this.isUrl(data.body) === true) {
+                    if (this.isImage(data.body) === true) {
 
-                if (this.isUrl(message.body) === true) {
-                    if (this.isImage(message.body) === true) {
-
-                        message.body = (
+                        return (
                             <div className={styles.Messages}>
-                                <a href={message.body} target="_blank" rel="noopener noreferrer">
+                                <a href={data.body} target="_blank" rel="noopener noreferrer">
                                     <img
-                                        src={message.body}
-                                        alt={message.body}
+                                        src={data.body}
+                                        alt={data.body}
                                         onLoad={this.adjustImage}
                                     />
                                 </a>
                             </div>
                         )
 
-                    } else message.body = <a href={message.body} target="_blank" rel="noopener noreferrer" className={styles.Link}>{message.body}</a>
+                    } else return <a href={data.body} target="_blank" rel="noopener noreferrer" className={styles.Link}>{data.body}</a>
                 }
 
 
 
-                if (message.author === arr[index - 1].author) {
+                if (data.author === arr[index - 1].author) {
                     return (
                         <div className={styles.Messages} key={index}>
-                            <div className={styles.Message}>{message.body}</div>
+                            <div className={styles.Message}>{data.body}</div>
                         </div>
                     )
                 }
@@ -200,11 +213,11 @@ class Chatbox extends Component {
                         <div className={styles.Messages} key={index}>
                             <hr className={styles.MessageHorizontalLine}></hr>
                             <div className={styles.MessageHeader}>
-                                <img src={message.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} />
-                                <p className={styles.Username}>{message.author}</p>
-                                <p className={styles.Date}>{message.created_at}</p>
+                                <img src={data.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} />
+                                <p className={styles.Username}>{data.author}</p>
+                                <p className={styles.Date}>{data.created_at}</p>
                             </div>
-                            <div className={styles.Message}>{message.body}</div>
+                            <div className={styles.Message}>{data.body}</div>
                         </div>
                     )
                 };
@@ -214,11 +227,11 @@ class Chatbox extends Component {
                     <div className={styles.Messages} key={index}>
                         <hr className={styles.MessageHorizontalLine}></hr>
                         <div className={styles.MessageHeader}>
-                            <img src={message.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} />
-                            <p className={styles.Username}>{message.author}</p>
-                            <p className={styles.Date}>{message.created_at}</p>
+                            <img src={data.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} />
+                            <p className={styles.Username}>{data.author}</p>
+                            <p className={styles.Date}>{data.created_at}</p>
                         </div>
-                        <div className={styles.Message}>{message.body}</div>
+                        <div className={styles.Message}>{data.body}</div>
                     </div>
                 )
             }
@@ -229,9 +242,12 @@ class Chatbox extends Component {
             <React.Fragment>
                 {!this.props.roomID || this.props.channels.length === 0 ? null :
                     <div className={styles.Chatbox}>
-                        <div className={styles.MessagesContainer} ref={(div) => {
-                            this.messageContainer = div;
-                        }}>
+                        <div
+                            className={styles.MessagesContainer}
+                            ref={(div) => {
+                                this.messageContainer = div;
+                            }}
+                            onScroll={this.getMoreMessages}>
                             {messages}
                             {this.state.typing ? <UserTyping /> : null}
                         </div>
@@ -262,7 +278,7 @@ const mapStateToProps = state => {
         channelID: state.chat.channelID,
         avatar: state.auth.avatar,
         channels: state.chat.channels,
-
+        skip: state.chat.skip
     }
 }
 

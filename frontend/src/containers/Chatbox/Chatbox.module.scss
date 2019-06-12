@@ -78,7 +78,7 @@
 }
 
 .Message {
-    margin-bottom: 3px;
+    margin-bottom: 5px;
     margin-left: 62px;
     margin-right: 30px;
     word-break: break-all;
@@ -123,8 +123,10 @@
 
 .Link {
     text-decoration: none;
+    margin-left: 62px;
+    margin-bottom: 5px;
 }
 
 .Link:visited {
-    color: rgb(0, 217, 255);
+    color: blue;
 }
