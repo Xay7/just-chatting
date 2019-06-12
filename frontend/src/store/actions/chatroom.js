@@ -197,10 +197,15 @@ export const getChatMessages = data => {
     return async dispatch => {
         try {
 
-            const res = await axios.get(`http://localhost:3001/users/${data.username}/chat/${data.roomID}/channels/${data.channelID}/messages`)
+            const res = await axios.get(`http://localhost:3001/users/${data.username}/chat/${data.roomID}/channels/${data.channelID}/messages?amount=50&skip=${data.skipMessages}`)
+
+            if (!res.data) {
+                return;
+            }
+
             dispatch({
                 type: actionTypes.GET_MESSAGES,
-                messages: res.data[0].messages
+                messages: res.data.messages
             })
 
         } catch (error) {
