@@ -48,6 +48,18 @@ io.on("connection", function (socket) {
         socket.broadcast.to(data.channel).emit('SOMEONE_IS_TYPING');
     })
 
+    socket.on('NEW_ROOM', function (data) {
+
+        socket.join(data.roomID);
+
+        users[data.roomID] = [];
+        users[data.roomID].push({
+            username: data.username,
+            avatar: data.avatar
+        });
+
+    })
+
     socket.on('JOIN_CHANNEL', function (data) {
 
         if (data.previousChannelID) {
