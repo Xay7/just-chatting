@@ -324,7 +324,7 @@ module.exports = {
         const id = req.params.id;
         const channelID = req.params.channelID;
         const skip = +req.query.skip;
-        const amount = +req.query.amount + skip;
+        const amount = +req.query.amount;
 
         const result = await Chatroom.aggregate(
             (
