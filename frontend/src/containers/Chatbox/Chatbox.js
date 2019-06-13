@@ -121,7 +121,6 @@ class Chatbox extends Component {
 
     }
     onChangeHandler = (e) => {
-
         this.socket.emit('CLIENT_IS_TYPING', {
             channel: this.props.channelID
         })
@@ -159,7 +158,8 @@ class Chatbox extends Component {
     }
 
     getMoreMessages = async () => {
-        if (this.messageContainer.scrollTop === 0) {
+
+        if (this.messageContainer.scrollTop === 0 && !this.props.noMessages) {
 
             let data = {
                 channelID: this.props.channelID,
@@ -170,9 +170,12 @@ class Chatbox extends Component {
 
             await this.props.getChatMessages(data)
 
+            let messages = [...this.props.messages, ...this.state.messages];
+
             this.setState({
-                messages: this.props.messages
+                messages: messages
             })
+
         }
     }
 
@@ -180,12 +183,12 @@ class Chatbox extends Component {
     render() {
 
         let messages = this.state.messages.map((data, index, arr) => {
+            console.log(data);
             if (index > 0) {
                 if (this.isUrl(data.body) === true) {
                     if (this.isImage(data.body) === true) {
-
                         return (
-                            <div className={styles.Messages}>
+                            <div className={styles.Messages} key={index}>
                                 <a href={data.body} target="_blank" rel="noopener noreferrer">
                                     <img
                                         src={data.body}
@@ -195,8 +198,7 @@ class Chatbox extends Component {
                                 </a>
                             </div>
                         )
-
-                    } else return <a href={data.body} target="_blank" rel="noopener noreferrer" className={styles.Link}>{data.body}</a>
+                    } else return <a href={data.body} target="_blank" rel="noopener noreferrer" className={styles.Link} key={index}>{data.body}</a>
                 }
 
 
@@ -278,7 +280,8 @@ const mapStateToProps = state => {
         channelID: state.chat.channelID,
         avatar: state.auth.avatar,
         channels: state.chat.channels,
-        skip: state.chat.skip
+        skip: state.chat.skip,
+        noMessages: state.chat.noMessages
     }
 }
 
