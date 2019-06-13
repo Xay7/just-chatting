@@ -46,8 +46,8 @@ class Users extends Component {
         let connectedUsers = this.state.users.map(user => {
             return (
                 <div className={styles.UserWrapper} key={user.username}>
-                    <div className={styles.xd}>
-                        <img src={user.avatar} alt={user.username + " avatar"} className={styles.Avatar} s />
+                    <div className={styles.Status}>
+                        <img src={user.avatar} alt={user.username + " avatar"} className={styles.Avatar} />
                     </div>
                     <p className={styles.User} key={user.username}>{user.username}</p>
                 </div>
@@ -56,17 +56,16 @@ class Users extends Component {
 
         let subscribers = null;
 
-        if (this.props.loading) {
-            subscribers = <Loader />
-        } else subscribers = this.props.subscribers.map(data => {
+        // Filter those who are online and not
+        subscribers = this.props.subscribers.map(data => {
             const isOnline = this.state.users.some((el) => {
                 return el.username === data.subscriber;
             })
             if (isOnline) {
                 return null;
             } else return (
-                <div className={styles.UserWrapper} key={data.subscriber}>
-                    <img src={data.avatar} alt={data.avatar + " avatar"} className={styles.Avatar} />
+                <div className={styles.UserWrapperOffline} key={data.subscriber}>
+                    <img src={data.avatar} alt={data.avatar + " avatar"} className={styles.AvatarOffline} />
                     <div>{data.subscriber}</div>
                 </div>
             )
@@ -78,7 +77,7 @@ class Users extends Component {
                     <div className={styles.Users}>
                         <h5 className={styles.UserRole}>Online</h5>
                         {connectedUsers}
-                        <h5 className={styles.UserRole}>Offline</h5>
+                        {this.props.subscribers.length > 1 && <h5 className={styles.UserRole}>Offline</h5>}
                         {subscribers}
                     </div>
                 }

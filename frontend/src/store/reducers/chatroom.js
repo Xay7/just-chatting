@@ -17,7 +17,8 @@ const DEFAULT_STATE = {
     successMessage: '',
     changedRoom: false,
     loading: false,
-    skip: 0
+    skip: 0,
+    noMessages: false
 }
 
 const reducer = (state = DEFAULT_STATE, action) => {
@@ -72,16 +73,23 @@ const reducer = (state = DEFAULT_STATE, action) => {
             }
         case actionTypes.GET_MESSAGES:
 
-            let reverse = action.messages.reverse();
+            let noMessage = false;
+            let reverse = [];
+            let updatedSkip = null;
 
-            let updatedMessages = reverse.concat(state.messages);
-
-            const updatedSkip = state.skip + 50;
+            if (action.messages === undefined) {
+                noMessage = true;
+            } else {
+                noMessage = false
+                reverse = action.messages.reverse();
+                updatedSkip = state.skip + 50;
+            }
 
             return {
                 ...state,
-                messages: updatedMessages,
-                skip: updatedSkip
+                messages: reverse,
+                skip: updatedSkip,
+                noMessages: noMessage
             }
         case actionTypes.NEW_CHANNEL:
             return {

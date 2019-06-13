@@ -199,13 +199,10 @@ export const getChatMessages = data => {
 
             const res = await axios.get(`http://localhost:3001/users/${data.username}/chat/${data.roomID}/channels/${data.channelID}/messages?amount=50&skip=${data.skipMessages}`)
 
-            if (!res.data) {
-                return;
-            }
 
             dispatch({
                 type: actionTypes.GET_MESSAGES,
-                messages: res.data.messages
+                messages: res.data.messages,
             })
 
         } catch (error) {
