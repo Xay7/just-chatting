@@ -54,9 +54,10 @@ class Channels extends Component {
             channelID: id,
             roomID: this.props.roomID,
             username: this.props.username,
+            skipMessages: 0
         }
 
-        await this.setState({ selectedChannel: id });
+        this.setState({ selectedChannel: id });
 
 
         await this.props.changeChannel(id, name, description);
@@ -71,6 +72,11 @@ class Channels extends Component {
 
 
     addChannel = async () => {
+
+        if (!this.state.channelName) {
+            return console.log("can't be empty");
+        }
+
         let data = {
             username: this.props.username,
             id: this.props.roomID,
@@ -82,6 +88,11 @@ class Channels extends Component {
         await this.props.newChannel(data);
 
         this.showAddChannel();
+
+        this.setState({
+            channelName: '',
+            channelDescription: '',
+        })
 
     }
 
@@ -193,6 +204,7 @@ const mapStateToProps = state => {
         errorMessage: state.auth.errorMessage,
         successMessage: state.auth.successMessage,
         roomName: state.chat.roomName,
+        skip: state.chat.skip
     }
 }
 
