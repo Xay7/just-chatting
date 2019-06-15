@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import styles from './Rooms.module.scss';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/chatroom';
-import uuid4 from 'uuid4';
 import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import ChatInput from '../../components/ChatInput/ChatInput';
@@ -25,23 +24,13 @@ class Rooms extends Component {
 
         this.socket = this.props.socketChat;
 
-        this.changeChatroom = async (roomID, roomName, roomChannels, roomOwner) => {
+        this.changeChatroom = async id => {
 
             const previousRoom = this.props.roomID;
 
-            this.props.isFetching();
+            this.setState({ selectedRoom: id });
 
-            this.setState({ selectedRoom: roomID });
-
-            let data = {
-                id: roomID,
-                username: this.props.username,
-                roomName: roomName,
-                roomChannels: roomChannels,
-                roomOwner: roomOwner
-            }
-
-            await this.props.changeRoom(data);
+            await this.props.changeRoom(id);
 
             await this.socket.emit('CHANGE_ROOM', {
                 previousRoom: previousRoom,
@@ -49,11 +38,7 @@ class Rooms extends Component {
                 username: this.props.username,
                 avatar: this.props.avatar
             })
-
-
-
         }
-
     }
 
 
@@ -65,21 +50,15 @@ class Rooms extends Component {
             return;
         }
 
-        let data = {
-            id: uuid4(),
-            name: name,
-            owner: this.props.username
-        }
-
-        await this.props.newChatroom(data);
+        await this.props.newChatroom(name);
 
         this.setState({
             chatRooms: this.props.chatRooms,
             showAdd: false,
         });
-
+        ;
         this.socket.emit('NEW_ROOM', {
-            roomID: data.id,
+            roomID: this.props.chatRooms.slice(-1)[0].id,
             username: this.props.username,
             avatar: this.props.avatar
         });
@@ -87,12 +66,12 @@ class Rooms extends Component {
     }
 
     joinRoom = async () => {
-        // Replace later with modal input
+
         const id = this.state.chatRoomId
 
-        let data = {
+        const data = {
             id: id,
-            username: this.props.username
+            user_id: this.props.user_id
         }
 
         await this.props.joinRoom(data);
@@ -137,7 +116,7 @@ class Rooms extends Component {
 
 
     async componentDidMount() {
-        await this.props.updateRooms(this.props.username);
+        await this.props.updateRooms(this.props.user_id);
 
         const roomIDs = this.props.chatRooms.map(el => {
             return el.id
@@ -179,7 +158,7 @@ class Rooms extends Component {
             return <div key={room.id}>
                 <button
                     className={this.currentRoomStyle(room.id)}
-                    onClick={() => this.changeChatroom(room.id, room.name, room.channels, room.owner)}
+                    onClick={() => this.changeChatroom(room.id)}
                     disabled={this.currentRoomDisable(room.id)}>{room.name.charAt(0)}
                 </button>
             </div>
@@ -290,6 +269,8 @@ class Rooms extends Component {
 const mapStateToProps = state => {
     return {
         username: state.auth.username,
+        user_id: state.auth.user_id,
+        user_id: state.auth.user_id,
         chatRooms: state.chat.chatRooms,
         socketChat: state.auth.socket,
         channelID: state.chat.channelID,

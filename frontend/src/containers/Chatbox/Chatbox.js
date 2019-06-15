@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import * as actions from '../../store/actions/chatroom';
 import UserTyping from '../../components/UserTyping/UserTyping';
-
+import Loader from '../../components/Loader/Loader';
 
 class Chatbox extends Component {
 
@@ -27,7 +27,7 @@ class Chatbox extends Component {
             let socketMessage = {
                 author: this.props.username,
                 body: this.state.message,
-                created_at: moment().calendar(null),
+                created_at: moment(),
                 avatar: this.props.avatar,
                 room: this.props.roomID
             }
@@ -52,22 +52,13 @@ class Chatbox extends Component {
         });
 
         this.socket.on('UPDATING_MESSAGES', (data) => {
-
-            let messagesFormated = this.props.messages.map(el => {
-                el.created_at = moment(el.created_at).calendar(null);
-                return el;
-            })
-            this.setState({ room: data.room, messages: messagesFormated });
+            this.setState({
+                room: data.room,
+                messages: this.props.messages,
+                message: ''
+            });
             this.scrollToBottom()
         });
-
-        this.socket.on('CHANGED_ROOM', () => {
-            this.setState({
-                message: '',
-                messages: [],
-                sameUserMessage: false,
-            })
-        })
 
         this.socket.on('SOMEONE_IS_TYPING', () => {
 
@@ -131,7 +122,7 @@ class Chatbox extends Component {
     }
 
     scrollToBottom() {
-        if (this.messageContainer === undefined) return;
+        if (this.messageContainer === undefined || this.messageContainer === null) return;
         const scrollHeight = this.messageContainer.scrollHeight;
         const height = this.messageContainer.clientHeight;
         const maxScrollTop = scrollHeight - height;
@@ -161,6 +152,10 @@ class Chatbox extends Component {
 
         if (this.messageContainer.scrollTop === 0 && !this.props.noMessages) {
 
+            this.props.isFetching();
+
+            const previosScrollHeight = this.messageContainer.scrollHeight;
+
             let data = {
                 channelID: this.props.channelID,
                 roomID: this.props.roomID,
@@ -168,13 +163,15 @@ class Chatbox extends Component {
                 skipMessages: this.props.skip
             }
 
-            await this.props.getChatMessages(data)
+            //await this.props.getChatMessages(data)
 
             let messages = [...this.props.messages, ...this.state.messages];
 
-            this.setState({
-                messages: messages
-            })
+            this.setState({ messages: messages })
+
+            this.messageContainer.scrollTop = this.messageContainer.scrollHeight - previosScrollHeight
+
+
 
         }
     }
@@ -183,7 +180,7 @@ class Chatbox extends Component {
     render() {
 
         let messages = this.state.messages.map((data, index, arr) => {
-            console.log(data);
+            // CHECK IF IMAGE IS URL AND IMAGE
             if (index > 0) {
                 if (this.isUrl(data.body) === true) {
                     if (this.isImage(data.body) === true) {
@@ -200,16 +197,15 @@ class Chatbox extends Component {
                         )
                     } else return <a href={data.body} target="_blank" rel="noopener noreferrer" className={styles.Link} key={index}>{data.body}</a>
                 }
-
-
-
-                if (data.author === arr[index - 1].author) {
+                // CHECK FOR SAME AUTHOR AND IF THERE IS LESS THAN 30 MINUTES TIME DIFFERENCE BETWEEN LAST MESSAGE
+                if (data.author === arr[index - 1].author && moment(data.created_at).diff(moment(arr[index - 1].created_at), "minutes") < 30) {
                     return (
                         <div className={styles.Messages} key={index}>
                             <div className={styles.Message}>{data.body}</div>
                         </div>
                     )
                 }
+                // RENDER MESSAGE WITH USER HEADER
                 else {
                     return (
                         <div className={styles.Messages} key={index}>
@@ -217,13 +213,14 @@ class Chatbox extends Component {
                             <div className={styles.MessageHeader}>
                                 <img src={data.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} />
                                 <p className={styles.Username}>{data.author}</p>
-                                <p className={styles.Date}>{data.created_at}</p>
+                                <p className={styles.Date}>{moment(data.created_at).calendar(null)}</p>
                             </div>
                             <div className={styles.Message}>{data.body}</div>
                         </div>
                     )
                 };
             }
+            // FIRST RENDER
             else {
                 return (
                     <div className={styles.Messages} key={index}>
@@ -231,7 +228,7 @@ class Chatbox extends Component {
                         <div className={styles.MessageHeader}>
                             <img src={data.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} />
                             <p className={styles.Username}>{data.author}</p>
-                            <p className={styles.Date}>{data.created_at}</p>
+                            <p className={styles.Date}>{moment(data.created_at).calendar(null)}</p>
                         </div>
                         <div className={styles.Message}>{data.body}</div>
                     </div>
@@ -244,6 +241,7 @@ class Chatbox extends Component {
             <React.Fragment>
                 {!this.props.roomID || this.props.channels.length === 0 ? null :
                     <div className={styles.Chatbox}>
+                        {this.props.loading && <Loader />}
                         <div
                             className={styles.MessagesContainer}
                             ref={(div) => {
@@ -281,7 +279,8 @@ const mapStateToProps = state => {
         avatar: state.auth.avatar,
         channels: state.chat.channels,
         skip: state.chat.skip,
-        noMessages: state.chat.noMessages
+        noMessages: state.chat.noMessages,
+        loading: state.chat.loading
     }
 }
 

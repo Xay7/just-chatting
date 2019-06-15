@@ -7,6 +7,7 @@ const DEFAULT_STATE = {
     successMessage: '',
     registerSuccess: false,
     username: '',
+    user_id: '',
     avatar: '',
     tokenSuccess: false,
     socket: io('http://localhost:3001')
@@ -20,7 +21,8 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 errorMessage: '',
                 registerSuccess: false,
                 username: action.username,
-                avatar: action.avatar
+                avatar: action.avatar,
+                user_id: action.id
             }
         case actionTypes.AUTH_SIGN_UP:
             return {

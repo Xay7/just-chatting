@@ -34,8 +34,7 @@ module.exports = {
     },
     changeChannelData: async (req, res, next) => {
 
-        const roomID = req.body.roomID;
-        const channelID = req.body.channelID;
+        const id = req.params.id;
 
         let newChannelName = req.body.channelName;
         const newChannelDescription = req.body.channelDescription
@@ -44,21 +43,12 @@ module.exports = {
             newChannelName = req.body.oldChannelName;
         }
 
-        await Chatroom.findOneAndUpdate({ "id": roomID, "channels.id": channelID },
-            {
-                $set: {
-                    "channels.$.name": newChannelName,
-                    "channels.$.description": newChannelDescription
-                }
-            },
-            { new: true }
-        ).exec(function (error, post) {
-            if (error) {
-                return res.status(400).send({ error: 'Update failed' });
-            }
+        await Channel.findByIdAndUpdate({ "_id": id }, {
+            name: newChannelName,
+            description: newChannelDescription
+        })
 
-            return res.status(200).send({ success: "Channel has been updated" });
-        });
+        res.status(200).json({ success: "Channel data has been changed" })
     },
     deleteChannel: async (req, res, next) => {
 

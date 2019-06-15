@@ -25,7 +25,7 @@ const upload = multer({
         transforms: [{
             id: 'original',
             key: function (req, file, cb) {
-                cb(null, req.params.username)
+                cb(null, req.params.id)
             },
             transform: function (req, file, cb) {
                 cb(null, sharp().resize({

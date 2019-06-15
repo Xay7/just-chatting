@@ -148,7 +148,7 @@ class Sidebar extends Component {
 
         formData.append('avatar', this.state.avatar);
 
-        await this.props.updateAvatar(formData, this.props.username);
+        await this.props.updateAvatar(formData, this.props.user_id);
 
         this.setState({
             avatarSuccess: "Your avatar has been updated",
@@ -165,7 +165,7 @@ class Sidebar extends Component {
             confirmPassword: this.state.confirmPassword
         }
 
-        this.props.updatePassword(data, this.props.username);
+        this.props.updatePassword(data, this.props.user_id);
     }
 
     showInviteHandler = (e) => {
@@ -225,7 +225,7 @@ class Sidebar extends Component {
                 <Modal onclick={this.hideDeleteBox} />
                 <Confirm
                     cancel={this.hideDeleteBox}
-                    confirm={() => this.deleteRoom(this.props.roomID, this.props.username)}
+                    confirm={() => this.deleteRoom(this.props.roomID, this.props.user_id)}
                     header={`Delete ${this.props.roomName}`}
                     description={`Are you sure you want to delete ${this.props.roomName}?`}
                 />
@@ -353,6 +353,7 @@ const mapStateToProps = state => {
     return {
         chatRooms: state.chat.chatRooms,
         username: state.auth.username,
+        user_id: state.auth.user_id,
         socketChat: state.auth.socket,
         roomID: state.chat.roomID,
         roomName: state.chat.roomName,

@@ -24,10 +24,10 @@ router.route('/oauth/google')
 router.route('/oauth/facebook')
     .post(passportFacebook, UsersController.facebookOAuth);
 
-router.route('/:username/avatar')
+router.route('/:id/avatar')
     .put(passportJWT, UsersController.changeAvatar);
 
-router.route('/:username/password')
+router.route('/:id/password')
     .put(
         validateBody(schemas.changePassword),
         passportJWT,
@@ -35,7 +35,7 @@ router.route('/:username/password')
     )
 
 // Get user chatrooms
-router.route('/:username/chatrooms')
+router.route('/:id/chatrooms')
     .get(passportJWT, ChatroomController.chatrooms)
 
 module.exports = router;

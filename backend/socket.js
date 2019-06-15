@@ -1,7 +1,6 @@
 const io = require('./index.js');
 
 let users = {};
-const namespacesCreated = {};
 
 io.on("connection", function (socket) {
 
@@ -39,7 +38,6 @@ io.on("connection", function (socket) {
     socket.on('CHANGE_ROOM', function (data) {
 
         const usernames = users[data.roomID];
-
         socket.leave(data.previousRoom)
 
         socket.join(data.roomID);
@@ -53,9 +51,6 @@ io.on("connection", function (socket) {
     })
 
     socket.on('NEW_ROOM', function (data) {
-
-        socket.join(data.roomID);
-
         users[data.roomID] = [];
         users[data.roomID].push({
             username: data.username,
@@ -66,7 +61,9 @@ io.on("connection", function (socket) {
 
     socket.on('JOIN_ROOM', function (data) {
 
-        socket.join(data.roomID);
+        if (users[data.roomID] === undefined) {
+            users[data.roomID] = []
+        }
 
         users[data.roomID].push({
             username: data.username,

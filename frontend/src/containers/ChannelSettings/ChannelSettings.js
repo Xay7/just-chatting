@@ -17,17 +17,20 @@ class ChannelSettings extends Component {
         channelDescription: ''
     }
 
-    changeChannelSettings = async () => {
+    changeData = async () => {
+
+        if (this.state.channelName === '' && this.state.channelDescription === '') {
+            return console.log("No changes provided")
+        }
+
         let data = {
             channelName: this.state.channelName,
             channelDescription: this.state.channelDescription,
-            channel: this.props.channelID,
+            id: this.props.channelID,
             oldChannelName: this.props.channelName.substring(1),
-            username: this.props.username,
-            room: this.props.roomID
         }
 
-        await this.props.changeChannelSettings(data);
+        await this.props.changeChannelData(data);
     }
 
     showConfirmDelete = () => {
@@ -42,8 +45,8 @@ class ChannelSettings extends Component {
         this.setState({ channelDescription: e.target.value })
     }
 
-    deleteChannel = async (roomID, channelID, username) => {
-        await this.props.deleteChannel(roomID, channelID, username);
+    deleteChannel = async id => {
+        await this.props.deleteChannel(id);
         this.setState({
             showConfirmDelete: false,
         })
@@ -58,7 +61,7 @@ class ChannelSettings extends Component {
                     <Modal onclick={this.showConfirmDelete} zIndex="2000" />
                     <Confirm
                         cancel={this.showConfirmDelete}
-                        confirm={() => this.deleteChannel(this.props.roomID, this.props.channelID, this.props.username)}
+                        confirm={() => this.deleteChannel(this.props.channelID)}
                         header={`Delete ${this.props.channelName}`}
                         description={`Are you sure you want to delete ${this.props.channelName}?`}
                     />
@@ -87,7 +90,7 @@ class ChannelSettings extends Component {
                         {this.props.successMessage && <ErrorMessage>{this.props.successMessage}</ErrorMessage>}
                         <div className={styles.Btns}>
                             <Button ClassName="Cancel" OnClick={this.props.display}>Cancel</Button>
-                            <Button ClassName="Confirm" OnClick={this.changeChannelSettings}>Submit</Button>
+                            <Button ClassName="Confirm" OnClick={this.changeData}>Submit</Button>
                         </div>
                         <Button ClassName="Danger" OnClick={this.showConfirmDelete}>Delete Channel</Button>
                     </div>

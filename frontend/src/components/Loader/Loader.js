@@ -5,7 +5,6 @@ import './Loader.scss';
 const Loader = () => {
     return (
         <React.Fragment>
-            <div className="Modal"></div>
             <div className="sk-circle">
                 <div className="sk-circle1 sk-child"></div>
                 <div className="sk-circle2 sk-child"></div>

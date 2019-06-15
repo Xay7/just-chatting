@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import styles from './Users.module.scss';
 import { connect } from 'react-redux';
-import Loader from '../../components/Loader/Loader';
 
 class Users extends Component {
 
@@ -10,7 +9,7 @@ class Users extends Component {
 
         this.state = {
             users: [],
-            subscribers: []
+            members: []
         }
 
         this.socket = this.props.socketChat;
@@ -20,7 +19,6 @@ class Users extends Component {
         })
 
         this.socket.on('USER_LOGGED_IN', (data) => {
-
             const userExists = this.state.users.some(el => {
                 return el.username === data.username;
             })
@@ -54,10 +52,10 @@ class Users extends Component {
             )
         })
 
-        let subscribers = null;
+        let members = null;
 
         // Filter those who are online and not
-        subscribers = this.props.subscribers.map(data => {
+        members = this.props.members.map(data => {
             const isOnline = this.state.users.some((el) => {
                 return el.username === data.subscriber;
             })
@@ -77,8 +75,8 @@ class Users extends Component {
                     <div className={styles.Users}>
                         <h5 className={styles.UserRole}>Online</h5>
                         {connectedUsers}
-                        {this.props.subscribers.length > 1 && <h5 className={styles.UserRole}>Offline</h5>}
-                        {subscribers}
+                        {this.props.members.length > 1 && <h5 className={styles.UserRole}>Offline</h5>}
+                        {members}
                     </div>
                 }
             </React.Fragment>
@@ -93,7 +91,7 @@ const mapStateToProps = state => {
         name: state.auth.name,
         socketChat: state.auth.socket,
         room: state.auth.room,
-        subscribers: state.chat.subscribers,
+        members: state.chat.members,
         roomOwner: state.chat.roomOwner,
         channel: state.chat.channelID,
         loading: state.chat.loading,

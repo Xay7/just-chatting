@@ -4,7 +4,7 @@ const DEFAULT_STATE = {
     roomID: '',
     roomName: '',
     chatRooms: [],
-    subscribers: [],
+    members: [],
     channels: [],
     channelID: '',
     channelName: '',
@@ -35,7 +35,7 @@ const reducer = (state = DEFAULT_STATE, action) => {
         case actionTypes.NEW_ROOM:
             return {
                 ...state,
-                chatRooms: action.chatRooms
+                chatRooms: [...state.chatRooms, action.room]
             }
         case actionTypes.CHANGE_ROOM:
             return {
@@ -46,7 +46,7 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 channelName: action.channelName,
                 channelID: '',
                 roomOwner: action.roomOwner,
-                subscribers: action.subscribers,
+                members: action.members,
                 changedRoom: true,
                 loading: false
             }
@@ -56,9 +56,10 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 changedRoom: false
             }
         case actionTypes.JOIN_ROOM:
+
             return {
                 ...state,
-                chatRooms: action.chatRooms
+                chatRooms: [...state.chatRooms, action.room]
             }
         case actionTypes.DELETE_ROOM:
             return {
@@ -79,22 +80,23 @@ const reducer = (state = DEFAULT_STATE, action) => {
 
             if (action.messages === undefined) {
                 noMessage = true;
+                reverse = [];
             } else {
                 noMessage = false
                 reverse = action.messages.reverse();
                 updatedSkip = state.skip + 50;
             }
-
             return {
                 ...state,
                 messages: reverse,
                 skip: updatedSkip,
-                noMessages: noMessage
+                noMessages: noMessage,
+                loading: false
             }
         case actionTypes.NEW_CHANNEL:
             return {
                 ...state,
-                channels: action.channels
+                channels: [...state.channels, action.channel]
             }
         case actionTypes.CHANGE_CHANNEL:
             return {
@@ -109,7 +111,9 @@ const reducer = (state = DEFAULT_STATE, action) => {
             return {
                 ...state,
                 errorMessage: '',
-                successMessage: action.successMessage
+                successMessage: action.successMessage,
+                channelDescription: action.channelDescription,
+                channelName: action.channelName
             }
         case actionTypes.CHANGE_CHANNEL_SETTINGS_ERROR:
             return {
@@ -118,9 +122,12 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 successMessage: ''
             }
         case actionTypes.DELETE_CHANNEL:
+            const channels = state.channels.filter(el => {
+                return el.id !== action.channel
+            })
             return {
                 ...state,
-                channels: action.channels
+                channels: channels
             }
         case actionTypes.SHOW_ROOM_OPTIONS:
             return {

@@ -24,13 +24,14 @@ module.exports = {
     newChatroom: async (req, res, next) => {
 
         const name = req.body.name
-        const owner = req.user.local.name
+        const username = req.user.local.name
+        const id = req.user._id
 
         const newChatroom = new Chatroom({
             name: name,
-            owner: owner,
+            owner: username,
             members: {
-                member: owner,
+                member: username,
                 joined_at: new Date(),
             }
         })
@@ -43,21 +44,21 @@ module.exports = {
         await newChatroom.save();
         await newChannel.save();
 
-        await User.findOneAndUpdate({ "local.name": owner }, {
+        await User.findOneAndUpdate({ "_id": id }, {
             "$push":
             {
                 "local.chatRooms": newChatroom._id
             }
         })
 
-        res.status(201).json({ success: "New chat has been created" })
+        res.status(201).json({ id: newChatroom._id, name: newChatroom.name })
     },
     joinChatroom: async (req, res, next) => {
 
-        const id = req.body.id;
-        const username = req.body.username
+        const id = req.params.id;
+        const user_id = req.user._id
 
-        const foundUser = await User.findOne({ "local.name": username });
+        const foundUser = await User.findById({ "_id": user_id });
 
         const userChatrooms = foundUser.local.chatRooms
 
@@ -67,30 +68,30 @@ module.exports = {
             return res.status(409).json({ error: "Can't join owned room" })
         }
 
-        const foundChatroom = await Chatroom.findOne({ "id": id });
+        const foundChatroom = await Chatroom.findOne({ "_id": id });
 
         if (!foundChatroom) {
             return res.status(403).json({ error: "Chat doesn't exist" });
         }
 
-        await User.findOneAndUpdate({ "local.name": username }, {
+        await User.findByIdAndUpdate({ "_id": user_id }, {
             "$push":
             {
-                "local.chatRooms": id
+                "local.chatRooms": foundChatroom._id
             }
         })
 
-        await Chatroom.findOneAndUpdate({ "id": id }, {
+        await Chatroom.findOneAndUpdate({ "_id": id }, {
             "$push":
             {
                 "members": {
-                    subscriber: username,
+                    member: foundUser.local.name,
                     joined_at: new Date(),
                 }
             }
         })
 
-        res.status(200).json({ "success": "Joined chatroom" });
+        res.status(200).json({ id: foundChatroom._id, name: foundChatroom.name });
     },
     deleteChatroom: async (req, res, next) => {
 
@@ -127,7 +128,7 @@ module.exports = {
             if (err) {
                 return res.status(404).json({ error: "Wrong id format" });
             }
-        }).select("owner members");
+        })
 
         if (!foundChatroom) {
             return res.status(404).json({ error: "Chatroom doesn't exist" });
@@ -136,6 +137,8 @@ module.exports = {
         const foundChannels = await Channel.find({ "chatroom_id": id }, { "chatroom_id": false, __v: false });
 
         const data = {
+            id: foundChatroom._id,
+            name: foundChatroom.name,
             owner: foundChatroom.owner,
             members: foundChatroom.members,
             channels: foundChannels

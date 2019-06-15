@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styles from './Channels.module.scss';
 import * as actions from '../../store/actions/chatroom';
-import uuid4 from 'uuid4'
 import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import ChatInput from '../../components/ChatInput/ChatInput';
@@ -48,6 +47,8 @@ class Channels extends Component {
 
     switchChannel = async (id, name, description) => {
 
+        await this.props.isFetching();
+
         const previousChannel = this.state.selectedChannel
 
         let data = {
@@ -59,10 +60,10 @@ class Channels extends Component {
 
         this.setState({ selectedChannel: id });
 
-
         await this.props.changeChannel(id, name, description);
-        await this.props.getChatMessages(data);
-        await this.socket.emit('JOIN_CHANNEL', {
+        //await this.props.getChatMessages(data);
+
+        this.socket.emit('JOIN_CHANNEL', {
             channelID: id,
             previousChannelID: previousChannel,
             name: this.props.username,
@@ -80,7 +81,6 @@ class Channels extends Component {
         let data = {
             username: this.props.username,
             id: this.props.roomID,
-            channelID: uuid4(),
             name: this.state.channelName,
             description: this.state.channelDescription
         }
@@ -179,7 +179,6 @@ class Channels extends Component {
         return (
             <React.Fragment>
                 {addChannel}
-
                 <div className={styles.Channels}>
                     {noChannels}
                     <div className={styles.ChannelsHeader}>
@@ -204,7 +203,8 @@ const mapStateToProps = state => {
         errorMessage: state.auth.errorMessage,
         successMessage: state.auth.successMessage,
         roomName: state.chat.roomName,
-        skip: state.chat.skip
+        skip: state.chat.skip,
+        loading: state.chat.loading
     }
 }
 

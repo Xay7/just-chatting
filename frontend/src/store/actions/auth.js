@@ -4,13 +4,14 @@ import * as actionTypes from './actionTypes';
 export const signIn = data => {
     return async dispatch => {
         try {
+
             const res = await axios.post('http://localhost:3001/users/signin', data);
 
             dispatch({
                 type: actionTypes.AUTH_SIGN_IN,
-                payload: res.data.token,
                 username: res.data.username,
-                avatar: res.data.avatar + "?" + Date.now()
+                avatar: res.data.avatar + "?" + Date.now(),
+                id: res.data.id
             });
 
         } catch (err) {
@@ -42,11 +43,11 @@ export const signUp = data => {
     }
 }
 
-export const updateAvatar = (data, username) => {
+export const updateAvatar = (data, id) => {
     return async (dispatch) => {
         try {
 
-            await axios.put(`http://localhost:3001/users/${username}/avatar`, data, {
+            await axios.put(`http://localhost:3001/users/${id}/avatar`, data, {
                 headers: {
                     'content-type': 'multipart/form-data'
                 }
@@ -54,7 +55,7 @@ export const updateAvatar = (data, username) => {
 
             dispatch({
                 type: actionTypes.AUTH_CHANGED_AVATAR,
-                avatar: `https://justchattingbucket.s3.eu-west-3.amazonaws.com/${username}`
+                avatar: `https://justchattingbucket.s3.eu-west-3.amazonaws.com/${id}`
             })
 
 
@@ -65,10 +66,10 @@ export const updateAvatar = (data, username) => {
     }
 }
 
-export const updatePassword = (data, username) => {
+export const updatePassword = (data, id) => {
     return async dispatch => {
         try {
-            let res = await axios.put(`http://localhost:3001/users/${username}/password`, data);
+            let res = await axios.put(`http://localhost:3001/users/${id}/password`, data);
 
             dispatch({
                 type: actionTypes.AUTH_CHANGED_PASSWORD,

@@ -28,20 +28,6 @@ class RoomHelpers extends Component {
         this.setState({ showChannelSettings: !this.state.showChannelSettings })
     }
 
-    changeChannelSettings = async () => {
-
-        let data = {
-            channelName: this.state.channelName,
-            channelDescription: this.state.channelDescription,
-            channel: this.props.channelID,
-            oldChannelName: this.props.channelName.substring(1),
-            username: this.props.username,
-            room: this.props.roomID
-        }
-
-        await this.props.changeChannelSettings(data);
-    }
-
     render() {
         return (
             <React.Fragment>

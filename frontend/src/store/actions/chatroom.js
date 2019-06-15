@@ -1,18 +1,23 @@
 import * as actionTypes from './actionTypes';
 import axios from 'axios';
 
-const getRooms = async (username) => {
-    const res = await axios.get(`http://localhost:3001/users/${username}/chat`);
+const getRooms = async (id) => {
+    const res = await axios.get(`http://localhost:3001/users/${id}/chatrooms`);
     return res;
 }
 
-const getRoom = async (username, id) => {
-    const res = await axios.get(`http://localhost:3001/users/${username}/chat/${id}`);
+const getRoom = async id => {
+    const res = await axios.get(`http://localhost:3001/chatrooms/${id}`);
     return res;
 }
 
-const getChannels = async (username, id) => {
-    const res = await axios.get(`http://localhost:3001/users/${username}/chat/${id}/channels`)
+const getChannels = async id => {
+    const res = await axios.get(`http://localhost:3001/chatrooms/${id}/channels`)
+    return res;
+}
+
+const getChannel = async id => {
+    const res = await axios.get(`http://localhost:3001/channels/${id}`)
     return res;
 }
 
@@ -24,10 +29,10 @@ export const isFetching = () => {
     }
 }
 
-export const updateRooms = (username) => {
+export const updateRooms = (id) => {
     return async dispatch => {
         try {
-            const res = await getRooms(username);
+            const res = await getRooms(id);
             dispatch({
                 type: actionTypes.GET_ROOMS,
                 chatRooms: res.data.chatRooms
@@ -41,17 +46,18 @@ export const updateRooms = (username) => {
     }
 }
 
-export const newChatroom = data => {
+export const newChatroom = name => {
     return async dispatch => {
         try {
 
-            await axios.post(`http://localhost:3001/users/${data.owner}/chat`, data);
-
-            const res = await getRooms(data.owner);
+            const res = await axios.post(`http://localhost:3001/chatrooms/`, { name });
 
             dispatch({
                 type: actionTypes.NEW_ROOM,
-                chatRooms: res.data.chatRooms
+                room: {
+                    id: res.data.id,
+                    name: res.data.name
+                }
             })
 
         } catch (err) {
@@ -64,13 +70,13 @@ export const newChannel = data => {
     return async dispatch => {
         try {
 
-            await axios.put(`http://localhost:3001/users/${data.username}/chat/${data.id}/channels`, data)
+            const postres = await axios.post(`http://localhost:3001/channels`, data);
 
-            const res = await getChannels(data.username, data.id);
+            const res = await getChannel(postres.data.id);
 
             dispatch({
                 type: actionTypes.NEW_CHANNEL,
-                channels: res.data.channels
+                channel: res.data
             })
         } catch (error) {
             console.log(error);
@@ -93,17 +99,15 @@ export const changeChannel = (id, name, description) => {
     }
 }
 
-export const deleteChannel = (roomID, channelID, username) => {
+export const deleteChannel = id => {
     return async dispatch => {
         try {
 
-            await axios.delete(`http://localhost:3001/users/${username}/chat/${roomID}/channels/${channelID}`)
-
-            const res = await getChannels(username, roomID);
+            await axios.delete(`http://localhost:3001/channels/${id}`)
 
             dispatch({
                 type: actionTypes.DELETE_CHANNEL,
-                channels: res.data.channels
+                channel: id
             })
 
         } catch (error) {
@@ -113,19 +117,17 @@ export const deleteChannel = (roomID, channelID, username) => {
 
 }
 
-export const changeRoom = data => {
+export const changeRoom = id => {
     return async dispatch => {
         try {
-
-            const res = await getRoom(data.username, data.id);
-
+            const res = await getRoom(id);
             dispatch({
                 type: actionTypes.CHANGE_ROOM,
-                roomID: data.id,
-                roomName: data.roomName,
-                channels: res.data.channels,
-                subscribers: res.data.subscribers,
+                roomID: res.data.id,
+                roomName: res.data.name,
                 channelName: '',
+                channels: res.data.channels,
+                members: res.data.members,
                 roomOwner: res.data.owner
             });
         } catch (error) {
@@ -147,13 +149,11 @@ export const joinRoom = data => {
     return async dispatch => {
         try {
 
-            await axios.put(`http://localhost:3001/users/${data.username}/chat/${data.id}`, data);
-
-            const res = await getRooms(data.username);
+            const res = await axios.put(`http://localhost:3001/chatrooms/${data.id}`, data);
 
             dispatch({
                 type: actionTypes.JOIN_ROOM,
-                chatRooms: res.data.chatRooms
+                room: res.data
             });
         }
         catch (err) {
@@ -166,7 +166,7 @@ export const deleteRoom = data => {
     return async dispatch => {
         try {
 
-            await axios.delete(`http://localhost:3001/users/${data.username}/chat/${data.id}`);
+            await axios.delete(`http://localhost:3001/chatrooms/${data.id}`);
 
             const res = await getRooms(data.username);
 
@@ -185,7 +185,7 @@ export const storeMessage = data => {
     return async dispatch => {
         try {
 
-            await axios.put(`http://localhost:3001/users/${data.author}/chat/${data.room}/channels/${data.channelID}/messages`, data);
+            await axios.put(`http://localhost:3001/channels/${data.channelID}/messages`, data);
 
         } catch (error) {
 
@@ -197,8 +197,7 @@ export const getChatMessages = data => {
     return async dispatch => {
         try {
 
-            const res = await axios.get(`http://localhost:3001/users/${data.username}/chat/${data.roomID}/channels/${data.channelID}/messages?amount=50&skip=${data.skipMessages}`)
-
+            const res = await axios.get(`http://localhost:3001/channels/${data.channelID}/messages?amount=50&skip=${data.skipMessages}`)
 
             dispatch({
                 type: actionTypes.GET_MESSAGES,
@@ -217,14 +216,19 @@ export const showRoomOptions = () => {
     }
 }
 
-export const changeChannelSettings = data => {
+export const changeChannelData = data => {
     return async dispatch => {
         try {
-            const res = await axios.put(`http://localhost:3001/users/${data.username}/chat/${data.room}/channels/${data.channel}`, data)
+
+            const res = await axios.put(`http://localhost:3001/channels/${data.id}`, data)
+
+            const channel = await getChannel(data.id);
 
             dispatch({
                 type: actionTypes.CHANGE_CHANNEL_SETTINGS,
-                successMessage: res.data.success
+                successMessage: res.data.success,
+                channelName: channel.data.name,
+                channelDescription: channel.data.description
             })
         } catch (error) {
             dispatch({
