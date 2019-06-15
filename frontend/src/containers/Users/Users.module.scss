@@ -20,7 +20,8 @@
     font-size: 12px;
 }
 
-.Avatar {
+.Avatar,
+.AvatarOffline {
     margin-left: 20px;
     margin-right: 7px;
     width: 32px;
@@ -28,7 +29,11 @@
     border-radius: 50%;
 }
 
-.xd::after {
+.AvatarOffline {
+    filter: grayscale(100%);
+}
+
+.Status::after {
     content: "";
     position: absolute;
     top: 18.5px;
@@ -40,7 +45,8 @@
     background-color: green;
 }
 
-.UserWrapper {
+.UserWrapper,
+.UserWrapperOffline {
     position: relative;
     display: flex;
     flex-direction: row;
@@ -49,6 +55,10 @@
     width: 100%;
     margin-top: 10px;
     height: 30px;
+}
+
+.UserWrapperOffline {
+    color: rgb(122, 122, 122);
 }
 
 .UserRole {

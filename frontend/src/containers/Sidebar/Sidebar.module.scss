@@ -111,7 +111,7 @@ $basecolor: #182C61;
 .InviteString {
     width: 450px;
     height: 150px;
-    background-color: white;
+    background-color: $white;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
@@ -170,7 +170,7 @@ $basecolor: #182C61;
 .UserSettings {
     width: 700px;
     height: 400px;
-    background-color: white;
+    background-color: $white;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;

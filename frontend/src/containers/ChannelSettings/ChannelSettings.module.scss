@@ -1,3 +1,5 @@
+@import '../../index.scss';
+
 .ChannelSettingsWrapper {
     display: flex;
     flex-direction: column;
@@ -5,7 +7,7 @@
     align-items: center;
     width: 500px;
     height: 400px;
-    background-color: white;
+    background-color: $white;
     border-radius: 5px;
 }
 
