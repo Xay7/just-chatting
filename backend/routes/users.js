@@ -7,15 +7,22 @@ const { validateBody, schemas } = require('../helpers/route-helpers');
 const UsersController = require('../controllers/users');
 const passportSignIn = passport.authenticate('local', { session: false })
 const passportJWT = passport.authenticate('jwt', { session: false })
+const ChatroomController = require('../controllers/chatrooms');
 const passportGoogle = passport.authenticate('googleToken', { session: false })
 const passportFacebook = passport.authenticate('facebookToken', { session: false });
 
-
+// Auth stuff
 router.route('/signup')
-    .post(
-        validateBody(schemas.signUpSchema),
-        UsersController.signUp,
-    );
+    .post(validateBody(schemas.signUpSchema), UsersController.signUp);
+
+router.route('/signin')
+    .post(passportSignIn, UsersController.signIn);
+
+router.route('/oauth/google')
+    .post(passportGoogle, UsersController.googleOAuth)
+
+router.route('/oauth/facebook')
+    .post(passportFacebook, UsersController.facebookOAuth);
 
 router.route('/:username/avatar')
     .put(passportJWT, UsersController.changeAvatar);
@@ -24,47 +31,11 @@ router.route('/:username/password')
     .put(
         validateBody(schemas.changePassword),
         passportJWT,
-        UsersController.changePassword);
+        UsersController.changePassword
+    )
 
-
-router.route('/signin')
-    .post(
-        passportSignIn,
-        UsersController.signIn,
-    );
-
-router.route('/:username/chat')
-    .get(passportJWT, UsersController.chat)
-    .post(passportJWT, UsersController.newChat);
-
-
-router.route('/:username/chat/:id')
-    .delete(passportJWT, UsersController.deleteChat)
-    .put(passportJWT, UsersController.joinChat)
-    .get(passportJWT, UsersController.getChatData);
-
-router.route('/:username/chat/:id/channels')
-    .put(passportJWT, UsersController.newChannel)
-    .get(passportJWT, UsersController.getChannels);
-
-router.route('/:username/chat/:id/channels/:channelID')
-    .put(passportJWT, UsersController.changeChannelData)
-    .get(passportJWT, UsersController.getChannel)
-    .delete(passportJWT, UsersController.deleteChannel)
-
-router.route('/:username/chat/:id/channels/:channelID/messages')
-    .put(passportJWT, UsersController.storeMessage)
-    .get(passportJWT, UsersController.getMessages);
-
-
-// Add support lateeeeeeeeeeer
-
-router.route('/oauth/google')
-    .post(passportGoogle, UsersController.googleOAuth)
-
-router.route('/oauth/facebook')
-    .post(passportFacebook, UsersController.facebookOAuth);
-
-
+// Get user chatrooms
+router.route('/:username/chatrooms')
+    .get(passportJWT, ChatroomController.chatrooms)
 
 module.exports = router;

@@ -29,11 +29,8 @@ app.use(cors({
 mongoose.set('useFindAndModify', false);
 
 
-
-
 app.use('/users', require('./routes/users'))
+app.use('/chatrooms', require('./routes/chatroom'))
+app.use('/channels', require('./routes/channel'))
 
-
-
-
-console.log(`Server listening at ${port}`)
+console.log(`Listening at ${port}`);
