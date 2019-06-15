@@ -2,10 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const chatSchema = new Schema({
-    id: {
-        type: String,
-        required: true
-    },
     name: {
         type: String,
         required: true,
@@ -14,38 +10,19 @@ const chatSchema = new Schema({
         type: String,
         required: true
     },
-    subscribers: [
+    members: [
         {
-            subscriber: String,
+            _id: false,
+            member: String,
             role: String,
             joined_at: String
         }
-    ],
-    channels: [
-        {
-            _id: false,
-            id: {
-                type: String
-            },
-            name: {
-                type: String
-            },
-            description: {
-                type: String
-            },
-            messages: [
-                {
-                    author: String,
-                    body: String,
-                    created_at: Date,
-                    _id: false,
-                    avatar: String
-                }
-            ]
-        }
     ]
-
-})
+}).set('toJSON', {
+    virtuals: true,
+    versionKey: false,
+    transform: function (doc, ret) { delete ret._id }
+});
 
 const chatroom = mongoose.model('chatroom', chatSchema);
 
