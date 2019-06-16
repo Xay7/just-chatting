@@ -39,6 +39,8 @@ class Users extends Component {
 
     }
 
+
+
     render() {
 
         let connectedUsers = this.state.users.map(user => {
@@ -57,14 +59,14 @@ class Users extends Component {
         // Filter those who are online and not
         members = this.props.members.map(data => {
             const isOnline = this.state.users.some((el) => {
-                return el.username === data.subscriber;
+                return el.username === data.name;
             })
             if (isOnline) {
                 return null;
             } else return (
                 <div className={styles.UserWrapperOffline} key={data.subscriber}>
                     <img src={data.avatar} alt={data.avatar + " avatar"} className={styles.AvatarOffline} />
-                    <div>{data.subscriber}</div>
+                    <div>{data.name}</div>
                 </div>
             )
         })

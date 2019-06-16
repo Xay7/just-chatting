@@ -11,12 +11,7 @@ const chatSchema = new Schema({
         required: true
     },
     members: [
-        {
-            _id: false,
-            member: String,
-            role: String,
-            joined_at: String
-        }
+        { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true }
     ]
 }).set('toJSON', {
     virtuals: true,

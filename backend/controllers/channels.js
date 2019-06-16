@@ -52,7 +52,7 @@ module.exports = {
     },
     deleteChannel: async (req, res, next) => {
 
-        const reqUserName = req.user.local.name
+        const reqUserName = req.user.name
         const channelID = req.params.id;
 
         const foundChannel = await Channel.findById({ "_id": channelID });
@@ -73,7 +73,7 @@ module.exports = {
     },
     storeMessage: async (req, res, next) => {
 
-        const username = req.user.local.name;
+        const username = req.user.name;
         const id = req.params.id;
 
         const data = {

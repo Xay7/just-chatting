@@ -11,10 +11,10 @@ const getRoom = async id => {
     return res;
 }
 
-const getChannels = async id => {
-    const res = await axios.get(`http://localhost:3001/chatrooms/${id}/channels`)
-    return res;
-}
+// const getChannels = async id => {
+//     const res = await axios.get(`http://localhost:3001/chatrooms/${id}/channels`)
+//     return res;
+// }
 
 const getChannel = async id => {
     const res = await axios.get(`http://localhost:3001/channels/${id}`)
@@ -37,8 +37,7 @@ export const updateRooms = (id) => {
                 type: actionTypes.GET_ROOMS,
                 chatRooms: res.data.chatRooms
             })
-        }
-        catch (err) {
+        } catch (err) {
             dispatch({
                 type: actionTypes.GET_ROOMS_ERROR
             })
@@ -59,7 +58,6 @@ export const newChatroom = name => {
                     name: res.data.name
                 }
             })
-
         } catch (err) {
             console.log(err);
         }

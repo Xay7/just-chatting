@@ -5,7 +5,7 @@ const Channel = require('../models/channel');
 module.exports = {
     chatrooms: async (req, res, next) => {
 
-        const chatrooms = req.user.local.chatRooms
+        const chatrooms = req.user.chatRooms
 
         const foundChatrooms = await Chatroom.find().where('_id').in(chatrooms);
 
@@ -24,16 +24,13 @@ module.exports = {
     newChatroom: async (req, res, next) => {
 
         const name = req.body.name
-        const username = req.user.local.name
+        const username = req.user.name
         const id = req.user._id
 
         const newChatroom = new Chatroom({
             name: name,
             owner: username,
-            members: {
-                member: username,
-                joined_at: new Date(),
-            }
+            members: id
         })
 
         const newChannel = new Channel({
@@ -47,7 +44,7 @@ module.exports = {
         await User.findOneAndUpdate({ "_id": id }, {
             "$push":
             {
-                "local.chatRooms": newChatroom._id
+                "chatRooms": newChatroom._id
             }
         })
 
@@ -60,7 +57,7 @@ module.exports = {
 
         const foundUser = await User.findById({ "_id": user_id });
 
-        const userChatrooms = foundUser.local.chatRooms
+        const userChatrooms = foundUser.chatRooms
 
         // Make sure user can't join arleady joined rooms
 
@@ -77,17 +74,14 @@ module.exports = {
         await User.findByIdAndUpdate({ "_id": user_id }, {
             "$push":
             {
-                "local.chatRooms": foundChatroom._id
+                "chatRooms": foundChatroom._id
             }
         })
 
         await Chatroom.findOneAndUpdate({ "_id": id }, {
             "$push":
             {
-                "members": {
-                    member: foundUser.local.name,
-                    joined_at: new Date(),
-                }
+                "members": foundUser._id
             }
         })
 
@@ -96,7 +90,7 @@ module.exports = {
     deleteChatroom: async (req, res, next) => {
 
         const id = req.params.id;
-        const username = req.user.local.name;
+        const username = req.user.name;
 
         // Check if request is from owner
         const foundOwner = await Chatroom.findOne({ "_id": id });
@@ -112,9 +106,9 @@ module.exports = {
         await Channel.deleteMany({ "chatroom_id": id });
 
         // Find room clients and delete all id's
-        await User.updateMany({ "local.chatRooms": id }, {
+        await User.updateMany({ "chatRooms": id }, {
             $pull: {
-                "local.chatRooms": id
+                "chatRooms": id
             }
         });
 
@@ -124,11 +118,7 @@ module.exports = {
 
         const id = req.params.id;
 
-        const foundChatroom = await Chatroom.findOne({ "_id": id }, function (err) {
-            if (err) {
-                return res.status(404).json({ error: "Wrong id format" });
-            }
-        })
+        const foundChatroom = await Chatroom.findOne({ "_id": id }).populate('members', 'name avatar');
 
         if (!foundChatroom) {
             return res.status(404).json({ error: "Chatroom doesn't exist" });
@@ -145,6 +135,5 @@ module.exports = {
         }
 
         res.status(200).json(data);
-
     },
 }

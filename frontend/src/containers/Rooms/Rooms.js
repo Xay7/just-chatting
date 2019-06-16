@@ -270,7 +270,6 @@ const mapStateToProps = state => {
     return {
         username: state.auth.username,
         user_id: state.auth.user_id,
-        user_id: state.auth.user_id,
         chatRooms: state.chat.chatRooms,
         socketChat: state.auth.socket,
         channelID: state.chat.channelID,

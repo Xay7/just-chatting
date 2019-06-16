@@ -3,67 +3,40 @@ const bcrypt = require('bcryptjs');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    method: {
+    name: {
         type: String,
-        enum: ['local', 'google', 'facebook'],
-        required: true
     },
-    local: {
-        name: {
-            type: String,
-        },
-        email: {
-            type: String,
-            lowercase: true
-        },
-        password: {
-            type: String,
-        },
-        avatar: {
-            type: String,
-        },
-        chatRooms: {
-            type: Array
-        }
+    email: {
+        type: String,
+        lowercase: true
     },
-    google: {
-        id: {
-            type: String
-        },
-        email: {
-            type: String,
-            lowercase: true
-        }
+    password: {
+        type: String,
     },
-    facebook: {
-        id: {
-            type: String
-        },
-        email: {
-            type: String,
-            lowercase: true
-        }
+    avatar: {
+        type: String,
     },
+    chatRooms: {
+        type: Array
+    }
 
 }).set('toJSON', {
     virtuals: true,
     versionKey: false,
     transform: function (doc, ret) { delete ret._id }
-});;
+});
 
 
 userSchema.pre('save', async function (next) {
     try {
-        if (this.method !== 'local') {
-            next();
-        }
+
         // Generate a salt
         const salt = await bcrypt.genSalt(10);
         // Generate password hash
-        const hashedPassword = await bcrypt.hash(this.local.password, salt);
+        const hashedPassword = await bcrypt.hash(this.password, salt);
 
         // Replace originial password with a hashed password
-        this.local.password = hashedPassword;
+        this.password = hashedPassword;
 
         next();
 
@@ -74,7 +47,7 @@ userSchema.pre('save', async function (next) {
 
 userSchema.methods.isValidPassword = async function (newPassword) {
     try {
-        return await bcrypt.compare(newPassword, this.local.password);
+        return await bcrypt.compare(newPassword, this.password);
     } catch (error) {
         throw new Error(error);
     }

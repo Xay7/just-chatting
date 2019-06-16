@@ -20,8 +20,8 @@ module.exports = {
         // Email and password from user
         const { email, password, name } = req.value.body
         // Check if user exists in database
-        const foundUser = await User.findOne({ "local.email": email })
-        const foundName = await User.findOne({ "local.name": name })
+        const foundUser = await User.findOne({ "email": email })
+        const foundName = await User.findOne({ "name": name })
 
         if (foundUser) {
             return res.status(403).send({ error: "Email arleady in use" })
@@ -34,13 +34,11 @@ module.exports = {
         // Create new user
 
         const newUser = new User({
-            method: 'local',
-            local: {
-                email: email,
-                password: password,
-                name: name,
-                avatar: 'https://justchattingbucket.s3.eu-west-3.amazonaws.com/DefaultUserAvatar'
-            }
+            email: email,
+            password: password,
+            name: name,
+            avatar: 'https://justchattingbucket.s3.eu-west-3.amazonaws.com/DefaultUserAvatar'
+
         });
         await newUser.save();
 
@@ -56,8 +54,8 @@ module.exports = {
     },
     signIn: async (req, res, next) => {
 
-        const avatar = req.user.local.avatar;
-        const username = req.user.local.name;
+        const avatar = req.user.avatar;
+        const username = req.user.name;
         const id = req.user._id;
         const token = signToken(req.user);
 
@@ -75,7 +73,7 @@ module.exports = {
 
         const password = req.body.password
         await User.findOne({ "_id": req.params.id }, function (err, doc) {
-            doc.local.password = password;
+            doc.password = password;
             doc.save();
         });
 
@@ -85,7 +83,7 @@ module.exports = {
 
         const id = req.params.id
 
-        await User.findOneAndUpdate({ "_id": id }, { "local.avatar": `https://justchattingbucket.s3.eu-west-3.amazonaws.com/${id}` })
+        await User.findOneAndUpdate({ "_id": id }, { "avatar": `https://justchattingbucket.s3.eu-west-3.amazonaws.com/${id}` })
 
         await uploadAvatar(req, res, function (err) {
             if (err) {

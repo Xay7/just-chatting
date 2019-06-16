@@ -38,6 +38,7 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 chatRooms: [...state.chatRooms, action.room]
             }
         case actionTypes.CHANGE_ROOM:
+
             return {
                 ...state,
                 roomID: action.roomID,
