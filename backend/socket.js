@@ -11,17 +11,20 @@ io.on("connection", function (socket) {
     socket.on('USER_LOGGED_IN', function (data) {
 
         socket.username = data.username;
-        socket.roomIDs = data.roomIDs
+        socket.chatrooms = data.roomIDs;
+        socket.user_id = data.user_id
 
         data.roomIDs.map(el => {
 
             if (users[el] === undefined) {
                 users[el] = [];
                 users[el].push({
+                    id: data.user_id,
                     username: data.username,
                     avatar: data.avatar
                 });
             } else users[el].push({
+                id: data.user_id,
                 username: data.username,
                 avatar: data.avatar
             });
@@ -44,6 +47,14 @@ io.on("connection", function (socket) {
 
         io.in(data.roomID).emit('ROOM_USER_LIST', usernames);
 
+    })
+
+    socket.on('USER_LEFT', function (id) {
+        users = users.filter(el => {
+            return el.id !== id
+        })
+
+        io.in(data.roomID).emit('USER_LEFT_UPDATE_USERS', id);
     })
 
     socket.on('CLIENT_IS_TYPING', function (data) {
@@ -83,17 +94,13 @@ io.on("connection", function (socket) {
         socket.emit('UPDATING_MESSAGES', data);
 
     })
-    socket.on('OWNER_DELETED_ROOM', function (data) {
-        io.in(data.room).emit('ROOM_DELETED');
-    })
-
     socket.on('disconnect', function () {
 
-        if (socket.roomIDs === undefined) {
+        if (socket.chatrooms === undefined) {
             return;
         }
 
-        socket.roomIDs.map(el => {
+        socket.chatrooms.map(el => {
             users[el] = users[el].filter(el => {
                 return el.username !== socket.username
             })

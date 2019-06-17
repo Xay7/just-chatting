@@ -7,13 +7,13 @@ const chatSchema = new Schema({
         required: true,
     },
     owner: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true
     },
     members: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true }
     ]
 }).set('toJSON', {
+    virtuals: true,
     versionKey: false,
     transform: function (doc, ret) { delete ret._id }
 });

@@ -5,7 +5,7 @@ const Channel = require('../models/channel');
 module.exports = {
     chatrooms: async (req, res, next) => {
 
-        const chatrooms = req.user.chatRooms
+        const chatrooms = req.user.chatrooms
 
         const foundChatrooms = await Chatroom.find().where('_id').in(chatrooms);
 
@@ -17,19 +17,18 @@ module.exports = {
         })
 
         res.status(200).json({
-            chatRooms: formattedChatrooms
+            chatrooms: formattedChatrooms
         })
 
     },
     newChatroom: async (req, res, next) => {
 
         const name = req.body.name
-        const username = req.user.name
         const id = req.user._id
 
         const newChatroom = new Chatroom({
             name: name,
-            owner: username,
+            owner: id,
             members: id
         })
 
@@ -44,7 +43,7 @@ module.exports = {
         await User.findOneAndUpdate({ "_id": id }, {
             "$push":
             {
-                "chatRooms": newChatroom._id
+                "chatrooms": newChatroom._id
             }
         })
 
@@ -57,7 +56,7 @@ module.exports = {
 
         const foundUser = await User.findById({ "_id": user_id });
 
-        const userChatrooms = foundUser.chatRooms
+        const userChatrooms = foundUser.chatrooms
 
         // Make sure user can't join arleady joined rooms
 
@@ -74,7 +73,7 @@ module.exports = {
         await User.findByIdAndUpdate({ "_id": user_id }, {
             "$push":
             {
-                "chatRooms": foundChatroom._id
+                "chatrooms": foundChatroom._id
             }
         })
 
@@ -87,15 +86,34 @@ module.exports = {
 
         res.status(200).json({ id: foundChatroom._id, name: foundChatroom.name });
     },
+    leaveChatroom: async (req, res, next) => {
+
+        const id = req.params.id;
+        const user_id = req.user._id
+
+        await Chatroom.findOneAndUpdate({ "_id": id }, {
+            $pull: {
+                "members": user_id
+            }
+        })
+
+        await User.findOneAndUpdate({ "_id": user_id }, {
+            $pull: {
+                "chatrooms": id
+            }
+        })
+
+        res.status(200).json("good");
+    },
     deleteChatroom: async (req, res, next) => {
 
         const id = req.params.id;
-        const username = req.user.name;
+        const user_id = req.user._id;
 
         // Check if request is from owner
         const foundOwner = await Chatroom.findOne({ "_id": id });
 
-        if (username !== foundOwner.owner) {
+        if (!user_id.equals(foundOwner.owner)) {
             return res.status(403).json({ error: "Unauthorized" })
         }
 
@@ -106,9 +124,9 @@ module.exports = {
         await Channel.deleteMany({ "chatroom_id": id });
 
         // Find room clients and delete all id's
-        await User.updateMany({ "chatRooms": id }, {
+        await User.updateMany({ "chatrooms": id }, {
             $pull: {
-                "chatRooms": id
+                "chatrooms": id
             }
         });
 
@@ -118,18 +136,20 @@ module.exports = {
 
         const id = req.params.id;
 
-        const foundChatroom = await Chatroom.findOne({ "_id": id }).populate('members', 'name avatar');
+        const foundChatroom = await Chatroom.findOne({ "_id": id }).populate([{ path: 'members', select: 'name avatar' }, { path: 'owner', select: 'name' }]);
 
         if (!foundChatroom) {
             return res.status(404).json({ error: "Chatroom doesn't exist" });
         }
-
         const foundChannels = await Channel.find({ "chatroom_id": id }, { "chatroom_id": false, __v: false });
 
         const data = {
             id: foundChatroom._id,
             name: foundChatroom.name,
-            owner: foundChatroom.owner,
+            owner: {
+                name: foundChatroom.owner.name,
+                id: foundChatroom.owner._id
+            },
             members: foundChatroom.members,
             channels: foundChannels
         }

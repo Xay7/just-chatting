@@ -30,8 +30,6 @@ class ChannelSettings extends Component {
             oldChannelName: this.props.channelName.substring(1),
         }
 
-        console.log(this.props);
-
         await this.props.changeChannelData(data);
     }
 

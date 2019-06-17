@@ -17,7 +17,7 @@ export const updateRooms = (id) => {
             const res = await getRooms(id);
             dispatch({
                 type: actionTypes.GET_ROOMS,
-                chatRooms: res.data.chatRooms
+                chatRooms: res.data.chatrooms
             })
         } catch (err) {
             dispatch({
@@ -91,18 +91,33 @@ export const joinRoom = data => {
     }
 }
 
-export const deleteRoom = data => {
+export const deleteChatroom = id => {
     return async dispatch => {
         try {
 
-            await axios.delete(`http://localhost:3001/chatrooms/${data.id}`);
-
-            const res = await getRooms(data.username);
+            await axios.delete(`http://localhost:3001/chatrooms/${id}`);
 
             dispatch({
                 type: actionTypes.DELETE_ROOM,
-                chatRooms: res.data.chatRooms
+                room: id
             });
+
+        } catch (err) {
+            console.log(err);
+        }
+    }
+}
+
+export const leaveChatroom = id => {
+    return async dispatch => {
+        try {
+
+            await axios.patch(`http://localhost:3001/chatrooms/${id}`)
+
+            dispatch({
+                type: actionTypes.LEAVE_ROOM,
+                room: id
+            })
 
         } catch (err) {
             console.log(err);

@@ -12,6 +12,7 @@ router.route('/')
 router.route('/:id')
     .delete(passportJWT, ChatroomController.deleteChatroom)
     .put(passportJWT, ChatroomController.joinChatroom)
+    .patch(passportJWT, ChatroomController.leaveChatroom)
     .get(passportJWT, ChatroomController.getChatroomData);
 
 router.route('/:id/channels')

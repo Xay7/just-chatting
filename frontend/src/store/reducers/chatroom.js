@@ -61,9 +61,12 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 chatRooms: [...state.chatRooms, action.room]
             }
         case actionTypes.DELETE_ROOM:
+            const rooms = state.chatRooms.filter(el => {
+                return el.id !== action.room
+            })
             return {
                 ...state,
-                chatRooms: action.chatRooms,
+                chatRooms: rooms,
                 channels: [],
                 roomName: '',
                 roomID: '',
@@ -127,6 +130,20 @@ const reducer = (state = DEFAULT_STATE, action) => {
             return {
                 ...state,
                 channels: channels
+            }
+        case actionTypes.LEAVE_ROOM:
+            const updatedRooms = state.chatRooms.filter(el => {
+                return el.id !== action.room
+            })
+            return {
+                ...state,
+                chatRooms: updatedRooms,
+                channels: [],
+                roomName: '',
+                roomID: '',
+                channelDescription: '',
+                updateRooms: true,
+                showRoomOptions: false,
             }
         case actionTypes.SHOW_ROOM_OPTIONS:
             return {

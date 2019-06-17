@@ -49,19 +49,21 @@ class RoomHelpers extends Component {
                                 <div className={styles.Channel}>
                                     <h2 className={styles.ChannelName}>{this.props.channelName}</h2>
                                     <p className={styles.ChannelDescription}>{this.props.channelDescription}</p>
-                                    <i
-                                        className="fas fa-cog fa-lg"
-                                        style={{
-                                            position: "absolute",
-                                            right: "0",
-                                            marginRight: "20px",
-                                            color: "#444444",
-                                            ':hover': {
-                                                color: '#BBB',
-                                                cursor: 'pointer'
-                                            },
-                                        }}
-                                        onClick={this.showChannelSettings}></i>
+                                    {this.props.user_id === this.props.owner_id &&
+                                        <i
+                                            className="fas fa-cog fa-lg"
+                                            style={{
+                                                position: "absolute",
+                                                right: "0",
+                                                marginRight: "20px",
+                                                color: "#444444",
+                                                ':hover': {
+                                                    color: '#BBB',
+                                                    cursor: 'pointer'
+                                                },
+                                            }}
+                                            onClick={this.showChannelSettings}></i>
+                                    }
                                 </div>
                             }
                         </div>
@@ -76,6 +78,8 @@ class RoomHelpers extends Component {
 const mapStateToProps = state => {
     return {
         roomName: state.chat.roomName,
+        user_id: state.auth.user_id,
+        owner_id: state.chat.roomOwner.id,
         roomID: state.chat.roomID,
         channels: state.chat.channels,
         channelDescription: state.chat.channelDescription,

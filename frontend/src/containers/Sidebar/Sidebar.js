@@ -11,11 +11,12 @@ import Button from '../../components/Button/Button';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import Channels from '../Channels/Channels'
 import {
-    deleteRoom,
+    deleteChatroom,
     showRoomOptions,
     updateAvatar,
     updatePassword,
-    clearFetchMessage
+    clearFetchMessage,
+    leaveChatroom
 } from '../../store/actions/index';
 
 class Sidebar extends Component {
@@ -26,6 +27,7 @@ class Sidebar extends Component {
 
         this.state = {
             showDeleteBox: false,
+            showLeaveBox: false,
             showInviteString: false,
             copiedInviteString: false,
             showUserSettings: false,
@@ -47,23 +49,19 @@ class Sidebar extends Component {
         this.setState({ showDeleteBox: !this.state.showDeleteBox })
     }
 
-    deleteRoom = async (id, username) => {
-
+    deleteRoom = async id => {
+        await this.props.deleteChatroom(id);
         this.setState({ showDeleteBox: !this.state.showDeleteBox })
-
-        const data = {
-            id: id,
-            username: username
-        }
-
-        await this.props.deleteRoom(data);
-
-        this.socket.emit('OWNER_DELETED_ROOM', data);
-
     }
 
-    hideDeleteBox = () => {
-        this.setState({ showDeleteBox: false })
+    leaveRoomHandler = () => {
+        this.setState({ showLeaveBox: !this.state.showLeaveBox })
+    }
+
+    leaveRoom = async id => {
+        await this.props.leaveChatroom(id);
+        this.setState({ showLeaveBox: !this.state.showLeaveBox })
+        this.socket.emit('USER_LEFT', this.props.user_id)
     }
 
     componentWillMount() {
@@ -208,16 +206,26 @@ class Sidebar extends Component {
                             Invite people
                             </div>
                     </div>
-                    {/* Render delete room only to the owner */}
-                    {this.props.roomOwner === this.props.username ? <div className={styles.OptionsBtnRed} onClick={this.deleteRoomHandler}>
-                        <div className={styles.IconsWrapper}>
-                            <i className="fas fa-trash-alt "></i>
+                    {/* Render delete room only to the owner, else render leave room */}
+                    {this.props.roomOwner.id === this.props.user_id ?
+                        <div className={styles.OptionsBtnRed} onClick={this.deleteRoomHandler}>
+                            <div className={styles.IconsWrapper}>
+                                <i className="fas fa-trash-alt "></i>
+                            </div>
+                            <div className={styles.OptionsDescription}>
+                                Delete room
+                            </div>
                         </div>
-                        <div className={styles.OptionsDescription}>
-                            Delete room
+                        :
+                        <div className={styles.OptionsBtnRed} onClick={this.leaveRoomHandler}>
+                            <div className={styles.IconsWrapper}>
+                                <i className="fas fa-door-open"></i>
+                            </div>
+                            <div className={styles.OptionsDescription}>
+                                Leave room
                             </div>
 
-                    </div> : null}
+                        </div>}
                 </div>
             )
 
@@ -227,15 +235,26 @@ class Sidebar extends Component {
 
         if (this.state.showDeleteBox) {
             deleteBox = <React.Fragment>
-                <Modal onclick={this.hideDeleteBox} />
+                <Modal onclick={this.deleteRoomHandler} />
                 <Confirm
                     cancel={this.hideDeleteBox}
-                    confirm={() => this.deleteRoom(this.props.roomID, this.props.user_id)}
+                    confirm={() => this.deleteRoom(this.props.roomID)}
                     header={`Delete ${this.props.roomName}`}
                     description={`Are you sure you want to delete ${this.props.roomName}?`}
                 />
             </React.Fragment>
+        }
 
+        if (this.state.showLeaveBox) {
+            deleteBox = <React.Fragment>
+                <Modal onclick={this.leaveRoomHandler} />
+                <Confirm
+                    cancel={this.hideDeleteBox}
+                    confirm={() => this.leaveRoom(this.props.roomID)}
+                    header={`Leave ${this.props.roomName}`}
+                    description={`Are you sure you want to leave ${this.props.roomName}?`}
+                />
+            </React.Fragment>
         }
 
         if (this.state.showInviteString) {
@@ -366,11 +385,12 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = {
-    deleteRoom,
+    deleteChatroom,
     showRoomOptions,
     updateAvatar,
     updatePassword,
-    clearFetchMessage
+    clearFetchMessage,
+    leaveChatroom
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Radium(Sidebar));

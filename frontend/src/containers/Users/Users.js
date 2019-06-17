@@ -36,10 +36,11 @@ class Users extends Component {
             })
             this.setState({ users: updatedUsers });
         })
-
     }
 
-
+    componentDidUpdate() {
+        console.log("x");
+    }
 
     render() {
 
@@ -64,7 +65,7 @@ class Users extends Component {
             if (isOnline) {
                 return null;
             } else return (
-                <div className={styles.UserWrapperOffline} key={data.subscriber}>
+                <div className={styles.UserWrapperOffline} key={data.name}>
                     <img src={data.avatar} alt={data.avatar + " avatar"} className={styles.AvatarOffline} />
                     <div>{data.name}</div>
                 </div>
@@ -90,9 +91,7 @@ class Users extends Component {
 
 const mapStateToProps = state => {
     return {
-        name: state.auth.name,
         socketChat: state.auth.socket,
-        room: state.auth.room,
         members: state.chat.members,
         roomOwner: state.chat.roomOwner,
         channel: state.chat.channelID,

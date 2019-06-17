@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styles from './Chatbox.module.scss';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { getChatMessages } from '../../store/actions/index';
+import { getChatMessages, storeMessage } from '../../store/actions/index';
 import UserTyping from '../../components/UserTyping/UserTyping';
 import Loader from '../../components/Loader/Loader';
 
@@ -284,7 +284,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = {
-    getChatMessages
+    getChatMessages,
+    storeMessage
 }
 
 

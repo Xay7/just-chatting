@@ -16,9 +16,9 @@ const userSchema = new Schema({
     avatar: {
         type: String,
     },
-    chatRooms: {
-        type: Array
-    }
+    chatrooms: [
+        { type: mongoose.Schema.Types.ObjectId, ref: 'chatroom', required: true }
+    ]
 }).set('toJSON', {
     versionKey: false,
     transform: function (doc, ret) { delete ret._id }

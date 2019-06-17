@@ -53,7 +53,7 @@ module.exports = {
     },
     deleteChannel: async (req, res, next) => {
 
-        const reqUserName = req.user.name
+        const user_id = req.user._id
         const channelID = req.params.id;
 
         const foundChannel = await Channel.findById({ "_id": channelID });
@@ -64,7 +64,7 @@ module.exports = {
 
         const isOwner = await Chatroom.findById(foundChannel.chatroom_id);
 
-        if (isOwner.owner !== reqUserName) {
+        if (isOwner.owner !== user_id) {
             return res.status(403).json({ error: "Unauthorized" })
         }
 

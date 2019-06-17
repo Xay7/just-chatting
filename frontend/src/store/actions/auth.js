@@ -58,7 +58,6 @@ export const updateAvatar = (data, id) => {
                 avatar: `https://justchattingbucket.s3.eu-west-3.amazonaws.com/${id}`
             })
 
-
         }
         catch (err) {
             console.log("something bad happened");

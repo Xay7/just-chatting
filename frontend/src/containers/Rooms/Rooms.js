@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styles from './Rooms.module.scss';
 import { connect } from 'react-redux';
-import { newChatroom, updateRooms, changeRoom } from '../../store/actions/index';
+import { newChatroom, updateRooms, changeRoom, joinRoom } from '../../store/actions/index';
 import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import ChatInput from '../../components/ChatInput/ChatInput';
@@ -123,9 +123,10 @@ class Rooms extends Component {
         })
 
         const data = {
-            roomIDs: roomIDs,
+            user_id: this.props.user_id,
             username: this.props.username,
-            avatar: this.props.avatar
+            avatar: this.props.avatar,
+            roomIDs: roomIDs,
         }
 
         this.socket.emit("USER_LOGGED_IN", data);
@@ -165,16 +166,16 @@ class Rooms extends Component {
         })
 
         let addOrJoin = null;
-        let noChannels = !this.props.roomID;
+        let noRooms = !this.props.roomID;
 
         if (!this.props.roomID) {
-            noChannels = <div className={styles.NoRooms}>
+            noRooms = <div className={styles.NoRooms}>
                 <div className={styles.NoRoomsTextWrapper}>
                     <h1>Waiting to join a room</h1>
                     <p>You can join or add room at the left sidebar</p>
                 </div>
             </div>
-        } else noChannels = null;
+        } else noRooms = null;
 
 
         if (this.state.showAddOrJoin) {
@@ -251,7 +252,7 @@ class Rooms extends Component {
 
         return (
             <React.Fragment>
-                {noChannels}
+                {noRooms}
                 <div className={styles.Rooms}>
                     {chatRooms}
                     <button
@@ -282,7 +283,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
     newChatroom,
     updateRooms,
-    changeRoom
+    changeRoom,
+    joinRoom
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Rooms);
