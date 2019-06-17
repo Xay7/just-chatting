@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const channelSchema = new Schema({
     chatroom_id: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         required: true
     },
     name: {
@@ -18,7 +18,6 @@ const channelSchema = new Schema({
     versionKey: false,
     transform: function (doc, ret) { delete ret._id }
 });
-
 
 
 const channel = mongoose.model('channel', channelSchema);

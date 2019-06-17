@@ -1,5 +1,6 @@
 const Chatroom = require('../models/chatroom');
 const Channel = require('../models/channel');
+const ChannelMessage = require('../models/channelMessage');
 
 module.exports = {
     newChannel: async (req, res, next) => {
@@ -73,72 +74,26 @@ module.exports = {
     },
     storeMessage: async (req, res, next) => {
 
-        const username = req.user.name;
-        const id = req.params.id;
-
-        const data = {
-            author: username,
+        const newChannelMessage = new ChannelMessage({
+            channel_id: req.body.id,
+            author: req.user._id,
             body: req.body.body,
             created_at: req.body.created_at,
-            avatar: req.body.avatar
-        }
+        })
 
-        await Chatroom.findOneAndUpdate({ "id": id, "channels.id": req.params.channelID }, {
-            "$push":
-            {
-                "channels.$.messages": data
-            }
-        });
+        newChannelMessage.save();
 
         res.status(200).json({ success: "Stored a message" });
 
     },
     getMessages: async (req, res, next) => {
 
-        const id = req.params.id;
-        const channelID = req.params.channelID;
-        const skip = +req.query.skip;
         const amount = +req.query.amount;
+        const skip = +req.query.skip
 
-        const result = await Chatroom.aggregate(
-            (
-                [
-                    {
-                        "$match": {
-                            "id": id
-                        }
-                    },
-                    {
-                        "$unwind": "$channels"
-                    },
-                    {
-                        "$match": {
-                            "channels.id": channelID
-                        }
-                    },
-                    {
-                        "$project": {
-                            "_id": 0,
-                            "messages": {
-                                "$slice": [
-                                    {
-                                        "$reverseArray": "$channels.messages"
-                                    },
-                                    skip,
-                                    amount
-                                ]
-                            }
-                        }
-                    }
-                ]
-            )
-        )
+        const foundMessages = await ChannelMessage.find({ "channel_id": req.params.id }).sort({ _id: -1 }).limit(amount).skip(skip).populate('author', "name avatar -_id");
 
-        if (result[0].messages.length === 0) {
-            return res.status(204).json({ error: "There are no more chat messages in this channel" });
-        }
-
-        res.status(200).json(result[0]);
+        res.status(200).json(foundMessages);
 
     },
 }
