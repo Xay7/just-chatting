@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import styles from './Sidebar.module.scss';
 import { connect } from 'react-redux';
-import * as actions from '../../store/actions/chatroom';
-import * as authActions from '../../store/actions/auth';
 import Confirm from '../../components/Confirm/Confirm';
 import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
@@ -12,6 +10,13 @@ import ChatInput from '../../components/ChatInput/ChatInput';
 import Button from '../../components/Button/Button';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import Channels from '../Channels/Channels'
+import {
+    deleteRoom,
+    showRoomOptions,
+    updateAvatar,
+    updatePassword,
+    clearFetchMessage
+} from '../../store/actions/index';
 
 class Sidebar extends Component {
 
@@ -344,11 +349,6 @@ class Sidebar extends Component {
 
 }
 
-const mapDispatchToProps = {
-    ...actions,
-    ...authActions
-}
-
 const mapStateToProps = state => {
     return {
         chatRooms: state.chat.chatRooms,
@@ -363,7 +363,14 @@ const mapStateToProps = state => {
         errorMessage: state.auth.errorMessage,
         successMessage: state.auth.successMessage
     }
+}
 
+const mapDispatchToProps = {
+    deleteRoom,
+    showRoomOptions,
+    updateAvatar,
+    updatePassword,
+    clearFetchMessage
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Radium(Sidebar));

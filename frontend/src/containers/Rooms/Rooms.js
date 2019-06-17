@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styles from './Rooms.module.scss';
 import { connect } from 'react-redux';
-import * as actions from '../../store/actions/chatroom';
+import { newChatroom, updateRooms, changeRoom } from '../../store/actions/index';
 import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import ChatInput from '../../components/ChatInput/ChatInput';
@@ -279,4 +279,10 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, actions)(Rooms);
+const mapDispatchToProps = {
+    newChatroom,
+    updateRooms,
+    changeRoom
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Rooms);

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styles from './Channels.module.scss';
-import * as actions from '../../store/actions/chatroom';
+import { isFetching, changeChannel, getChatMessages, newChannel } from '../../store/actions/index';
 import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import ChatInput from '../../components/ChatInput/ChatInput';
@@ -52,16 +52,14 @@ class Channels extends Component {
         const previousChannel = this.state.selectedChannel
 
         let data = {
-            channelID: id,
-            roomID: this.props.roomID,
-            username: this.props.username,
+            channel_id: id,
             skipMessages: 0
         }
 
         this.setState({ selectedChannel: id });
 
         await this.props.changeChannel(id, name, description);
-        //await this.props.getChatMessages(data);
+        await this.props.getChatMessages(data);
 
         this.socket.emit('JOIN_CHANNEL', {
             channelID: id,
@@ -208,4 +206,12 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, actions)(Channels);
+const mapDispatchToProps = {
+    isFetching,
+    changeChannel,
+    getChatMessages,
+    newChannel
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Channels);

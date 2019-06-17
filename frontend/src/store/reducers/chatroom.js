@@ -38,7 +38,6 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 chatRooms: [...state.chatRooms, action.room]
             }
         case actionTypes.CHANGE_ROOM:
-
             return {
                 ...state,
                 roomID: action.roomID,
@@ -57,7 +56,6 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 changedRoom: false
             }
         case actionTypes.JOIN_ROOM:
-
             return {
                 ...state,
                 chatRooms: [...state.chatRooms, action.room]
@@ -79,7 +77,7 @@ const reducer = (state = DEFAULT_STATE, action) => {
             let reverse = [];
             let updatedSkip = null;
 
-            if (action.messages === undefined) {
+            if (action.messages.length === 0) {
                 noMessage = true;
                 reverse = [];
             } else {

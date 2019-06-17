@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styles from './SignUp.module.scss';
 import Input from '../../components/Input/Input';
 import { connect } from 'react-redux';
-import * as actions from '../../store/actions/auth';
+import { signUp } from '../../store/actions/index';
 import { Link } from 'react-router-dom';
 import Spinner from '../../components/Spinner/Spinner';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
@@ -101,4 +101,8 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, actions)(SignUp);
+const mapDispatchToProps = {
+    signUp
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

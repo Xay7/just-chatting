@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import * as actions from '../../store/actions/chatroom';
+import { changeChannelData, deleteChannel } from '../../store/actions/index';
 import styles from './ChannelSettings.module.scss';
 import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
@@ -29,6 +29,8 @@ class ChannelSettings extends Component {
             id: this.props.channelID,
             oldChannelName: this.props.channelName.substring(1),
         }
+
+        console.log(this.props);
 
         await this.props.changeChannelData(data);
     }
@@ -109,4 +111,9 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, actions)(ChannelSettings);
+const mapDispatchToProps = {
+    changeChannelData,
+    deleteChannel
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChannelSettings);

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styles from './Chatbox.module.scss';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import * as actions from '../../store/actions/chatroom';
+import { getChatMessages } from '../../store/actions/index';
 import UserTyping from '../../components/UserTyping/UserTyping';
 import Loader from '../../components/Loader/Loader';
 
@@ -25,7 +25,10 @@ class Chatbox extends Component {
         this.sendMessage = async e => {
 
             let socketMessage = {
-                author: this.props.username,
+                author: {
+                    name: this.props.username,
+                    avatar: this.props.avatar
+                },
                 body: this.state.message,
                 created_at: moment(),
                 avatar: this.props.avatar,
@@ -35,12 +38,9 @@ class Chatbox extends Component {
             this.socket.emit('SEND_MESSAGE', socketMessage)
 
             let dbData = {
-                author: this.props.username,
                 body: this.state.message,
-                room: this.props.roomID,
-                channelID: this.props.channelID,
+                id: this.props.channelID,
                 created_at: moment(),
-                avatar: this.props.avatar
             }
 
             await this.props.storeMessage(dbData);
@@ -157,13 +157,11 @@ class Chatbox extends Component {
             const previosScrollHeight = this.messageContainer.scrollHeight;
 
             let data = {
-                channelID: this.props.channelID,
-                roomID: this.props.roomID,
-                username: this.props.username,
+                channel_id: this.props.channelID,
                 skipMessages: this.props.skip
             }
 
-            //await this.props.getChatMessages(data)
+            await this.props.getChatMessages(data)
 
             let messages = [...this.props.messages, ...this.state.messages];
 
@@ -198,7 +196,7 @@ class Chatbox extends Component {
                     } else return <a href={data.body} target="_blank" rel="noopener noreferrer" className={styles.Link} key={index}>{data.body}</a>
                 }
                 // CHECK FOR SAME AUTHOR AND IF THERE IS LESS THAN 30 MINUTES TIME DIFFERENCE BETWEEN LAST MESSAGE
-                if (data.author === arr[index - 1].author && moment(data.created_at).diff(moment(arr[index - 1].created_at), "minutes") < 30) {
+                if (data.author.name === arr[index - 1].author.name && moment(data.created_at).diff(moment(arr[index - 1].created_at), "minutes") < 30) {
                     return (
                         <div className={styles.Messages} key={index}>
                             <div className={styles.Message}>{data.body}</div>
@@ -211,8 +209,8 @@ class Chatbox extends Component {
                         <div className={styles.Messages} key={index}>
                             <hr className={styles.MessageHorizontalLine}></hr>
                             <div className={styles.MessageHeader}>
-                                <img src={data.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} />
-                                <p className={styles.Username}>{data.author}</p>
+                                <img src={data.author.avatar} alt={data.author.name + " avatar"} className={styles.Avatar} />
+                                <p className={styles.Username}>{data.author.name}</p>
                                 <p className={styles.Date}>{moment(data.created_at).calendar(null)}</p>
                             </div>
                             <div className={styles.Message}>{data.body}</div>
@@ -226,8 +224,8 @@ class Chatbox extends Component {
                     <div className={styles.Messages} key={index}>
                         <hr className={styles.MessageHorizontalLine}></hr>
                         <div className={styles.MessageHeader}>
-                            <img src={data.avatar} alt={this.props.username + "avatar"} className={styles.Avatar} />
-                            <p className={styles.Username}>{data.author}</p>
+                            <img src={data.author.avatar} alt={data.author.name + " avatar"} className={styles.Avatar} />
+                            <p className={styles.Username}>{data.author.name}</p>
                             <p className={styles.Date}>{moment(data.created_at).calendar(null)}</p>
                         </div>
                         <div className={styles.Message}>{data.body}</div>
@@ -271,6 +269,7 @@ class Chatbox extends Component {
 const mapStateToProps = state => {
     return {
         username: state.auth.username,
+        user_id: state.auth.user_id,
         users: state.auth.users,
         socketChat: state.auth.socket,
         roomID: state.chat.roomID,
@@ -284,4 +283,9 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, actions)(Chatbox);
+const mapDispatchToProps = {
+    getChatMessages
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Chatbox);

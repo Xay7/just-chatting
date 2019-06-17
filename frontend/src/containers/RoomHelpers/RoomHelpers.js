@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styles from './RoomHelpers.module.scss';
 import { connect } from 'react-redux';
-import * as actions from '../../store/actions/chatroom';
+import { showRoomOptions, clearFetchMessage } from '../../store/actions/index';
 import Radium from 'radium';
 import ChannelSettings from '../ChannelSettings/ChannelSettings';
 
@@ -85,4 +85,10 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, actions)(Radium(RoomHelpers));
+
+const mapDispatchToProps = {
+    showRoomOptions,
+    clearFetchMessage
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Radium(RoomHelpers));
