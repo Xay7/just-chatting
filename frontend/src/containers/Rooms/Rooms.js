@@ -58,6 +58,7 @@ class Rooms extends Component {
         });
         ;
         this.socket.emit('NEW_ROOM', {
+            user_id: this.props.user_id,
             roomID: this.props.chatRooms.slice(-1)[0].id,
             username: this.props.username,
             avatar: this.props.avatar
@@ -83,6 +84,7 @@ class Rooms extends Component {
 
         this.socket.emit('JOIN_ROOM', {
             roomID: data.id,
+            user_id: this.props.user_id,
             username: this.props.username,
             avatar: this.props.avatar
         });
@@ -133,14 +135,14 @@ class Rooms extends Component {
     }
 
     // Changes selected room styles for visual clarity
-    currentRoomStyle = (index) => {
-        const isSelected = this.state.selectedRoom === index;
+    currentRoomStyle = (id) => {
+        const isSelected = this.props.selectedRoom === id;
         // True is room selected, rest are not
         return isSelected ? styles.RoomSelected : styles.RoomNotSelected;
     }
     // Disables click on currect room to prevent multiple socket calls
-    currentRoomDisable = (index) => {
-        const isSelected = this.state.selectedRoom === index;
+    currentRoomDisable = (id) => {
+        const isSelected = this.props.selectedRoom === id;
         return isSelected ? true : false;
     }
 
@@ -276,7 +278,8 @@ const mapStateToProps = state => {
         channelID: state.chat.channelID,
         updateRooms: state.chat.updateRooms,
         roomID: state.chat.roomID,
-        avatar: state.auth.avatar
+        avatar: state.auth.avatar,
+        selectedRoom: state.chat.selectedRoom
     }
 }
 

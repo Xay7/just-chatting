@@ -57,7 +57,8 @@ export const changeRoom = id => {
                 channelName: '',
                 channels: res.data.channels,
                 members: res.data.members,
-                roomOwner: res.data.owner
+                roomOwner: res.data.owner,
+                selectedRoom: id
             });
         } catch (error) {
 

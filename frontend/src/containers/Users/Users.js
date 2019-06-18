@@ -30,16 +30,38 @@ class Users extends Component {
             this.setState({ users: [...this.state.users, data] })
         })
 
+        this.socket.on('JOIN_ROOM_UPDATE', (data) => {
+            const updatedUsers = [...this.state.users, data];
+            this.setState({ users: updatedUsers });
+        })
+
         this.socket.on('USER_DISCONNECTED', data => {
             let updatedUsers = this.state.users.filter(el => {
                 return el.username !== data
             })
             this.setState({ users: updatedUsers });
         })
+
+        this.socket.on('USER_LEFT_UPDATE', user => {
+            const updatedUsers = this.state.users.filter(el => {
+                return el.id !== user;
+            })
+            const updatedMembers = this.state.members.filter(el => {
+                return el.id !== user;
+            })
+
+            this.setState({ users: updatedUsers, members: updatedMembers })
+        })
+    }
+
+    componentDidMount() {
+        this.setState({ members: this.props.members })
     }
 
     componentDidUpdate() {
-        console.log("x");
+        if (this.state.members !== this.props.members) {
+            this.setState({ members: this.props.members });
+        }
     }
 
     render() {
@@ -58,7 +80,7 @@ class Users extends Component {
         let members = null;
 
         // Filter those who are online and not
-        members = this.props.members.map(data => {
+        members = this.state.members.map(data => {
             const isOnline = this.state.users.some((el) => {
                 return el.username === data.name;
             })

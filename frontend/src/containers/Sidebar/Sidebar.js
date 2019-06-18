@@ -61,7 +61,10 @@ class Sidebar extends Component {
     leaveRoom = async id => {
         await this.props.leaveChatroom(id);
         this.setState({ showLeaveBox: !this.state.showLeaveBox })
-        this.socket.emit('USER_LEFT', this.props.user_id)
+        this.socket.emit('USER_LEFT', {
+            user_id: this.props.user_id,
+            room_id: id
+        })
     }
 
     componentWillMount() {

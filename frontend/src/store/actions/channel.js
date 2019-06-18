@@ -30,7 +30,7 @@ export const changeChannel = (id, name, description) => {
             dispatch({
                 type: actionTypes.CHANGE_CHANNEL,
                 channelID: id,
-                channelName: "#" + name,
+                channelName: name,
                 description: description
             })
         } catch (error) {

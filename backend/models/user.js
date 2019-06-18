@@ -21,7 +21,6 @@ const userSchema = new Schema({
     ]
 }).set('toJSON', {
     versionKey: false,
-    transform: function (doc, ret) { delete ret._id }
 });
 
 

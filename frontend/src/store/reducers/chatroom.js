@@ -18,7 +18,8 @@ const DEFAULT_STATE = {
     changedRoom: false,
     loading: false,
     skip: 0,
-    noMessages: false
+    noMessages: false,
+    selectedRoom: ''
 }
 
 const reducer = (state = DEFAULT_STATE, action) => {
@@ -48,7 +49,8 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 roomOwner: action.roomOwner,
                 members: action.members,
                 changedRoom: true,
-                loading: false
+                loading: false,
+                selectedRoom: action.selectedRoom
             }
         case actionTypes.CHANGE_ROOM_UI:
             return {
@@ -144,6 +146,7 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 channelDescription: '',
                 updateRooms: true,
                 showRoomOptions: false,
+                selectedRoom: ''
             }
         case actionTypes.SHOW_ROOM_OPTIONS:
             return {
