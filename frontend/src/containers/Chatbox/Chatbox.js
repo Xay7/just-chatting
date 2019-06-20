@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styles from './Chatbox.module.scss';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { getChatMessages, storeMessage } from '../../store/actions/index';
+import { getChatMessages, storeMessage, isFetching } from '../../store/actions/index';
 import UserTyping from '../../components/UserTyping/UserTyping';
 import Loader from '../../components/Loader/Loader';
 
@@ -23,7 +23,6 @@ class Chatbox extends Component {
         this.socket = this.props.socketChat;
 
         this.sendMessage = async e => {
-
             let socketMessage = {
                 author: {
                     name: this.props.username,
@@ -32,7 +31,7 @@ class Chatbox extends Component {
                 body: this.state.message,
                 created_at: moment(),
                 avatar: this.props.avatar,
-                room: this.props.roomID
+                room: this.props.channelID
             }
 
             this.socket.emit('SEND_MESSAGE', socketMessage)
@@ -285,7 +284,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
     getChatMessages,
-    storeMessage
+    storeMessage,
+    isFetching
 }
 
 

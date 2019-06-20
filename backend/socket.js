@@ -5,6 +5,7 @@ let users = {};
 io.on("connection", function (socket) {
 
     socket.on('SEND_MESSAGE', function (data) {
+        console.log(data.room);
         io.in(data.room).emit('RECEIVE_MESSAGE', data);
     })
 
@@ -30,6 +31,7 @@ io.on("connection", function (socket) {
             });
 
             io.in(el).emit("USER_LOGGED_IN", {
+                id: data.user_id,
                 username: data.username,
                 avatar: data.avatar
             });
@@ -47,7 +49,7 @@ io.on("connection", function (socket) {
 
         io.in(data.roomID).emit('ROOM_USER_LIST', usernames);
 
-    })
+    });
 
     socket.on('USER_LEFT', function (id) {
         users = users.filter(el => {
