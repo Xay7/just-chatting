@@ -9,3 +9,13 @@
     display: flex;
     flex-direction: row;
 }
+
+@media (max-width: 1000px) {
+    .Holder {
+        flex-direction: column;
+    }
+
+    .Chat {
+        flex-direction: column;
+    }
+}

@@ -5,7 +5,6 @@
     flex-direction: column;
 }
 
-
 .Channel,
 .ChannelSelected {
     width: 200px;
@@ -116,4 +115,55 @@
     margin: 0;
     color: $black;
     text-align: center;
+}
+
+
+@media (max-width: 1000px) {
+    .Channels {
+        flex-direction: row;
+        align-items: center;
+        overflow: auto;
+    }
+
+    .Channels::-webkit-scrollbar {
+        background-color: transparent;
+        height: 6px;
+    }
+
+    .Channels::-webkit-scrollbar-track {
+        background-color: #ebebeb;
+    }
+
+    .Channels::-webkit-scrollbar-thumb {
+        background-color: #2e58c9;
+        border-radius: 5px;
+
+    }
+
+    .ChannelsHeader {
+        font-size: 12px;
+        margin-left: 15px;
+        margin-bottom: 20px;
+    }
+
+    .AddChannel {
+        font-size: 24px;
+        margin-left: 10px;
+        order: 1;
+    }
+
+    .Channel,
+    .ChannelSelected {
+        width: max-content;
+        height: max-content;
+        margin: 0 5px;
+        font-size: 12px;
+    }
+
+    .Channel button,
+    .ChannelSelected button {
+        width: max-content;
+        height: max-content;
+    }
+
 }

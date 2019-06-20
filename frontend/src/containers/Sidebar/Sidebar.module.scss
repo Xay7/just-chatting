@@ -187,3 +187,21 @@ $basecolor: #182C61;
     align-items: center;
     margin: 30px 0;
 }
+
+
+@media (max-width: 1000px) {
+    .Sidebar {
+        width: 100vw;
+        height: auto;
+        min-height: auto;
+    }
+
+    .Options {
+        width: 100vw;
+        z-index: 5;
+    }
+
+    .User {
+        display: none;
+    }
+}

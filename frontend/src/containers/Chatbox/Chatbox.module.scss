@@ -130,3 +130,12 @@
 .Link:visited {
     color: blue;
 }
+
+
+@media (max-width: 1000px) {
+    .Chatbox {
+        width: 100vw;
+        height: auto;
+        min-height: auto;
+    }
+}

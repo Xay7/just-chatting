@@ -81,3 +81,20 @@ $roomColor: #182C61;
     outline: none;
     margin: 0 30px;
 }
+
+@media (max-width: 1000px) {
+    .RoomHelpers {
+        width: 100vw;
+        height: 50px;
+        flex-direction: column;
+    }
+
+    .Room {
+        width: 100%;
+    }
+
+    .Channel {
+        width: 100%;
+        display: none;
+    }
+}
