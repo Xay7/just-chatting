@@ -136,7 +136,8 @@ module.exports = {
 
         const id = req.params.id;
 
-        const foundChatroom = await Chatroom.findOne({ "_id": id }).populate([{ path: 'members', select: 'name avatar _id' }, { path: 'owner', select: 'name' }]);
+        const foundChatroom = await Chatroom.findOne({ "_id": id }).populate([{ path: 'members', select: 'name avatar' }, { path: 'owner', select: 'name' }]);
+
         if (!foundChatroom) {
             return res.status(404).json({ error: "Chatroom doesn't exist" });
         }
