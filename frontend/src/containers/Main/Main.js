@@ -26,6 +26,9 @@ class Main extends Component {
                 <div>
                     <h1 className={styles.Title}>Just chatting</h1>
                 </div>
+                <div className={styles.DescriptionWrapper}>
+                    <p className={styles.Description}>Real time text chat with personal rooms and channels. Join today and chat for free!</p>
+                </div>
                 <Link to="/signin">
                     <button className={styles.Login} onClick={this.tokenAccess}>Login</button>
                 </Link>
