@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import Spinner from '../../components/Spinner/Spinner';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import { clearFetchMessage } from '../../store/actions/index';
+import Footer from '../../components/Footer/Footer';
 
 class SignIn extends Component {
 
@@ -76,6 +77,7 @@ class SignIn extends Component {
                     </form>
                 </div>
                 <Link to='/signup' className={styles.Link} onClick={this.props.clearFetchMessage}>Click here to register</Link>
+                <Footer />
             </div >
         )
     }

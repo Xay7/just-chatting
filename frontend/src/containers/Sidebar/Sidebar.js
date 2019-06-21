@@ -68,6 +68,10 @@ class Sidebar extends Component {
         document.addEventListener('mousedown', this.handleClick, false);
     }
 
+    hideDeleteBox = () => {
+        this.setState({ showDeleteBox: false });
+    }
+
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleClick, false);
     }
@@ -270,7 +274,7 @@ class Sidebar extends Component {
                             </CopyToClipboard>
                         </div>
                         {this.state.copiedInviteString ? <p style={{ margin: 0 }}>Copied <span role="img" aria-label="thumbs up">👍</span></p> :
-                            <span style={{ margin: 0, visibility: "hidden" }}>Copied <span role="img" aria-label="thumbs up">👍</span></span>}
+                            <span style={{ margin: 0, display: "none" }}>Copied <span role="img" aria-label="thumbs up">👍</span></span>}
                     </div>
                 </Options>
             </React.Fragment>
