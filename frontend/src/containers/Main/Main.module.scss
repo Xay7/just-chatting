@@ -31,13 +31,8 @@
     }
 }
 
-.Login {
-    margin-top: 90px;
-}
-
-
 .Title {
-    font-size: 10vw;
+    font-size: 120px;
     margin: 0;
     color: white;
     text-shadow: 5px 5px black;
@@ -56,6 +51,12 @@
 }
 
 @media (max-width:1000px) {
+    .Title {
+        font-size: 72px;
+    }
+}
+
+@media (max-width:600px) {
     .Description {
         font-size: 16px;
         color: white;
@@ -66,5 +67,9 @@
     .DescriptionWrapper {
         width: 250px;
         text-align: center;
+    }
+
+    .Title {
+        font-size: 42px;
     }
 }

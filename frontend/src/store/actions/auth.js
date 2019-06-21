@@ -76,12 +76,9 @@ export const updatePassword = (data, id) => {
             })
         }
         catch (err) {
-
-            const errorMessage = err.response.data.replace(/[/"]+/g, "");
-
             dispatch({
                 type: actionTypes.AUTH_CHANGED_PASSWORD_ERROR,
-                errorMessage: errorMessage
+                errorMessage: err.response.data.error
             })
         }
     }

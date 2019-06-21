@@ -6,6 +6,7 @@ import { signUp } from '../../store/actions/index';
 import { Link } from 'react-router-dom';
 import Spinner from '../../components/Spinner/Spinner';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import { clearFetchMessage } from '../../store/actions/index';
 
 class SignUp extends Component {
 
@@ -77,12 +78,7 @@ class SignUp extends Component {
                         <Input inputClass={inputStyle} inputPlaceholder="Name" inputType="text" onchange={this.onChangeHandler} inputName="name">Username</Input>
                         <Input inputClass={inputStyle} inputPlaceholder="Email" inputType="email" onchange={this.onChangeHandler} inputName="email">Email</Input>
                         <Input inputClass={inputStyle} inputPlaceholder="Password" inputType="password" onchange={this.onChangeHandler} inputName="password">Password</Input>
-                        {this.state.submitError ?
-                            !this.state.name ? <ErrorMessage>Username field can't be empty</ErrorMessage> :
-                                !this.state.email ? <ErrorMessage>Email field can't be empty</ErrorMessage> :
-                                    !this.state.password ? <ErrorMessage>Password field can't be empty</ErrorMessage> : null : null}
                         {errorMessage}
-
                     </form>
                     {submitButton}
                 </div>
@@ -102,7 +98,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = {
-    signUp
+    signUp,
+    clearFetchMessage
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

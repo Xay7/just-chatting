@@ -134,7 +134,7 @@ class Channels extends Component {
         if (this.props.channels.length === 0) {
             noChannels = <div className={styles.NoChannel}>
                 <div className={styles.NoChannelsTextWrapper}>
-                    <h1>No channels :(</h1>
+                    <h1>Waiting to join a channel</h1>
                     <p>You can add channels by pressing plus button</p>
                 </div>
             </div>

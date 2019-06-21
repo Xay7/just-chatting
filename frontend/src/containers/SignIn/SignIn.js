@@ -6,7 +6,7 @@ import { signIn } from '../../store/actions/index';
 import { Link } from 'react-router-dom';
 import Spinner from '../../components/Spinner/Spinner';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
-
+import { clearFetchMessage } from '../../store/actions/index';
 
 class SignIn extends Component {
 
@@ -90,7 +90,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = {
-    signIn
+    signIn,
+    clearFetchMessage
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

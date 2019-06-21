@@ -52,7 +52,7 @@
 .Input,
 .InputError {
     border: none;
-    box-shadow: 0 0 2px 0px black;
+    box-shadow: 0 0 0px 1px rgb(146, 146, 146);
     border-radius: 25px;
     width: 220px;
     height: 40px;
@@ -62,7 +62,7 @@
 }
 
 .InputError {
-    box-shadow: 0 0 2px 0px red;
+    box-shadow: 0 0 0px 1px red;
 }
 
 .ErrorMessage {
