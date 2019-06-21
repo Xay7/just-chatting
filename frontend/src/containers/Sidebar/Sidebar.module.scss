@@ -137,11 +137,11 @@ $basecolor: #182C61;
     width: 65px;
     height: 30px;
     border: none;
-    cursor: pointer;
     outline: none;
 
     &:hover {
         background-color: darken(green, 10%);
+        cursor: pointer;
     }
 }
 
@@ -203,5 +203,14 @@ $basecolor: #182C61;
 
     .User {
         display: none;
+    }
+
+    .InviteString {
+        height: 130px;
+        width: 340px;
+    }
+
+    .InviteInput[disabled] {
+        width: 200px;
     }
 }

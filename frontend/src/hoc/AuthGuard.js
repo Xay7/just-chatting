@@ -5,20 +5,20 @@ export default (OriginalComponent) => {
     class MixedComponent extends Component {
 
 
-        checkAuth() {
-            if (!this.props.isAuth) {
-                return this.props.history.push('/');
-            }
-        }
+        // checkAuth() {
+        //     if (!this.props.isAuth) {
+        //         return this.props.history.push('/');
+        //     }
+        // }
 
-        componentDidMount() {
-            this.checkAuth();
-        }
+        // componentDidMount() {
+        //     this.checkAuth();
+        // }
 
 
-        componentDidUpdate() {
-            this.checkAuth();
-        }
+        // componentDidUpdate() {
+        //     this.checkAuth();
+        // }
 
         render() {
             return <OriginalComponent {...this.props} />;

@@ -171,8 +171,8 @@ class Rooms extends Component {
         if (!this.props.roomID) {
             noRooms = <div className={styles.NoRooms}>
                 <div className={styles.NoRoomsTextWrapper}>
-                    <h1>Waiting to join a room</h1>
-                    <p>You can join or add room at the left sidebar</p>
+                    <h1>No rooms :(</h1>
+                    <p>You can add or join a room by pressing plus button</p>
                 </div>
             </div>
         } else noRooms = null;

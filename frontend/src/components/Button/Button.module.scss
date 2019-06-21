@@ -40,3 +40,14 @@
         background-color: darken(red, 5%);
     }
 }
+
+
+@media (max-width: 1000px) {
+
+    .Cancel,
+    .Confirm,
+    .Danger {
+        width: 90px;
+        height: 40px;
+    }
+}

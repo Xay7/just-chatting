@@ -77,6 +77,10 @@ code {
 }
 
 @media (max-width: 1000px) {
+    body {
+        overflow: hidden;
+    }
+
     body::-webkit-scrollbar {
         background-color: transparent;
         height: 6px;

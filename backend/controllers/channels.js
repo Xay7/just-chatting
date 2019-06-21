@@ -1,6 +1,7 @@
 const Chatroom = require('../models/chatroom');
 const Channel = require('../models/channel');
 const ChannelMessage = require('../models/channelMessage');
+const mongoose = require('mongoose');
 
 module.exports = {
     newChannel: async (req, res, next) => {
@@ -64,7 +65,7 @@ module.exports = {
 
         const isOwner = await Chatroom.findById(foundChannel.chatroom_id);
 
-        if (isOwner.owner !== user_id) {
+        if (isOwner.owner.toString() !== user_id.toString()) {
             return res.status(403).json({ error: "Unauthorized" })
         }
 

@@ -33,13 +33,12 @@ $basecolor: #081b50;
 .RoomSelected,
 .RoomNotSelected {
     border: none;
-    border-radius: 15px;
+    border-radius: 5px;
     margin-top: 10px;
     width: 45px;
     height: 45px;
     outline: 0;
     background-color: #182C61;
-    border: 2px solid rgb(255, 255, 255);
     color: white;
     font-weight: 700;
     font-size: 18px;
@@ -48,13 +47,12 @@ $basecolor: #081b50;
 
 .AddChatroom {
     border: none;
-    border-radius: 10px;
+    border-radius: 5px;
     margin-top: 10px;
     width: 40px;
     height: 40px;
     outline: 0;
     background-color: #182C61;
-    border: 2px solid rgb(255, 255, 255);
     color: white;
     font-size: 32px;
     cursor: pointer;
@@ -192,4 +190,17 @@ h3 {
         height: 30px;
         font-size: 24px;
     }
+
+    .Wrapper,
+    .AddJoinWrapper {
+        height: 220px;
+        width: 340px;
+        font-size: 14px;
+    }
+
+    .Btn {
+        width: 100px;
+        height: 40px;
+    }
+
 }

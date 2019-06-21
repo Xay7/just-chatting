@@ -134,8 +134,8 @@ class Channels extends Component {
         if (this.props.channels.length === 0) {
             noChannels = <div className={styles.NoChannel}>
                 <div className={styles.NoChannelsTextWrapper}>
-                    <h1>No channels detected</h1>
-                    <p>You can add channel by pressing plus button in the sidebar</p>
+                    <h1>No channels :(</h1>
+                    <p>You can add channels by pressing plus button</p>
                 </div>
             </div>
         }
@@ -183,7 +183,9 @@ class Channels extends Component {
                         <h3 className={styles.ChannelTitle}>Channels</h3>
                         {this.props.roomName ? <button onClick={this.showAddChannel} className={styles.AddChannel}>+</button> : null}
                     </div>
-                    {channels}
+                    <div className={styles.ChannelsList}>
+                        {channels}
+                    </div>
                 </div>
             </React.Fragment>
         )

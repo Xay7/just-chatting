@@ -77,7 +77,7 @@ class ChannelSettings extends Component {
                             ID="channelName"
                             AutoComplete="off"
                             ClassName={this.props.errorMessage ? "InputError" : "Input"}
-                        >Room Name</ChatInput>
+                        >Channel Name</ChatInput>
                         <ChatInput
                             Type="text"
                             OnChange={this.channelDescriptionHandler}
@@ -85,7 +85,7 @@ class ChannelSettings extends Component {
                             ID="channelDescription"
                             AutoComplete="off"
                             ClassName={this.props.errorMessage ? "InputError" : "Input"}
-                        >Room description</ChatInput>
+                        >Channel description</ChatInput>
                         {this.props.errorMessage && <ErrorMessage>{this.props.errorMessage}</ErrorMessage>}
                         {this.props.successMessage && <ErrorMessage>{this.props.successMessage}</ErrorMessage>}
                         <div className={styles.Btns}>

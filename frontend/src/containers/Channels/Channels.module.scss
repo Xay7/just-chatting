@@ -9,7 +9,7 @@
 .ChannelSelected {
     width: 200px;
     margin: 0 auto;
-    padding: 7px;
+    padding: 5px 0;
     color: $white;
     border-radius: 5px;
 }
@@ -120,9 +120,9 @@
 
 @media (max-width: 1000px) {
     .Channels {
+        overflow-y: auto;
+        display: flex;
         flex-direction: row;
-        align-items: center;
-        overflow: auto;
     }
 
     .Channels::-webkit-scrollbar {
@@ -131,23 +131,24 @@
     }
 
     .Channels::-webkit-scrollbar-track {
-        background-color: #ebebeb;
+        background-color: #eeeeee;
     }
 
     .Channels::-webkit-scrollbar-thumb {
-        background-color: #2e58c9;
+        background-color: #dbdbdb;
         border-radius: 5px;
 
     }
 
     .ChannelsHeader {
-        font-size: 12px;
-        margin-left: 15px;
-        margin-bottom: 20px;
+        margin-top: 0;
+        font-size: 16px;
+        margin-bottom: 10px;
+        justify-content: flex-start;
     }
 
     .AddChannel {
-        font-size: 24px;
+        font-size: 22px;
         margin-left: 10px;
         order: 1;
     }
@@ -164,6 +165,27 @@
     .ChannelSelected button {
         width: max-content;
         height: max-content;
+    }
+
+    .ChannelsList {
+        box-sizing: border-box;
+        padding: 0 10px;
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .NoChannel {
+        margin: 0;
+        margin-top: 50px;
+        width: 100vw;
+        height: calc(100vh - 50px);
+    }
+
+    .AddChannelWrapper {
+        height: 300px;
+        width: 320px;
+        font-size: 14px;
     }
 
 }
