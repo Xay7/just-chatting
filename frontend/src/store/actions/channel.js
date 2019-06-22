@@ -73,6 +73,7 @@ export const changeChannelData = data => {
             dispatch({
                 type: actionTypes.CHANGE_CHANNEL_SETTINGS,
                 successMessage: res.data.success,
+                oldChannel: data.id,
                 channelName: channel.data.name,
                 channelDescription: channel.data.description
             })

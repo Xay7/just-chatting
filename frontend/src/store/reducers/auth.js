@@ -78,7 +78,7 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 ...state,
                 avatar: action.avatar,
                 errorMessage: '',
-                successMessage: 'Avatar has been updated'
+                successMessage: ''
             }
 
         case actionTypes.AUTH_CHANGED_AVATAR_ERROR:

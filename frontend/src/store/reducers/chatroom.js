@@ -110,8 +110,15 @@ const reducer = (state = DEFAULT_STATE, action) => {
                 skip: 0
             }
         case actionTypes.CHANGE_CHANNEL_SETTINGS:
+            const updatedChannels = state.channels.map(el => {
+                if (el.id === action.oldChannel) {
+                    el.name = action.channelName
+                    return el;
+                } else return el
+            })
             return {
                 ...state,
+                channels: updatedChannels,
                 errorMessage: '',
                 successMessage: action.successMessage,
                 channelDescription: action.channelDescription,
