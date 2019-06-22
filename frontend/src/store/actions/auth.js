@@ -5,7 +5,7 @@ export const signIn = data => {
     return async dispatch => {
         try {
 
-            const res = await axios.post('http://localhost:3001/users/signin', data);
+            const res = await axios.post('/users/signin', data);
 
             dispatch({
                 type: actionTypes.AUTH_SIGN_IN,
@@ -27,7 +27,7 @@ export const signUp = data => {
     return async dispatch => {
         try {
 
-            const res = await axios.post('http://localhost:3001/users/signup', data);
+            const res = await axios.post('/users/signup', data);
 
             dispatch({
                 type: actionTypes.AUTH_SIGN_UP,
@@ -47,7 +47,7 @@ export const updateAvatar = (data, id) => {
     return async (dispatch) => {
         try {
 
-            await axios.put(`http://localhost:3001/users/${id}/avatar`, data, {
+            await axios.put(`/users/${id}/avatar`, data, {
                 headers: {
                     'content-type': 'multipart/form-data'
                 }
@@ -70,7 +70,7 @@ export const updateAvatar = (data, id) => {
 export const updatePassword = (data, id) => {
     return async dispatch => {
         try {
-            let res = await axios.put(`http://localhost:3001/users/${id}/password`, data);
+            let res = await axios.put(`/users/${id}/password`, data);
 
             dispatch({
                 type: actionTypes.AUTH_CHANGED_PASSWORD,
@@ -91,7 +91,7 @@ export const tokenAccess = () => {
     return async dispatch => {
         try {
 
-            const res = await axios.get('http://localhost:3001/users/chat')
+            const res = await axios.get('/users/chat')
 
             dispatch({
                 type: actionTypes.TOKEN_ACCESS,

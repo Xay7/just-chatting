@@ -14,6 +14,7 @@ import { LOGOUT } from './store/actions/actionTypes';
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 axios.defaults.withCredentials = true;
+axios.defaults.baseURL = 'http://localhost:3001';
 
 const reducers = combineReducers({
     auth: authReducer,

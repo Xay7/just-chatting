@@ -2,12 +2,12 @@ import * as actionTypes from './actionTypes';
 import axios from 'axios';
 
 const getRooms = async (id) => {
-    const res = await axios.get(`http://localhost:3001/users/${id}/chatrooms`);
+    const res = await axios.get(`/users/${id}/chatrooms`);
     return res;
 }
 
 const getRoom = async id => {
-    const res = await axios.get(`http://localhost:3001/chatrooms/${id}`);
+    const res = await axios.get(`/chatrooms/${id}`);
     return res;
 }
 
@@ -30,7 +30,7 @@ export const updateRooms = (id) => {
 export const newChatroom = name => {
     return async dispatch => {
         try {
-            const res = await axios.post(`http://localhost:3001/chatrooms/`, { name });
+            const res = await axios.post(`/chatrooms/`, { name });
 
             dispatch({
                 type: actionTypes.NEW_ROOM,
@@ -81,7 +81,7 @@ export const joinRoom = data => {
     return async dispatch => {
         try {
 
-            const res = await axios.put(`http://localhost:3001/chatrooms/${data.id}`, data);
+            const res = await axios.put(`/chatrooms/${data.id}`, data);
 
             dispatch({
                 type: actionTypes.JOIN_ROOM,
@@ -100,7 +100,7 @@ export const deleteChatroom = id => {
     return async dispatch => {
         try {
 
-            await axios.delete(`http://localhost:3001/chatrooms/${id}`);
+            await axios.delete(`/chatrooms/${id}`);
 
             dispatch({
                 type: actionTypes.DELETE_ROOM,
@@ -119,7 +119,7 @@ export const leaveChatroom = id => {
     return async dispatch => {
         try {
 
-            await axios.patch(`http://localhost:3001/chatrooms/${id}`)
+            await axios.patch(`/chatrooms/${id}`)
 
             dispatch({
                 type: actionTypes.LEAVE_ROOM,
