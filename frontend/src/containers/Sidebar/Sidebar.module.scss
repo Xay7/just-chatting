@@ -33,15 +33,11 @@ $basecolor: #182C61;
     font-size: 14px;
     background-color: #182C61;
     color: $white;
-    outline: none;
-    text-align: start;
+    outline: none;text-align: start;
 
     &:hover {
         background-color: #081B50;
     }
-
-    //background-color: #0e2155;
-
 }
 
 .IconsWrapper {

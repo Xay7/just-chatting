@@ -6,22 +6,16 @@ import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import Radium from 'radium';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import ChatInput from '../../components/ChatInput/ChatInput';
-import Button from '../../components/Button/Button';
-import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import Channels from '../Channels/Channels'
 import {
     deleteChatroom,
     showRoomOptions,
-    updateAvatar,
-    updatePassword,
     clearFetchMessage,
     leaveChatroom
 } from '../../store/actions/index';
+import UserSettings from '../UserSettings/UserSettings'
 
 class Sidebar extends Component {
-
-
     constructor(props) {
         super(props);
 
@@ -31,19 +25,11 @@ class Sidebar extends Component {
             showInviteString: false,
             copiedInviteString: false,
             showUserSettings: false,
-            fileUploaded: false,
-            noChannels: false,
-            password: '',
-            confirmPassword: '',
-            avatar: '',
-            avatarPreview: '',
-            avatarError: '',
-            avatarSuccess: '',
+            fileUploaded: false
         }
 
         this.socket = this.props.socketChat;
     }
-
 
     deleteRoomHandler = () => {
         this.setState({ showDeleteBox: !this.state.showDeleteBox })
@@ -97,82 +83,6 @@ class Sidebar extends Component {
             this.props.showRoomOptions();
         }
 
-    }
-
-    uploadFile = (e) => {
-
-        const avatar = e.target.files[0]
-
-        if (avatar === undefined) {
-            return;
-        }
-
-        if (avatar.type === "image/jpeg" || avatar.type === "image/jpg" || avatar.type === "image/png") {
-
-            if (avatar.size > 1048576) {
-                return this.setState({
-                    avatarError: "File size must be less than 1MB",
-                    avatarSuccess: ''
-                })
-            }
-
-            let url = URL.createObjectURL(avatar);
-
-            this.setState({
-                avatar: avatar,
-                fileUploaded: true,
-                avatarPreview: url
-            })
-        } else {
-            this.setState({
-                avatarError: "File must me .jpg/.jpeg/.png",
-                avatarSuccess: ''
-            })
-        }
-    }
-
-    changePassword = (e) => {
-        this.setState({ password: e.target.value })
-    }
-
-
-    confirmPassword = (e) => {
-        this.setState({ confirmPassword: e.target.value })
-    }
-
-
-    submitAvatar = async (e) => {
-
-        e.preventDefault();
-        const formData = new FormData();
-
-        if (this.state.avatar === ``) {
-            return this.setState({
-                avatarError: "No file provided",
-                avatarSuccess: ''
-            })
-        }
-
-        formData.append('avatar', this.state.avatar);
-
-        await this.props.updateAvatar(formData, this.props.user_id);
-
-        this.setState({
-            avatarSuccess: "Your avatar has been updated",
-            avatarError: ''
-        });
-
-    }
-
-    submitPassword = (e) => {
-        e.preventDefault();
-
-        const data = {
-            password: this.state.password,
-            confirmPassword: this.state.confirmPassword
-        }
-
-        this.props.updatePassword(data, this.props.user_id);
     }
 
     showInviteHandler = (e) => {
@@ -280,71 +190,11 @@ class Sidebar extends Component {
             </React.Fragment>
         }
 
-        if (this.state.showUserSettings) {
-            userSettings = <React.Fragment>
-                <Modal onclick={this.showUserSettings} />
-                <Options>
-                    <div className={styles.UserSettings}>
-                        <div className={styles.ChangeUserSettings}>
-                            <h3>Change your avatar</h3>
-                            <label htmlFor="upload" style={{
-                                backgroundImage: `url(${this.state.fileUploaded ? this.state.avatarPreview : this.props.avatar})`,
-                                backgroundSize: 'cover',
-                                width: '128px',
-                                height: '128px',
-                                borderRadius: '50%',
-                                transition: '150ms all ease-in'
-
-                            }} className={styles.AvatarPreview}>
-                                <input
-                                    id="upload"
-                                    type="file"
-                                    onChange={this.uploadFile}
-                                    accept="image/*"
-                                    style={{
-                                        display: 'none'
-                                    }} />
-                            </label>
-
-                            {this.state.avatarError && <p style={{ color: "red", fontSize: "10px", margin: "0" }}>{this.state.avatarError}</p>}
-                            {this.state.avatarSuccess && <p style={{ color: "green", fontSize: "10px", margin: "0" }}>{this.state.avatarSuccess}</p>}
-                            <Button ClassName="Confirm" OnClick={this.submitAvatar}>Confirm</Button>
-                        </div>
-                        <div className={styles.ChangeUserSettings}>
-                            <h3>Change password</h3>
-                            <form onSubmit={this.submitPassword} style={{ width: '100%' }}>
-                                <ChatInput
-                                    Type="password"
-                                    OnChange={this.changePassword}
-                                    Placeholder="New password"
-                                    ID="password"
-                                    AutoComplete="on"
-                                    ClassName={this.props.errorMessage ? "InputError" : "Input"}
-                                >New password</ChatInput>
-                                <ChatInput
-                                    Type="password"
-                                    OnChange={this.confirmPassword}
-                                    Placeholder="Confirm password"
-                                    ID="confirmPassword"
-                                    AutoComplete="on"
-                                    ClassName={this.props.errorMessage ? "InputError" : "Input"}
-                                >Confirm password</ChatInput>
-                            </form>
-                            {this.props.errorMessage && <ErrorMessage>{this.props.errorMessage}</ErrorMessage>}
-                            {this.props.successMessage && <ErrorMessage>{this.props.successMessage}</ErrorMessage>}
-                            <Button ClassName="Confirm" OnClick={this.submitPassword}>Confirm</Button>
-                        </div>
-                    </div>
-                </Options>
-            </React.Fragment>
-        }
-
-
         return (
             <React.Fragment>
                 {deleteBox}
                 {inviteString}
-                {userSettings}
+                {this.state.showUserSettings && <UserSettings toggleDisplay={this.showUserSettings} />}
                 <div className={styles.Sidebar}>
                     {roomOptions}
                     {this.props.roomID && <Channels />}
@@ -391,8 +241,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
     deleteChatroom,
     showRoomOptions,
-    updateAvatar,
-    updatePassword,
     clearFetchMessage,
     leaveChatroom
 }

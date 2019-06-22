@@ -38,10 +38,6 @@ class Users extends Component {
         })
     }
 
-    componentDidUpdate() {
-        console.log("x");
-    }
-
     render() {
 
         let connectedUsers = this.state.users.map(user => {
