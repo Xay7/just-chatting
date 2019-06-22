@@ -166,6 +166,15 @@ h3 {
     text-align: center;
 }
 
+.LogoutWrapper {
+    position: absolute;
+    bottom: 0;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 @media (max-width: 1000px) {
     .Rooms {
         width: 100vw;
@@ -199,8 +208,8 @@ h3 {
     .Wrapper,
     .AddJoinWrapper {
         height: 220px;
-        width: 340px;
-        font-size: 14px;
+        width: 300px;
+        font-size: 12px;
     }
 
     .Btn {
@@ -208,4 +217,10 @@ h3 {
         height: 40px;
     }
 
+    .LogoutWrapper {
+        right: 0;
+        top: 0;
+        height: 50px;
+        width: 50px;
+    }
 }

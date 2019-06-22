@@ -125,6 +125,8 @@
         overflow-y: auto;
         display: flex;
         flex-direction: row;
+        align-items: center;
+        height: 50px;
     }
 
     .Channels::-webkit-scrollbar {
@@ -145,7 +147,7 @@
     .ChannelsHeader {
         margin-top: 0;
         font-size: 16px;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         justify-content: flex-start;
     }
 
