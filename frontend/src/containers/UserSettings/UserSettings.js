@@ -53,7 +53,6 @@ export class UserSettings extends Component {
     }
 
     submitAvatar = async (e) => {
-
         e.preventDefault();
         const formData = new FormData();
 

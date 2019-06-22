@@ -19,7 +19,9 @@ export const newChannel = data => {
                 channel: res.data
             })
         } catch (error) {
-            console.log(error);
+            dispatch({
+                type: actionTypes.NEW_CHANNEL_ERROR,
+            })
         }
     }
 }
@@ -34,7 +36,9 @@ export const changeChannel = (id, name, description) => {
                 description: description
             })
         } catch (error) {
-            console.log(error);
+            dispatch({
+                type: actionTypes.CHANGE_CHANNEL_ERROR,
+            })
         }
     }
 }
@@ -51,7 +55,9 @@ export const deleteChannel = id => {
             })
 
         } catch (error) {
-
+            dispatch({
+                type: actionTypes.DELETE_CHANNEL_ERROR,
+            })
         }
     }
 
@@ -86,7 +92,9 @@ export const storeMessage = data => {
             await axios.put(`http://localhost:3001/channels/${data.id}/messages`, data);
 
         } catch (error) {
-
+            dispatch({
+                type: actionTypes.STORE_MESSAGE_ERROR,
+            })
         }
     }
 }
@@ -103,7 +111,9 @@ export const getChatMessages = data => {
             })
 
         } catch (error) {
-            console.log(error);
+            dispatch({
+                type: actionTypes.GET_MESSAGES_ERROR,
+            })
         }
     }
 }

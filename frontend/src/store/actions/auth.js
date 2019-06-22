@@ -60,7 +60,9 @@ export const updateAvatar = (data, id) => {
 
         }
         catch (err) {
-            console.log("something bad happened");
+            dispatch({
+                type: actionTypes.AUTH_CHANGED_AVATAR_ERROR
+            })
         }
     }
 }
@@ -84,6 +86,7 @@ export const updatePassword = (data, id) => {
     }
 }
 
+// Not used yet
 export const tokenAccess = () => {
     return async dispatch => {
         try {

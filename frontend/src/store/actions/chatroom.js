@@ -30,7 +30,6 @@ export const updateRooms = (id) => {
 export const newChatroom = name => {
     return async dispatch => {
         try {
-
             const res = await axios.post(`http://localhost:3001/chatrooms/`, { name });
 
             dispatch({
@@ -41,7 +40,9 @@ export const newChatroom = name => {
                 }
             })
         } catch (err) {
-            console.log(err);
+            dispatch({
+                type: actionTypes.NEW_ROOM_ERROR
+            })
         }
     }
 }
@@ -60,7 +61,9 @@ export const changeRoom = id => {
                 roomOwner: res.data.owner
             });
         } catch (error) {
-
+            dispatch({
+                type: actionTypes.CHANGE_ROOM_ERROR
+            })
         }
 
     }
@@ -86,7 +89,9 @@ export const joinRoom = data => {
             });
         }
         catch (err) {
-            console.log(err);
+            dispatch({
+                type: actionTypes.JOIN_ROOM_ERROR
+            })
         }
     }
 }
@@ -103,7 +108,9 @@ export const deleteChatroom = id => {
             });
 
         } catch (err) {
-            console.log(err);
+            dispatch({
+                type: actionTypes.DELETE_ROOM_ERROR
+            })
         }
     }
 }
@@ -120,7 +127,9 @@ export const leaveChatroom = id => {
             })
 
         } catch (err) {
-            console.log(err);
+            dispatch({
+                type: actionTypes.LEAVE_ROOM_ERROR
+            })
         }
     }
 }

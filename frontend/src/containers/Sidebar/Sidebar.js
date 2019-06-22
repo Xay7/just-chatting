@@ -24,7 +24,6 @@ class Sidebar extends Component {
     }
 
     render() {
-
         return (
             <React.Fragment>
                 {this.state.showUserSettings && <UserSettings toggleDisplay={this.showUserSettings} />}
@@ -58,7 +57,6 @@ class Sidebar extends Component {
 const mapStateToProps = state => {
     return {
         username: state.auth.username,
-        socketChat: state.auth.socket,
         roomID: state.chat.roomID,
         showOptions: state.chat.showRoomOptions,
         avatar: state.auth.avatar,
