@@ -9,11 +9,16 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 export class RoomSettings extends Component {
 
-    state = {
-        showconfirmAction: false,
-        showLeaveBox: false,
-        showInviteString: false,
-        copiedInviteString: false,
+    constructor(props) {
+        super(props);
+        this.state = {
+            showconfirmAction: false,
+            showLeaveBox: false,
+            showInviteString: false,
+            copiedInviteString: false,
+        }
+
+        this.socket = this.props.socketChat;
     }
 
     deleteRoomHandler = () => {
@@ -32,7 +37,10 @@ export class RoomSettings extends Component {
     leaveRoom = async id => {
         await this.props.leaveChatroom(id);
         this.setState({ showLeaveBox: !this.state.showLeaveBox })
-        this.socket.emit('USER_LEFT', this.props.user_id)
+        this.socket.emit('USER_LEFT', {
+            room_id: this.props.room_id,
+            user_id: this.props.user_id
+        })
     }
 
     componentDidMount() {
@@ -90,7 +98,7 @@ export class RoomSettings extends Component {
                 <Modal onclick={this.deleteRoomHandler} />
                 <Confirm
                     cancel={this.hideconfirmAction}
-                    confirm={() => this.deleteRoom(this.props.roomID)}
+                    confirm={() => this.deleteRoom(this.props.room_id)}
                     header={`Delete ${this.props.roomName}`}
                     description={`Are you sure you want to delete ${this.props.roomName}?`}
                 />
@@ -102,7 +110,7 @@ export class RoomSettings extends Component {
                 <Modal onclick={this.leaveRoomHandler} />
                 <Confirm
                     cancel={this.hideconfirmAction}
-                    confirm={() => this.leaveRoom(this.props.roomID)}
+                    confirm={() => this.leaveRoom(this.props.room_id)}
                     header={`Leave ${this.props.roomName}`}
                     description={`Are you sure you want to leave ${this.props.roomName}?`}
                 />
@@ -116,8 +124,8 @@ export class RoomSettings extends Component {
                     <div className={styles.InviteString}>
                         <h3 style={{ marginTop: "10px" }}>Share this room ID with friends</h3>
                         <div className={styles.InputWithBtn}>
-                            <input value={this.props.roomID} disabled className={styles.InviteInput} />
-                            <CopyToClipboard text={this.props.roomID}>
+                            <input value={this.props.room_id} disabled className={styles.InviteInput} />
+                            <CopyToClipboard text={this.props.room_id}>
                                 <button className={styles.Copy} onClick={this.copiedInviteString}>Copy</button>
                             </CopyToClipboard>
                         </div>
@@ -170,9 +178,10 @@ const mapStateToProps = state => {
     return {
         user_id: state.auth.user_id,
         roomOwner: state.chat.roomOwner,
-        roomID: state.chat.roomID,
+        room_id: state.chat.roomID,
         roomName: state.chat.roomName,
-        showOptions: state.chat.showRoomOptions
+        showOptions: state.chat.showRoomOptions,
+        socketChat: state.auth.socket,
     }
 }
 

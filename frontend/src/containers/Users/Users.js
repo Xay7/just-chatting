@@ -30,6 +30,16 @@ class Users extends Component {
             this.setState({ users: [...this.state.users, data] })
         })
 
+        this.socket.on('USER_LEFT_ROOM', id => {
+            const updatedUsers = this.state.users.filter(el => {
+                return el.id !== id
+            })
+            const updatedMembers = this.state.members.filter(el => {
+                return el.id !== id
+            })
+            this.setState({ users: updatedUsers, members: updatedMembers })
+        })
+
         this.socket.on('USER_DISCONNECTED', data => {
             let updatedUsers = this.state.users.filter(el => {
                 return el.username !== data

@@ -44,19 +44,18 @@ io.on("connection", function (socket) {
 
         const usernames = users[data.roomID];
         socket.leave(data.previousRoom)
-
         socket.join(data.roomID);
 
         io.in(data.roomID).emit('ROOM_USER_LIST', usernames);
 
     });
 
-    socket.on('USER_LEFT', function (id) {
-        users = users.filter(el => {
-            return el.id !== id
+    socket.on('USER_LEFT', function (data) {
+        socket.leave(data.room_id);
+        users[data.room_id] = users[data.room_id].filter(el => {
+            return el.id !== data.user_id
         })
-
-        io.in(data.roomID).emit('USER_LEFT_UPDATE_USERS', id);
+        io.in(data.room_id).emit('USER_LEFT_ROOM', data.user_id);
     })
 
     socket.on('CLIENT_IS_TYPING', function (data) {
@@ -66,6 +65,7 @@ io.on("connection", function (socket) {
     socket.on('NEW_ROOM', function (data) {
         users[data.roomID] = [];
         users[data.roomID].push({
+            id: data.user_id,
             username: data.username,
             avatar: data.avatar
         });
@@ -79,6 +79,7 @@ io.on("connection", function (socket) {
         }
 
         users[data.roomID].push({
+            id: data.user_id,
             username: data.username,
             avatar: data.avatar
         });

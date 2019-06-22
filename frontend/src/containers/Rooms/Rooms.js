@@ -61,7 +61,8 @@ class Rooms extends Component {
         this.socket.emit('NEW_ROOM', {
             roomID: this.props.chatRooms.slice(-1)[0].id,
             username: this.props.username,
-            avatar: this.props.avatar
+            avatar: this.props.avatar,
+            user_id: this.props.user_id
         });
 
     }
@@ -84,6 +85,7 @@ class Rooms extends Component {
 
         this.socket.emit('JOIN_ROOM', {
             roomID: data.id,
+            user_id: this.props.user_id,
             username: this.props.username,
             avatar: this.props.avatar
         });
