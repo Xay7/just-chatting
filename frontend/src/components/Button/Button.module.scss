@@ -6,6 +6,7 @@
     border-bottom: 1px solid transparent;
     transition: 150ms all;
     outline: none;
+    cursor: pointer;
 
     &:hover {
         color: darken(grey, 20%);
@@ -21,6 +22,7 @@
     border: none;
     transition: 150ms all;
     outline: none;
+    cursor: pointer;
 
     &:hover {
         background-color: darken(green, 5%);
@@ -35,6 +37,7 @@
     border: none;
     transition: 150ms all;
     outline: none;
+    cursor: pointer;
 
     &:hover {
         background-color: darken(red, 5%);

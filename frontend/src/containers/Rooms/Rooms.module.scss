@@ -56,6 +56,11 @@ $basecolor: #081b50;
     color: white;
     font-size: 32px;
     cursor: pointer;
+    transition: 150ms all ease-in-out;
+
+    &:hover {
+        background-color: rgb(46, 88, 201)
+    }
 }
 
 .RoomSelected {
@@ -65,7 +70,7 @@ $basecolor: #081b50;
 
 .RoomNotSelected {
     color: #FDFDFD;
-    transition: 350ms all ease-out;
+    transition: 150ms all ease-in-out;
 
     &:hover {
         background-color: rgb(46, 88, 201)

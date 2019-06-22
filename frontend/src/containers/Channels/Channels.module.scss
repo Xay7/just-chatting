@@ -8,10 +8,12 @@
 .Channel,
 .ChannelSelected {
     width: 200px;
+    height: auto;
     margin: 0 auto;
     padding: 5px 0;
     color: $white;
-    border-radius: 5px;
+    transition: 150ms all ease-in-out;
+    word-wrap: break-word;
 }
 
 .Channel button,
@@ -66,7 +68,7 @@
 }
 
 .AddChannelWrapper {
-    height: 300px;
+    height: 400px;
     width: 500px;
     border-radius: 5px;
     display: flex;

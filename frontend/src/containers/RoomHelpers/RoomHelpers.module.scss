@@ -19,10 +19,11 @@ $roomColor: #182C61;
     align-items: center;
     background-color: $roomColor;
     cursor: pointer;
+    transition: 150ms all ease-in-out;
 }
 
 .Room:hover {
-    background-color: darken(#182C61, 3%);
+    background-color: #081B50;
 }
 
 .RoomName {
