@@ -6,7 +6,7 @@ const Footer = () => {
     return (
         <div className={styles.Footer}>
             <a href="https://github.com/Xay7/just-chatting" target="_blank" rel="noopener noreferrer">
-                <img src={GithubLogo} alt="Github" />
+                <img src={GithubLogo} alt="Github" className={styles.Github} />
             </a>
         </div>
     )

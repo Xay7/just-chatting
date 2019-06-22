@@ -9,6 +9,7 @@ import thunk from 'redux-thunk'
 import authReducer from './store/reducers/auth';
 import chatReducer from './store/reducers/chatroom';
 import axios from 'axios';
+import { LOGOUT } from './store/actions/actionTypes';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -19,7 +20,14 @@ const reducers = combineReducers({
     chat: chatReducer
 });
 
-const store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)));
+const rootReducer = (state, action) => {
+    if (action.type === LOGOUT) {
+        state = undefined;
+    }
+    return reducers(state, action);
+};
+
+const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
 
 
 const app = (

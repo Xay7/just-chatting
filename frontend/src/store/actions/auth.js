@@ -113,3 +113,11 @@ export const clearFetchMessage = () => {
         })
     }
 }
+
+export const Logout = () => {
+    return dispatch => {
+        dispatch({
+            type: actionTypes.LOGOUT
+        })
+    }
+}

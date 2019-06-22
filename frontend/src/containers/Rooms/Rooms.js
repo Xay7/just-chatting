@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import styles from './Rooms.module.scss';
 import { connect } from 'react-redux';
-import { newChatroom, updateRooms, changeRoom, joinRoom } from '../../store/actions/index';
+import { newChatroom, updateRooms, changeRoom, joinRoom, Logout } from '../../store/actions/index';
 import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import ChatInput from '../../components/ChatInput/ChatInput';
 import Button from '../../components/Button/Button';
+import { withRouter } from 'react-router-dom';
 
 
 class Rooms extends Component {
@@ -152,6 +153,11 @@ class Rooms extends Component {
         this.setState({ chatRoomId: e.target.value });
     }
 
+    Logout = () => {
+        this.props.history.push('/');
+        this.props.Logout();
+    }
+
 
     render() {
 
@@ -259,6 +265,15 @@ class Rooms extends Component {
                         onClick={this.showAddorJoin}
                         className={styles.AddChatroom}>
                         +</button>
+                    <div className={styles.LogoutWrapper}>
+                        <i
+                            class="fas fa-sign-out-alt fa-lg"
+                            style={{
+                                color: "white",
+                                cursor: "pointer",
+                            }}
+                            onClick={this.Logout}></i>
+                    </div>
                 </div>
                 {addOrJoin}
             </React.Fragment>
@@ -284,7 +299,8 @@ const mapDispatchToProps = {
     newChatroom,
     updateRooms,
     changeRoom,
-    joinRoom
+    joinRoom,
+    Logout
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Rooms);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Rooms));
