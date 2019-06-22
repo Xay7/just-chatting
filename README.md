@@ -17,4 +17,4 @@ MERN real time text chat with with custom chatrooms with channels (think Discord
 * Private messages
 * Friend list
 * Room settings
-* ???
+* Fetch error handling
