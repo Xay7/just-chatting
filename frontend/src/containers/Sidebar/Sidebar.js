@@ -8,6 +8,7 @@ import {
 } from '../../store/actions/index';
 import UserSettings from '../UserSettings/UserSettings';
 import RoomSettings from '../RoomSettings/RoomSettings';
+import Tooltip from '../../components/Tooltip/Tooltip';
 
 class Sidebar extends Component {
     constructor(props) {
@@ -33,19 +34,18 @@ class Sidebar extends Component {
                     <div className={styles.User}>
                         <img src={this.props.avatar} alt={this.props.username + " avatar"} className={styles.Avatar} />
                         <p style={{ color: 'white' }}>{this.props.username}</p>
-                        <i
-                            className="fas fa-cog fa-lg"
-                            style={{
-                                position: "absolute",
-                                right: "0",
-                                marginRight: "20px",
-                                color: "white",
-                                ':hover': {
-                                    color: '#BBB',
-                                    cursor: 'pointer'
-                                },
-                            }}
-                            onClick={this.showUserSettings}></i>
+                        <Tooltip where="Top" distance="-35px" text="User settings" wrapper="Right" height="auto" width="50px" margin="0 5px 0 0" position="absolute">
+                            <i
+                                className="fas fa-cog fa-lg"
+                                style={{
+                                    color: "white",
+                                    ':hover': {
+                                        color: '#BBB',
+                                        cursor: 'pointer'
+                                    },
+                                }}
+                                onClick={this.showUserSettings}></i>
+                        </Tooltip>
                     </div>
                 </div>
             </React.Fragment>

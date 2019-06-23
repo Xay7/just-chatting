@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { showRoomOptions, clearFetchMessage } from '../../store/actions/index';
 import Radium from 'radium';
 import ChannelSettings from '../ChannelSettings/ChannelSettings';
+import Tooltip from '../../components/Tooltip/Tooltip';
 
 class RoomHelpers extends Component {
 
@@ -50,19 +51,22 @@ class RoomHelpers extends Component {
                                     <h2 className={styles.ChannelName}>{this.props.channelName}</h2>
                                     <p className={styles.ChannelDescription}>{this.props.channelDescription}</p>
                                     {this.props.user_id === this.props.owner_id &&
-                                        <i
-                                            className="fas fa-cog fa-lg"
-                                            style={{
-                                                position: "absolute",
-                                                right: "0",
-                                                marginRight: "20px",
-                                                color: "#444444",
-                                                ':hover': {
-                                                    color: '#BBB',
-                                                    cursor: 'pointer'
-                                                },
-                                            }}
-                                            onClick={this.showChannelSettings}></i>
+                                        <Tooltip where="Left" distance="-105px" wrapper="Right" text="Channel settings" height="50px" width="50px" margin="0 0 0px 0" position="absolute">
+                                            <i
+                                                className="fas fa-cog fa-lg"
+                                                style={{
+                                                    position: "absolute",
+                                                    right: "0",
+                                                    marginRight: "20px",
+                                                    color: "#444444",
+                                                    ':hover': {
+                                                        color: '#BBB',
+                                                        cursor: 'pointer'
+                                                    },
+                                                }}
+                                                onClick={this.showChannelSettings}></i>
+                                        </Tooltip>
+
                                     }
                                 </div>
                             }

@@ -8,6 +8,7 @@ import ChatInput from '../../components/ChatInput/ChatInput';
 import Button from '../../components/Button/Button';
 import { withRouter } from 'react-router-dom';
 import FetchResponse from '../../components/FetchResponse/FetchResponse';
+import Tooltip from '../../components/Tooltip/Tooltip';
 
 class Rooms extends Component {
 
@@ -274,19 +275,25 @@ class Rooms extends Component {
                 {noRooms}
                 <div className={styles.Rooms}>
                     {chatRooms}
-                    <button
-                        onClick={this.showAddorJoin}
-                        className={styles.AddChatroom}>
-                        +</button>
-                    <div className={styles.LogoutWrapper}>
+                    <Tooltip where="Right" distance="-90px" text="Create & Join" height="50px" width="50px" margin="0 0 0px 0" position="relative">
+                        <button
+                            onClick={this.showAddorJoin}
+                            className={styles.AddChatroom}>
+                            +</button>
+                    </Tooltip>
+
+                    <Tooltip where="Top" distance="0px" text="Logout" wrapper="Bottom" height="50px" width="50px" margin="0 0 15px 0" position="absolute">
                         <i
                             class="fas fa-sign-out-alt fa-lg"
                             style={{
+                                position: "absolute",
+                                bottom: "0px",
                                 color: "white",
                                 cursor: "pointer",
                             }}
                             onClick={this.Logout}></i>
-                    </div>
+                    </Tooltip>
+
                 </div>
                 {addOrJoin}
             </React.Fragment>

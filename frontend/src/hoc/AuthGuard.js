@@ -4,18 +4,14 @@ import { connect } from 'react-redux';
 export default (OriginalComponent) => {
     class MixedComponent extends Component {
 
-
         checkAuth() {
             if (!this.props.isAuth) {
                 return this.props.history.push('/');
             }
         }
-
         componentDidMount() {
             this.checkAuth();
         }
-
-
         componentDidUpdate() {
             this.checkAuth();
         }

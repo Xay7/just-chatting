@@ -1,0 +1,9 @@
+.TooltipWrapper:hover div {
+    display: block !important;
+}
+
+@media (max-width:1000px) {
+    .TooltipWrapper {
+        display: none !important;
+    }
+}

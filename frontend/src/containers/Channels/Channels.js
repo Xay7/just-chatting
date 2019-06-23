@@ -6,6 +6,7 @@ import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import ChatInput from '../../components/ChatInput/ChatInput';
 import Button from '../../components/Button/Button';
+import Tooltip from '../../components/Tooltip/Tooltip';
 
 class Channels extends Component {
 
@@ -181,7 +182,10 @@ class Channels extends Component {
                     {noChannels}
                     <div className={styles.ChannelsHeader}>
                         <h3 className={styles.ChannelTitle}>Channels</h3>
-                        {this.props.roomName ? <button onClick={this.showAddChannel} className={styles.AddChannel}>+</button> : null}
+                        {this.props.roomName ?
+                            <Tooltip where="Right" distance="-70px" text="Add channel" wrapper="Right" height="auto" width="auto" margin="0 0px 0 0" position="relative">
+                                <button onClick={this.showAddChannel} className={styles.AddChannel}>+</button>
+                            </Tooltip> : null}
                     </div>
                     <div className={styles.ChannelsList}>
                         {channels}
