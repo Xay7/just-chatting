@@ -20,6 +20,7 @@ const userSchema = new Schema({
         { type: mongoose.Schema.Types.ObjectId, ref: 'chatroom', required: true }
     ]
 }).set('toJSON', {
+    virtuals: true,
     versionKey: false,
     transform: function (doc, ret) { delete ret._id }
 });
