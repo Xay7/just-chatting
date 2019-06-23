@@ -10,7 +10,7 @@ const DEFAULT_STATE = {
     user_id: '',
     avatar: '',
     tokenSuccess: false,
-    socket: io('http://localhost:3001')
+    socket: io(process.env.REACT_APP_BACKEND_URL)
 }
 const reducer = (state = DEFAULT_STATE, action) => {
     switch (action.type) {
