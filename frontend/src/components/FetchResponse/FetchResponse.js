@@ -1,7 +1,7 @@
 import React from 'react';
-import styles from './ErrorMessage.module.scss';
+import styles from './FetchResponse.module.scss';
 
-const ErrorMessage = (props) => {
+const FetchMessage = (props) => {
     return (
         <div className={styles.ErrorMessageWrapper}>
             <h4 className={styles.ErrorMessageTxt}>{props.children}</h4>
@@ -10,4 +10,4 @@ const ErrorMessage = (props) => {
 }
 
 
-export default ErrorMessage;
+export default FetchMessage;
