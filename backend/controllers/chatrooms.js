@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const Chatroom = require('../models/chatroom');
 const Channel = require('../models/channel');
+const mongoose = require('mongoose');
 
 module.exports = {
     chatrooms: async (req, res, next) => {
@@ -61,13 +62,18 @@ module.exports = {
         // Make sure user can't join arleady joined rooms
 
         if (userChatrooms.includes(id)) {
-            return res.status(409).json({ error: "Can't join owned room" })
+            return res.status(409).json({ error: "You arleady joined this chatroom" })
         }
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: "Invalid chatroom ID" })
+        }
+
 
         const foundChatroom = await Chatroom.findOne({ "_id": id });
 
         if (!foundChatroom) {
-            return res.status(403).json({ error: "Chat doesn't exist" });
+            return res.status(403).json({ error: "Chatroom doesn't exist" });
         }
 
         await User.findByIdAndUpdate({ "_id": user_id }, {
@@ -136,7 +142,7 @@ module.exports = {
 
         const id = req.params.id;
 
-        const foundChatroom = await Chatroom.findOne({ "_id": id }).populate([{ path: 'members', select: 'name avatar' }, { path: 'owner', select: 'name' }]);
+        const foundChatroom = await Chatroom.findOne({ "_id": id }).populate([{ path: 'members', select: 'name avatar _id' }, { path: 'owner', select: 'name' }]);
 
         if (!foundChatroom) {
             return res.status(404).json({ error: "Chatroom doesn't exist" });
@@ -153,7 +159,6 @@ module.exports = {
             members: foundChatroom.members,
             channels: foundChannels
         }
-
         res.status(200).json(data);
     },
 }
