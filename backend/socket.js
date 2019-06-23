@@ -63,27 +63,31 @@ io.on("connection", function (socket) {
     })
 
     socket.on('NEW_ROOM', function (data) {
+        socket.chatrooms.push(data.roomID)
         users[data.roomID] = [];
         users[data.roomID].push({
             id: data.user_id,
             username: data.username,
             avatar: data.avatar
         });
-
     })
 
     socket.on('JOIN_ROOM', function (data) {
-
+        socket.chatrooms.push(data.roomID)
         if (users[data.roomID] === undefined) {
             users[data.roomID] = []
         }
-
         users[data.roomID].push({
             id: data.user_id,
             username: data.username,
             avatar: data.avatar
         });
 
+        io.in(data.roomID).emit('USER_JOINED_ROOM', {
+            id: data.user_id,
+            name: data.username,
+            avatar: data.avatar
+        });
     })
 
     socket.on('JOIN_CHANNEL', function (data) {
@@ -98,16 +102,14 @@ io.on("connection", function (socket) {
 
     })
     socket.on('disconnect', function () {
-
         if (socket.chatrooms === undefined) {
             return;
         }
-
         socket.chatrooms.map(el => {
             users[el] = users[el].filter(el => {
-                return el.username !== socket.username
+                return el.id !== socket.user_id
             })
-            io.in(el).emit('USER_DISCONNECTED', socket.username);
+            io.in(el).emit('USER_DISCONNECTED', socket.user_id);
         })
     })
 })

@@ -30,6 +30,12 @@ class Users extends Component {
             this.setState({ users: [...this.state.users, data] })
         })
 
+        this.socket.on('USER_JOINED_ROOM', (data) => {
+            const updatedUsers = [...this.state.users, data]
+            const updatedMembers = [...this.state.members, data]
+            this.setState({ users: updatedUsers, members: updatedMembers })
+        })
+
         this.socket.on('USER_LEFT_ROOM', id => {
             const updatedUsers = this.state.users.filter(el => {
                 return el.id !== id
@@ -40,12 +46,19 @@ class Users extends Component {
             this.setState({ users: updatedUsers, members: updatedMembers })
         })
 
-        this.socket.on('USER_DISCONNECTED', data => {
-            let updatedUsers = this.state.users.filter(el => {
-                return el.username !== data
+        this.socket.on('USER_DISCONNECTED', id => {
+            const updatedUsers = this.state.users.filter(el => {
+                return el.id !== id
             })
             this.setState({ users: updatedUsers });
         })
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (JSON.stringify(prevProps.members) !== JSON.stringify(this.props.members)) {
+            this.setState({ members: this.props.members });
+        }
+
     }
 
     render() {
@@ -64,9 +77,10 @@ class Users extends Component {
         let members = null;
 
         // Filter those who are online and not
-        members = this.props.members.map(data => {
+        members = this.state.members.map(data => {
+            console.log(data);
             const isOnline = this.state.users.some((el) => {
-                return el.username === data.name;
+                return el.id === data.id;
             })
             if (isOnline) {
                 return null;
@@ -84,7 +98,7 @@ class Users extends Component {
                     <div className={styles.Users}>
                         <h5 className={styles.UserRole}>Online</h5>
                         {connectedUsers}
-                        {this.props.members.length > 1 && <h5 className={styles.UserRole}>Offline</h5>}
+                        {this.state.members.length > 1 && <h5 className={styles.UserRole}>Offline</h5>}
                         {members}
                     </div>
                 }
