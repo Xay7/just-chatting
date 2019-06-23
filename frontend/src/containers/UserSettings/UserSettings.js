@@ -5,7 +5,7 @@ import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import Button from '../../components/Button/Button';
 import ChatInput from '../../components/ChatInput/ChatInput';
-import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import FetchResponse from '../../components/FetchResponse/FetchResponse';
 import { updateAvatar, updatePassword } from '../../store/actions/index';
 
 export class UserSettings extends Component {
@@ -147,8 +147,8 @@ export class UserSettings extends Component {
                                     ClassName={this.props.errorMessage ? "InputError" : "Input"}
                                 >Confirm password</ChatInput>
                             </form>
-                            {this.props.errorMessage && <ErrorMessage>{this.props.errorMessage}</ErrorMessage>}
-                            {this.props.successMessage && <ErrorMessage>{this.props.successMessage}</ErrorMessage>}
+                            {this.props.errorMessage && <FetchResponse>{this.props.errorMessage}</FetchResponse>}
+                            {this.props.successMessage && <FetchResponse>{this.props.successMessage}</FetchResponse>}
                             <Button ClassName="Confirm" OnClick={this.submitPassword}>Confirm</Button>
                         </div>
                     </div>

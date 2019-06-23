@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { signUp } from '../../store/actions/index';
 import { Link } from 'react-router-dom';
 import Spinner from '../../components/Spinner/Spinner';
-import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import FetchResponse from '../../components/FetchResponse/FetchResponse';
 import { clearFetchMessage } from '../../store/actions/index';
 import Footer from '../../components/Footer/Footer';
 
@@ -58,7 +58,7 @@ class SignUp extends Component {
 
         if (this.props.error) {
             errorMessage = <div className={styles.ErrorMessage}>
-                <ErrorMessage>{this.props.errorMessage}</ErrorMessage>
+                <FetchResponse>{this.props.errorMessage}</FetchResponse>
                 <p className={styles.ErrorParagraph}>Name must be longer than 3 characters</p>
                 <p className={styles.ErrorParagraph}>Password must be longer than 6 characters</p>
             </div>

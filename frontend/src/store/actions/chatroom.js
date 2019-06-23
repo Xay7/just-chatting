@@ -90,7 +90,8 @@ export const joinRoom = data => {
         }
         catch (err) {
             dispatch({
-                type: actionTypes.JOIN_ROOM_ERROR
+                type: actionTypes.JOIN_ROOM_ERROR,
+                errorMessage: err.response.data.error
             })
         }
     }

@@ -58,7 +58,14 @@ const reducer = (state = DEFAULT_STATE, action) => {
         case actionTypes.JOIN_ROOM:
             return {
                 ...state,
-                chatRooms: [...state.chatRooms, action.room]
+                chatRooms: [...state.chatRooms, action.room],
+                errorMessage: '',
+            }
+        case actionTypes.JOIN_ROOM_ERROR:
+            return {
+                ...state,
+                errorMessage: action.errorMessage,
+                successMessage: ''
             }
         case actionTypes.DELETE_ROOM:
             const rooms = state.chatRooms.filter(el => {

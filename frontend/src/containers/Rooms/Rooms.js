@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import styles from './Rooms.module.scss';
 import { connect } from 'react-redux';
-import { newChatroom, updateRooms, changeRoom, joinRoom, Logout } from '../../store/actions/index';
+import { newChatroom, updateRooms, changeRoom, joinRoom, Logout, clearFetchMessage } from '../../store/actions/index';
 import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import ChatInput from '../../components/ChatInput/ChatInput';
 import Button from '../../components/Button/Button';
 import { withRouter } from 'react-router-dom';
-
+import FetchResponse from '../../components/FetchResponse/FetchResponse';
 
 class Rooms extends Component {
 
@@ -76,7 +76,15 @@ class Rooms extends Component {
             user_id: this.props.user_id
         }
 
+        if (!this.state.chatRoomId) {
+            return;
+        }
+
         await this.props.joinRoom(data);
+
+        if (this.props.errorMessage) {
+            return;
+        }
 
         await this.setState({
             chatRooms: this.props.chatRooms,
@@ -101,6 +109,7 @@ class Rooms extends Component {
     }
 
     showJoin = () => {
+        this.props.clearFetchMessage();
         this.setState({
             showJoin: !this.state.showJoin,
             showAddOrJoin: false,
@@ -110,6 +119,7 @@ class Rooms extends Component {
     }
 
     showAdd = () => {
+        this.props.clearFetchMessage();
         this.setState({
             showAdd: !this.state.showAdd,
             showAddOrJoin: false,
@@ -136,14 +146,14 @@ class Rooms extends Component {
     }
 
     // Changes selected room styles for visual clarity
-    currentRoomStyle = (index) => {
-        const isSelected = this.state.selectedRoom === index;
+    currentRoomStyle = (id) => {
+        const isSelected = this.props.roomID === id;
         // True is room selected, rest are not
         return isSelected ? styles.RoomSelected : styles.RoomNotSelected;
     }
     // Disables click on currect room to prevent multiple socket calls
-    currentRoomDisable = (index) => {
-        const isSelected = this.state.selectedRoom === index;
+    currentRoomDisable = (id) => {
+        const isSelected = this.props.roomID === id;
         return isSelected ? true : false;
     }
 
@@ -247,6 +257,7 @@ class Rooms extends Component {
                             AutoComplete="off"
                             ClassName={this.props.errorMessage ? "InputError" : "Input"}
                         >Room ID</ChatInput>
+                        {this.props.errorMessage && <FetchResponse>{this.props.errorMessage}</FetchResponse>}
                         <div className={styles.AddJoinBtns}>
                             <Button ClassName="Cancel" OnClick={this.showAddorJoin}>Cancel</Button>
                             <Button ClassName="Confirm" OnClick={this.joinRoom}>Submit</Button>
@@ -293,7 +304,8 @@ const mapStateToProps = state => {
         channelID: state.chat.channelID,
         updateRooms: state.chat.updateRooms,
         roomID: state.chat.roomID,
-        avatar: state.auth.avatar
+        avatar: state.auth.avatar,
+        errorMessage: state.chat.errorMessage
     }
 }
 
@@ -302,7 +314,8 @@ const mapDispatchToProps = {
     updateRooms,
     changeRoom,
     joinRoom,
-    Logout
+    Logout,
+    clearFetchMessage
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Rooms));

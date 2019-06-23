@@ -6,7 +6,7 @@ import Modal from '../../components/Modal/Modal';
 import Options from '../../components/Options/Options';
 import ChatInput from '../../components/ChatInput/ChatInput';
 import Button from '../../components/Button/Button';
-import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import FetchResponse from '../../components/FetchResponse/FetchResponse';
 import Confirm from '../../components/Confirm/Confirm';
 
 class ChannelSettings extends Component {
@@ -86,8 +86,8 @@ class ChannelSettings extends Component {
                             AutoComplete="off"
                             ClassName={this.props.errorMessage ? "InputError" : "Input"}
                         >Channel description</ChatInput>
-                        {this.props.errorMessage && <ErrorMessage>{this.props.errorMessage}</ErrorMessage>}
-                        {this.props.successMessage && <ErrorMessage>{this.props.successMessage}</ErrorMessage>}
+                        {this.props.errorMessage && <FetchResponse>{this.props.errorMessage}</FetchResponse>}
+                        {this.props.successMessage && <FetchResponse>{this.props.successMessage}</FetchResponse>}
                         <div className={styles.Btns}>
                             <Button ClassName="Cancel" OnClick={this.props.display}>Cancel</Button>
                             <Button ClassName="Confirm" OnClick={this.changeData}>Submit</Button>

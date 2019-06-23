@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { signIn } from '../../store/actions/index';
 import { Link } from 'react-router-dom';
 import Spinner from '../../components/Spinner/Spinner';
-import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import FetchResponse from '../../components/FetchResponse/FetchResponse';
 import { clearFetchMessage } from '../../store/actions/index';
 import Footer from '../../components/Footer/Footer';
 
@@ -48,7 +48,7 @@ class SignIn extends Component {
         let errorMessage = null;
 
         if (this.props.errorMessage) {
-            errorMessage = <ErrorMessage>{this.props.errorMessage}</ErrorMessage>
+            errorMessage = <FetchResponse>{this.props.errorMessage}</FetchResponse>
         }
 
         let registerSuccess = null;
