@@ -1,5 +1,7 @@
 # Just chatting
 
+![alt text](https://i.imgur.com/v4snnR8.png)
+
 MERN real time text chat with with custom chatrooms with channels (think Discord/Slack)
 
 ## Project architecture and features
