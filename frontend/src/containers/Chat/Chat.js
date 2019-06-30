@@ -5,8 +5,22 @@ import Users from '../Users/Users';
 import styles from './Chat.module.scss';
 import RoomHelpers from '../RoomHelpers/RoomHelpers';
 import Rooms from '../Rooms/Rooms';
+import { connect } from 'react-redux';
+import { Logout } from '../../store/actions/index';
 
 class Chat extends Component {
+
+    onUnload = (e) => { // the method that will be used for both add and remove event
+        this.props.Logout();
+    }
+
+    componentDidMount() {
+        window.addEventListener("beforeunload", this.onUnload)
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("beforeunload", this.onUnload)
+    }
 
     render() {
         return (
@@ -30,6 +44,10 @@ class Chat extends Component {
     }
 }
 
+const mapDispatchToProps = {
+    Logout
+}
 
 
-export default Chat;
+
+export default connect(null, mapDispatchToProps)(Chat);

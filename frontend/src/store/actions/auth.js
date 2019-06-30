@@ -91,7 +91,7 @@ export const tokenAccess = () => {
     return async dispatch => {
         try {
 
-            const res = await axios.get('/users/chat')
+            const res = await axios.get('/users/chatrooms')
 
             dispatch({
                 type: actionTypes.TOKEN_ACCESS,
@@ -118,7 +118,10 @@ export const clearFetchMessage = () => {
 }
 
 export const Logout = () => {
-    return dispatch => {
+    return async dispatch => {
+
+        await axios.post('/users/logout');
+
         dispatch({
             type: actionTypes.LOGOUT
         })

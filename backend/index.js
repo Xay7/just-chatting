@@ -4,12 +4,16 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const app = express();
+const sessionSecret = require('./config/index').session;
 const cookieParser = require('cookie-parser');
 const socket = require("socket.io");
+const expressSession = require('express-session')
 const port = process.env.PORT || 3001;
+
 require('dotenv').config({ path: __dirname + '/.env' });
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+mongoose.set('useFindAndModify', false);
 
 
 const server = app.listen(port);
@@ -25,7 +29,12 @@ app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true
 }));
-mongoose.set('useFindAndModify', false);
+app.use(expressSession({
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1800000 }
+}));
 
 
 app.use('/users', require('./routes/users'))

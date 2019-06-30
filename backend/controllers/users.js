@@ -4,7 +4,6 @@ const { JWT_S } = require('../config/index');
 const upload = require('../services/fileupload');
 const uploadAvatar = upload.single('avatar');
 
-
 signToken = user => {
     return token = JWT.sign({
         iss: 'HELLO',
@@ -53,6 +52,9 @@ module.exports = {
 
     },
     signIn: async (req, res, next) => {
+        if (req.session.user) {
+            return res.status(400).json({ error: "User arleady logged in, try again later" })
+        }
 
         const avatar = req.user.avatar;
         const username = req.user.name;
@@ -62,6 +64,8 @@ module.exports = {
         res.cookie('access_token', token, {
             httpOnly: true
         });
+
+        req.session.user = req.user
 
         res.status(200).json({
             username,
@@ -92,6 +96,10 @@ module.exports = {
 
             res.status(201).json({ success: "Updated avatar" });
         })
+    },
+    logout: async (req, res, next) => {
+        req.session.destroy();
+        res.status(200).json({ success: "Logout successful" })
     },
     googleOAuth: async (req, res, next) => {
         const token = signToken(req.user);

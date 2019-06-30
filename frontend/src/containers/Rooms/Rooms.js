@@ -167,8 +167,8 @@ class Rooms extends Component {
     }
 
     Logout = () => {
-        this.props.history.push('/');
         this.props.Logout();
+        this.props.history.push('/');
     }
 
 
@@ -284,7 +284,7 @@ class Rooms extends Component {
 
                     <Tooltip where="Top" distance="0px" text="Logout" wrapper="Bottom" height="50px" width="50px" margin="0 0 15px 0" position="absolute">
                         <i
-                            class="fas fa-sign-out-alt fa-lg"
+                            className="fas fa-sign-out-alt fa-lg"
                             style={{
                                 position: "absolute",
                                 bottom: "0px",
