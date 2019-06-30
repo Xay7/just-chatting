@@ -15,7 +15,6 @@ const Tooltip = (props) => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            zIndex: 999,
         }} className={styles.TooltipWrapper}>
             <div style={{
                 display: "none",
@@ -30,7 +29,7 @@ const Tooltip = (props) => {
                 bottom: props.where === "Bottom" && props.distance,
                 left: props.where === "Left" && props.distance,
                 right: props.where === "Right" && props.distance,
-                zIndex: 999
+                zIndex: 9999
             }} >{props.text}</div>
             {props.children}
         </div>

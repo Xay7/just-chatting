@@ -16,12 +16,15 @@ class Chat extends Component {
 
     componentDidMount() {
         window.addEventListener("beforeunload", this.onUnload)
+        window.history.pushState(null, document.title, window.location.href);
+        window.addEventListener('popstate', function (event) {
+            window.history.pushState(null, document.title, window.location.href);
+        });
     }
 
     componentWillUnmount() {
         window.removeEventListener("beforeunload", this.onUnload)
     }
-
     render() {
         return (
             <Fragment>

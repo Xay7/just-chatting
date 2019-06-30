@@ -282,12 +282,10 @@ class Rooms extends Component {
                             +</button>
                     </Tooltip>
 
-                    <Tooltip where="Top" distance="0px" text="Logout" wrapper="Bottom" height="50px" width="50px" margin="0 0 15px 0" position="absolute">
+                    <Tooltip where="Right" distance="-40px" text="Logout" wrapper="Bottom" height="50px" width="50px" margin="0 0 0px 0" position="relative">
                         <i
                             className="fas fa-sign-out-alt fa-lg"
                             style={{
-                                position: "absolute",
-                                bottom: "0px",
                                 color: "white",
                                 cursor: "pointer",
                             }}
