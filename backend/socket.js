@@ -4,8 +4,8 @@ let users = {};
 
 io.on("connection", function (socket) {
 
+
     socket.on('SEND_MESSAGE', function (data) {
-        console.log(data.room);
         io.in(data.room).emit('RECEIVE_MESSAGE', data);
     })
 
@@ -100,6 +100,17 @@ io.on("connection", function (socket) {
 
         socket.emit('UPDATING_MESSAGES', data);
 
+    })
+    socket.on('LOGOUT', function () {
+        if (socket.chatrooms === undefined) {
+            return;
+        }
+        socket.chatrooms.map(el => {
+            users[el] = users[el].filter(el => {
+                return el.id !== socket.user_id
+            })
+            io.in(el).emit('USER_DISCONNECTED', socket.user_id);
+        })
     })
     socket.on('disconnect', function () {
         if (socket.chatrooms === undefined) {

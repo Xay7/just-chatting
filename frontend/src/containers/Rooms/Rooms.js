@@ -167,6 +167,7 @@ class Rooms extends Component {
     }
 
     Logout = () => {
+        this.socket.emit('LOGOUT');
         this.props.Logout();
         this.props.history.push('/');
     }
