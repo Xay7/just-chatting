@@ -6,15 +6,14 @@ const mongoose = require('mongoose');
 const app = express();
 const sessionSecret = require('./config/index').session;
 const cookieParser = require('cookie-parser');
-const socket = require("socket.io");
-const expressSession = require('express-session')
+const socket = require('socket.io');
+const expressSession = require('express-session');
 const port = process.env.PORT || 3001;
 
 require('dotenv').config({ path: __dirname + '/.env' });
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
 mongoose.set('useFindAndModify', false);
-
 
 const server = app.listen(port);
 io = socket(server);
@@ -25,20 +24,23 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors({
-    origin: 'http://localhost:3000',
-    credentials: true
-}));
-app.use(expressSession({
+app.use(
+  cors({
+    origin: 'http://just-chatting.herokuapp.com',
+    credentials: true,
+  })
+);
+app.use(
+  expressSession({
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1800000 }
-}));
+    cookie: { maxAge: 1800000 },
+  })
+);
 
-
-app.use('/users', require('./routes/users'))
-app.use('/chatrooms', require('./routes/chatroom'))
-app.use('/channels', require('./routes/channel'))
+app.use('/users', require('./routes/users'));
+app.use('/chatrooms', require('./routes/chatroom'));
+app.use('/channels', require('./routes/channel'));
 
 console.log(`Listening at ${port}`);
