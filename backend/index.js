@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: 'http://just-chatting.herokuapp.com',
+    origin: 'https://justchatting.netlify.app',
     credentials: true,
   })
 );
