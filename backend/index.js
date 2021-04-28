@@ -12,7 +12,7 @@ const port = process.env.PORT || 3001;
 
 require('dotenv').config({ path: __dirname + '/.env' });
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.set('useFindAndModify', false);
 
 const server = app.listen(port);

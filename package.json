@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/Xay7/just-chatting#readme",
   "dependencies": {
-    "concurrently": "^4.1.0"
-  },
-  "devDependencies": {}
+    "concurrently": "^6.0.2"
+  }
 }
