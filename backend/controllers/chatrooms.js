@@ -1,33 +1,23 @@
-const User = require("../models/user");
-const Chatroom = require("../models/chatroom");
-const Channel = require("../models/channel");
-const mongoose = require("mongoose");
+const User = require('../models/user');
+const Chatroom = require('../models/chatroom');
+const Channel = require('../models/channel');
+const mongoose = require('mongoose');
 
 module.exports = {
   chatrooms: async (req, res, next) => {
     const chatrooms = req.user.chatrooms;
 
-    console.log(req.user._id);
+    const foundChatrooms = await Chatroom.find().where('_id').in(chatrooms);
 
-    const t = req.user._id;
-
-    const test = await Chatroom.find({ members: t });
-
-    console.log(test);
-
-    const foundChatrooms = await Chatroom.find()
-      .where("_id")
-      .in(chatrooms);
-
-    const formattedChatrooms = foundChatrooms.map(el => {
+    const formattedChatrooms = foundChatrooms.map((el) => {
       return {
         id: el._id,
-        name: el.name
+        name: el.name,
       };
     });
 
     res.status(200).json({
-      chatrooms: formattedChatrooms
+      chatrooms: formattedChatrooms,
     });
   },
   newChatroom: async (req, res, next) => {
@@ -37,12 +27,12 @@ module.exports = {
     const newChatroom = new Chatroom({
       name: name,
       owner: id,
-      members: id
+      members: id,
     });
 
     const newChannel = new Channel({
       chatroom_id: newChatroom._id,
-      name: "General"
+      name: 'General',
     });
 
     await newChatroom.save();
@@ -52,8 +42,8 @@ module.exports = {
       { _id: id },
       {
         $push: {
-          chatrooms: newChatroom._id
-        }
+          chatrooms: newChatroom._id,
+        },
       }
     );
 
@@ -70,11 +60,11 @@ module.exports = {
     // Make sure user can't join arleady joined rooms
 
     if (userChatrooms.includes(id)) {
-      return res.status(409).json({ error: "You arleady joined this chatroom" });
+      return res.status(409).json({ error: 'You arleady joined this chatroom' });
     }
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "Invalid chatroom ID" });
+      return res.status(400).json({ error: 'Invalid chatroom ID' });
     }
 
     const foundChatroom = await Chatroom.findOne({ _id: id });
@@ -87,8 +77,8 @@ module.exports = {
       { _id: user_id },
       {
         $push: {
-          chatrooms: foundChatroom._id
-        }
+          chatrooms: foundChatroom._id,
+        },
       }
     );
 
@@ -96,8 +86,8 @@ module.exports = {
       { _id: id },
       {
         $push: {
-          members: foundUser._id
-        }
+          members: foundUser._id,
+        },
       }
     );
 
@@ -111,8 +101,8 @@ module.exports = {
       { _id: id },
       {
         $pull: {
-          members: user_id
-        }
+          members: user_id,
+        },
       }
     );
 
@@ -120,12 +110,12 @@ module.exports = {
       { _id: user_id },
       {
         $pull: {
-          chatrooms: id
-        }
+          chatrooms: id,
+        },
       }
     );
 
-    res.status(200).json("good");
+    res.status(200).json('good');
   },
   deleteChatroom: async (req, res, next) => {
     const id = req.params.id;
@@ -135,7 +125,7 @@ module.exports = {
     const foundOwner = await Chatroom.findOne({ _id: id });
 
     if (!user_id.equals(foundOwner.owner)) {
-      return res.status(403).json({ error: "Unauthorized" });
+      return res.status(403).json({ error: 'Unauthorized' });
     }
 
     // Delete chatroom
@@ -149,39 +139,36 @@ module.exports = {
       { chatrooms: id },
       {
         $pull: {
-          chatrooms: id
-        }
+          chatrooms: id,
+        },
       }
     );
 
-    res.status(200).json({ success: "Chat has been deleted" });
+    res.status(200).json({ success: 'Chat has been deleted' });
   },
   getChatroomData: async (req, res, next) => {
     const id = req.params.id;
 
     const foundChatroom = await Chatroom.findOne({ _id: id }).populate([
-      { path: "members", select: "name avatar _id" },
-      { path: "owner", select: "name" }
+      { path: 'members', select: 'name avatar _id' },
+      { path: 'owner', select: 'name' },
     ]);
 
     if (!foundChatroom) {
       return res.status(404).json({ error: "Chatroom doesn't exist" });
     }
-    const foundChannels = await Channel.find(
-      { chatroom_id: id },
-      { chatroom_id: false, __v: false }
-    );
+    const foundChannels = await Channel.find({ chatroom_id: id }, { chatroom_id: false, __v: false });
 
     const data = {
       id: foundChatroom._id,
       name: foundChatroom.name,
       owner: {
         name: foundChatroom.owner.name,
-        id: foundChatroom.owner._id
+        id: foundChatroom.owner._id,
       },
       members: foundChatroom.members,
-      channels: foundChannels
+      channels: foundChannels,
     };
     res.status(200).json(data);
-  }
+  },
 };

@@ -22,7 +22,6 @@ passport.use(
     async (payload, done) => {
       try {
         const user = await User.findById(payload.sub);
-        console.log(user);
         if (!user) {
           return done(null, false);
         }
@@ -45,7 +44,6 @@ passport.use(
     async (email, password, done) => {
       try {
         const user = await User.findOne({ email: email });
-
         if (!user) {
           return done(null, false);
         }
@@ -58,7 +56,6 @@ passport.use(
 
         done(null, user);
       } catch (error) {
-        console.log(error);
         done(error, false);
       }
     }

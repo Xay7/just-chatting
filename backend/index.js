@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: 'https://justchatting.netlify.app',
+    origin: 'http://localhost:3000',
     credentials: true,
   })
 );
@@ -35,7 +35,7 @@ app.use(
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1800000 },
+    cookie: { maxAge: 1800000, sameSite: 'none', secure: true, httpOnly: true },
   })
 );
 
