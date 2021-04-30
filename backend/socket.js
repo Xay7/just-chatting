@@ -4,7 +4,7 @@ let users = {};
 
 io.on('connection', function (socket) {
   socket.on('SEND_MESSAGE', function (data) {
-    io.in(data.room).emit('RECEIVE_MESSAGE', data);
+    io.in(data.channel_id).emit('RECEIVE_MESSAGE', data);
   });
 
   socket.on('USER_LOGGED_IN', function (data) {
@@ -26,7 +26,6 @@ io.on('connection', function (socket) {
           username: data.username,
           avatar: data.avatar,
         });
-
       io.in(el).emit('USER_LOGGED_IN', {
         id: data.user_id,
         username: data.username,

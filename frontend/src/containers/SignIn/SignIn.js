@@ -1,99 +1,89 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import styles from './SignIn.module.scss';
 import Input from '../../components/Input/Input';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { signIn } from '../../store/actions/index';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Spinner from '../../components/Spinner/Spinner';
 import FetchResponse from '../../components/FetchResponse/FetchResponse';
 import { clearFetchMessage } from '../../store/actions/index';
 import Footer from '../../components/Footer/Footer';
 
-class SignIn extends Component {
+const SignIn = () => {
+  const { registered, errorMessage } = useSelector((state) => ({
+    registered: state.auth.registerSuccess,
+    errorMessage: state.auth.errorMessage,
+  }));
+  const dispatch = useDispatch();
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const history = useHistory();
 
-    state = {
-        email: null,
-        password: null,
-        loading: false
-    }
+  const onSubmit = async (e) => {
+    setLoading(true);
 
-    onSubmit = async (e) => {
-        this.setState({ loading: true });
+    e.preventDefault();
 
-        e.preventDefault();
-        const userInfo = {
-            email: this.state.email,
-            password: this.state.password
-        }
+    dispatch(signIn({ email: email, password: password }, history));
 
-        await this.props.signIn(userInfo);
+    setLoading(false);
+  };
 
-        this.setState({ loading: false });
+  const onEmailChangeHandler = (e) => {
+    setEmail(e.target.value);
+  };
 
-        if (this.props.isAuth) {
-            this.props.history.push('/chat')
-        }
-    }
+  const onPasswordChangeHandler = (e) => {
+    setPassword(e.target.value);
+  };
 
-    onChangeHandler = (e) => {
-        this.setState({ [e.target.name]: e.target.value })
-    }
+  let inputStyle = errorMessage ? styles.InputError : styles.Input;
 
+  let errorMessageStructure = null;
 
-    render() {
+  if (errorMessage) {
+    errorMessageStructure = <FetchResponse>{errorMessage}</FetchResponse>;
+  }
 
-        let inputStyle = this.props.errorMessage ? styles.InputError : styles.Input;
+  let registerSuccess = null;
 
+  if (registered) {
+    registerSuccess = <p className={styles.RegisterSuccess}>Registration succesful, you can login</p>;
+  }
 
-        let errorMessage = null;
+  let submitButton = (
+    <button type="submit" onClick={onSubmit} className={styles.SubmitBtn}>
+      SUBMIT
+    </button>
+  );
 
-        if (this.props.errorMessage) {
-            errorMessage = <FetchResponse>{this.props.errorMessage}</FetchResponse>
-        }
+  if (loading) {
+    submitButton = <Spinner />;
+  }
 
-        let registerSuccess = null;
+  return (
+    <div className={styles.Body}>
+      <div className={styles.Form}>
+        <h1 className={styles.Login}>Login</h1>
+        <form onSubmit={onSubmit}>
+          <Input inputClass={inputStyle} inputPlaceholder="Email" inputType="email" onchange={onEmailChangeHandler} inputName="email">
+            Email
+          </Input>
+          <Input inputClass={inputStyle} inputPlaceholder="Password" inputType="password" onchange={onPasswordChangeHandler} inputName="password">
+            Password
+          </Input>
+          {errorMessageStructure}
+          {registerSuccess}
+          {submitButton}
+        </form>
+      </div>
+      <Link to="/signup" className={styles.Link} onClick={clearFetchMessage}>
+        Click here to register
+      </Link>
+      <Footer />
+    </div>
+  );
+};
 
-        if (this.props.registered) {
-            registerSuccess = <p className={styles.RegisterSuccess}>Registration succesful, you can login</p>
-        }
-
-
-        let submitButton = <button type="submit" onClick={this.onSubmit} className={styles.SubmitBtn}>SUBMIT</button>
-
-        if (this.state.loading) {
-            submitButton = <Spinner />
-        }
-
-        return (
-            <div className={styles.Body}>
-                <div className={styles.Form}>
-                    <h1 className={styles.Login}>Login</h1>
-                    <form onSubmit={this.onSubmit} >
-                        <Input inputClass={inputStyle} inputPlaceholder="Email" inputType="email" onchange={this.onChangeHandler} inputName="email" {...this.props}>Email</Input>
-                        <Input inputClass={inputStyle} inputPlaceholder="Password" inputType="password" onchange={this.onChangeHandler} inputName="password" {...this.props}>Password</Input>
-                        {errorMessage}
-                        {registerSuccess}
-                        {submitButton}
-                    </form>
-                </div>
-                <Link to='/signup' className={styles.Link} onClick={this.props.clearFetchMessage}>Click here to register</Link>
-                <Footer />
-            </div >
-        )
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-        isAuth: state.auth.isAuthenticated,
-        errorMessage: state.auth.errorMessage,
-        registered: state.auth.registerSuccess
-    }
-}
-
-const mapDispatchToProps = {
-    signIn,
-    clearFetchMessage
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(SignIn);
+export default SignIn;

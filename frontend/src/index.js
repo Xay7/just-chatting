@@ -4,31 +4,11 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
-import thunk from 'redux-thunk';
-import authReducer from './store/reducers/auth';
-import chatReducer from './store/reducers/chatroom';
 import axios from 'axios';
-import { LOGOUT } from './store/actions/actionTypes';
-
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+import store from './store/store';
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = process.env.NODE_ENV !== 'production' ? 'http://localhost:3001' : 'https://just-chatting.herokuapp.com';
-
-const reducers = combineReducers({
-  auth: authReducer,
-  chat: chatReducer,
-});
-
-const rootReducer = (state, action) => {
-  if (action.type === LOGOUT) {
-    state = undefined;
-  }
-  return reducers(state, action);
-};
-
-const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
 
 const app = (
   <Provider store={store}>

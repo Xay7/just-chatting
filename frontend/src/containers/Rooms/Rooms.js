@@ -1,327 +1,123 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styles from './Rooms.module.scss';
-import { connect } from 'react-redux';
-import { newChatroom, updateRooms, changeRoom, joinRoom, Logout, clearFetchMessage } from '../../store/actions/index';
-import Modal from '../../components/Modal/Modal';
-import Options from '../../components/Options/Options';
-import ChatInput from '../../components/ChatInput/ChatInput';
-import Button from '../../components/Button/Button';
-import { withRouter } from 'react-router-dom';
-import FetchResponse from '../../components/FetchResponse/FetchResponse';
+import { updateRooms, changeRoom, clearFetchMessage, Logout } from '../../store/actions/index';
+import { withRouter, useHistory } from 'react-router-dom';
 import Tooltip from '../../components/Tooltip/Tooltip';
+import AddRoom from './AddRoom';
+import JoinRoom from './JoinRoom';
+import AddOrJoin from './AddOrJoin';
 
-class Rooms extends Component {
+const Rooms = () => {
+  const { roomID, user_id, chatRooms } = useSelector((state) => ({
+    username: state.auth.username,
+    roomID: state.chat.roomID,
+    avatar: state.auth.avatar,
+    user_id: state.auth.user_id,
+    chatRooms: state.chat.chatRooms,
+  }));
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const [showAddOrJoin, setShowAddOrJoin] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
+  const [showJoin, setShowJoin] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState('');
 
-    constructor(props) {
-        super(props)
+  const changeChatroom = async (id) => {
+    const previousRoom = roomID;
+    setSelectedRoom(id);
+    dispatch(changeRoom(id, previousRoom));
+  };
 
-        this.state = {
-            selectedRoom: '',
-            showAddOrJoin: false,
-            showAdd: false,
-            showJoin: false,
-            chatRoomName: '',
-            chatRoomId: '',
-        }
+  const showAddorJoinHandler = () => {
+    setShowAddOrJoin(!showAddOrJoin);
+    setShowAdd(false);
+    setShowJoin(false);
+  };
 
-        this.socket = this.props.socketChat;
+  const showJoinHandler = () => {
+    dispatch(clearFetchMessage());
+    setShowJoin(!showJoin);
+    setShowAddOrJoin(false);
+    setShowAdd(false);
+  };
 
-        this.changeChatroom = async id => {
+  const showAddHandler = () => {
+    dispatch(clearFetchMessage());
+    setShowAdd(!showAdd);
+    setShowAddOrJoin(false);
+    setShowJoin(false);
+  };
+  useEffect(() => {
+    dispatch(updateRooms(user_id));
+  }, []);
 
-            const previousRoom = this.props.roomID;
+  // Changes selected room styles for visual clarity
+  const currentRoomStyle = (id) => {
+    const isSelected = selectedRoom === id;
+    // True is room selected, rest are not
+    return isSelected ? styles.RoomSelected : styles.RoomNotSelected;
+  };
+  // Disables click on currect room to prevent multiple socket calls
+  const currentRoomDisable = (id) => {
+    const isSelected = selectedRoom === id;
+    return isSelected ? true : false;
+  };
 
-            this.setState({ selectedRoom: id });
+  const logout = () => {
+    dispatch(Logout());
+    history.push('/');
+  };
 
-            await this.props.changeRoom(id);
+  let chatRoomsStructure = chatRooms.map((room) => {
+    return (
+      <div key={room.id}>
+        <button className={currentRoomStyle(room.id)} onClick={() => changeChatroom(room.id)} disabled={currentRoomDisable(room.id)}>
+          {room.name.charAt(0)}
+        </button>
+      </div>
+    );
+  });
 
-            await this.socket.emit('CHANGE_ROOM', {
-                previousRoom: previousRoom,
-                roomID: this.props.roomID,
-                username: this.props.username,
-                avatar: this.props.avatar
-            })
-        }
-    }
+  let noRooms = !roomID;
 
+  if (!roomID) {
+    noRooms = (
+      <div className={styles.NoRooms}>
+        <div className={styles.NoRoomsTextWrapper}>
+          <h1>Waiting to join a room</h1>
+          <p>You can add or join a room by pressing plus button</p>
+        </div>
+      </div>
+    );
+  } else noRooms = null;
 
-    addChatroom = async () => {
+  return (
+    <React.Fragment>
+      {noRooms}
+      <div className={styles.Rooms}>
+        {chatRoomsStructure}
+        <Tooltip where="Right" distance="-90px" text="Create & Join" height="50px" width="50px" margin="0 0 0px 0" position="relative">
+          <button onClick={showAddorJoinHandler} className={styles.AddChatroom}>
+            +
+          </button>
+        </Tooltip>
 
-        const name = this.state.chatRoomName
+        <Tooltip where="Right" distance="-40px" text="Logout" wrapper="Bottom" height="50px" width="50px" margin="0 0 0px 0" position="relative">
+          <i
+            className="fas fa-sign-out-alt fa-lg"
+            style={{
+              color: 'white',
+              cursor: 'pointer',
+            }}
+            onClick={logout}></i>
+        </Tooltip>
+      </div>
+      {showAddOrJoin ? <AddOrJoin showAdd={showAddHandler} showJoin={showJoinHandler} showAddOrJoin={showAddorJoinHandler} /> : null}
+      {showJoin ? <JoinRoom showJoin={showJoinHandler} /> : null}
+      {showAdd ? <AddRoom showAdd={showAddHandler} /> : null}
+    </React.Fragment>
+  );
+};
 
-        if (name === '') {
-            return;
-        }
-
-        await this.props.newChatroom(name);
-
-        this.setState({
-            chatRooms: this.props.chatRooms,
-            showAdd: false,
-        });
-        ;
-        this.socket.emit('NEW_ROOM', {
-            roomID: this.props.chatRooms.slice(-1)[0].id,
-            username: this.props.username,
-            avatar: this.props.avatar,
-            user_id: this.props.user_id
-        });
-
-    }
-
-    joinRoom = async () => {
-
-        const id = this.state.chatRoomId
-
-        const data = {
-            id: id,
-            user_id: this.props.user_id
-        }
-
-        if (!this.state.chatRoomId) {
-            return;
-        }
-
-        await this.props.joinRoom(data);
-
-        if (this.props.errorMessage) {
-            return;
-        }
-
-        await this.setState({
-            chatRooms: this.props.chatRooms,
-            showJoin: false
-        })
-
-        this.socket.emit('JOIN_ROOM', {
-            roomID: data.id,
-            user_id: this.props.user_id,
-            username: this.props.username,
-            avatar: this.props.avatar
-        });
-
-    }
-
-    showAddorJoin = () => {
-        this.setState({
-            showAddOrJoin: !this.state.showAddOrJoin,
-            showAdd: false,
-            showJoin: false
-        })
-    }
-
-    showJoin = () => {
-        this.props.clearFetchMessage();
-        this.setState({
-            showJoin: !this.state.showJoin,
-            showAddOrJoin: false,
-            showAdd: false,
-
-        })
-    }
-
-    showAdd = () => {
-        this.props.clearFetchMessage();
-        this.setState({
-            showAdd: !this.state.showAdd,
-            showAddOrJoin: false,
-            showJoin: false,
-        })
-    }
-
-
-    async componentDidMount() {
-        await this.props.updateRooms(this.props.user_id);
-
-        const roomIDs = this.props.chatRooms.map(el => {
-            return el.id
-        })
-
-        const data = {
-            user_id: this.props.user_id,
-            username: this.props.username,
-            avatar: this.props.avatar,
-            roomIDs: roomIDs,
-        }
-
-        this.socket.emit("USER_LOGGED_IN", data);
-    }
-
-    // Changes selected room styles for visual clarity
-    currentRoomStyle = (id) => {
-        const isSelected = this.props.roomID === id;
-        // True is room selected, rest are not
-        return isSelected ? styles.RoomSelected : styles.RoomNotSelected;
-    }
-    // Disables click on currect room to prevent multiple socket calls
-    currentRoomDisable = (id) => {
-        const isSelected = this.props.roomID === id;
-        return isSelected ? true : false;
-    }
-
-    roomNameHandler = (e) => {
-        this.setState({ chatRoomName: e.target.value });
-    }
-
-    roomIdHandler = (e) => {
-        this.setState({ chatRoomId: e.target.value });
-    }
-
-    Logout = () => {
-        this.socket.emit('LOGOUT');
-        this.props.Logout();
-        this.props.history.push('/');
-    }
-
-
-    render() {
-
-        let chatRooms = this.props.chatRooms.map(room => {
-            return <div key={room.id}>
-                <button
-                    className={this.currentRoomStyle(room.id)}
-                    onClick={() => this.changeChatroom(room.id)}
-                    disabled={this.currentRoomDisable(room.id)}>{room.name.charAt(0)}
-                </button>
-            </div>
-        })
-
-        let addOrJoin = null;
-        let noRooms = !this.props.roomID;
-
-        if (!this.props.roomID) {
-            noRooms = <div className={styles.NoRooms}>
-                <div className={styles.NoRoomsTextWrapper}>
-                    <h1>Waiting to join a room</h1>
-                    <p>You can add or join a room by pressing plus button</p>
-                </div>
-            </div>
-        } else noRooms = null;
-
-
-        if (this.state.showAddOrJoin) {
-            addOrJoin = <div >
-                <Modal onclick={this.showAddorJoin} />
-                <Options >
-                    <div className={styles.Wrapper}>
-                        <div className={styles.JoinAndAdd}>
-                            <h3>Create new room</h3>
-                            <p className={styles.Description}>Make a new room and invite whoever you want to</p>
-                            <button onClick={this.showAdd} className={styles.Btn}>Create</button>
-                        </div>
-                        <div className={styles.JoinAndAdd}>
-                            <h3>Join existing room</h3>
-                            <p className={styles.Description}>Grab room ID and simply enter it to join friends room</p>
-                            <button onClick={this.showJoin} className={styles.Btn}>Join</button>
-                        </div>
-                    </div>
-                </Options>
-            </div>
-        }
-
-        if (this.state.showAdd) {
-            addOrJoin = <div >
-                <Modal onclick={this.showAdd} />
-                <Options >
-                    <div className={styles.AddJoinWrapper}>
-                        <div className={styles.AddJoinDescription}>
-                            <h3>Create your room</h3>
-                        </div>
-                        <ChatInput
-                            Type="text"
-                            OnChange={this.roomNameHandler}
-                            Placeholder="Enter room name"
-                            ID="room"
-                            AutoComplete="off"
-                            ClassName={this.props.errorMessage ? "InputError" : "Input"}
-                        >Room Name</ChatInput>
-                        <div className={styles.AddJoinBtns}>
-                            <Button ClassName="Cancel" OnClick={this.showAddorJoin}>Cancel</Button>
-                            <Button ClassName="Confirm" OnClick={this.addChatroom}>Submit</Button>
-                        </div>
-                    </div>
-                </Options>
-            </div>;
-        }
-
-        if (this.state.showJoin) {
-            addOrJoin = <div >
-                <Modal onclick={this.showJoin} />
-                <Options >
-                    <div className={styles.AddJoinWrapper}>
-                        <div className={styles.AddJoinDescription}>
-                            <h3>Join existing room</h3>
-                        </div>
-                        <ChatInput
-                            Type="text"
-                            OnChange={this.roomIdHandler}
-                            Placeholder="Enter room ID"
-                            ID="room"
-                            AutoComplete="off"
-                            ClassName={this.props.errorMessage ? "InputError" : "Input"}
-                        >Room ID</ChatInput>
-                        {this.props.errorMessage && <FetchResponse>{this.props.errorMessage}</FetchResponse>}
-                        <div className={styles.AddJoinBtns}>
-                            <Button ClassName="Cancel" OnClick={this.showAddorJoin}>Cancel</Button>
-                            <Button ClassName="Confirm" OnClick={this.joinRoom}>Submit</Button>
-                        </div>
-                    </div>
-                </Options>
-            </div>;
-        }
-
-
-
-        return (
-            <React.Fragment>
-                {noRooms}
-                <div className={styles.Rooms}>
-                    {chatRooms}
-                    <Tooltip where="Right" distance="-90px" text="Create & Join" height="50px" width="50px" margin="0 0 0px 0" position="relative">
-                        <button
-                            onClick={this.showAddorJoin}
-                            className={styles.AddChatroom}>
-                            +</button>
-                    </Tooltip>
-
-                    <Tooltip where="Right" distance="-40px" text="Logout" wrapper="Bottom" height="50px" width="50px" margin="0 0 0px 0" position="relative">
-                        <i
-                            className="fas fa-sign-out-alt fa-lg"
-                            style={{
-                                color: "white",
-                                cursor: "pointer",
-                            }}
-                            onClick={this.Logout}></i>
-                    </Tooltip>
-
-                </div>
-                {addOrJoin}
-            </React.Fragment>
-
-        )
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-        username: state.auth.username,
-        user_id: state.auth.user_id,
-        chatRooms: state.chat.chatRooms,
-        socketChat: state.auth.socket,
-        channelID: state.chat.channelID,
-        updateRooms: state.chat.updateRooms,
-        roomID: state.chat.roomID,
-        avatar: state.auth.avatar,
-        errorMessage: state.chat.errorMessage
-    }
-}
-
-const mapDispatchToProps = {
-    newChatroom,
-    updateRooms,
-    changeRoom,
-    joinRoom,
-    Logout,
-    clearFetchMessage
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Rooms));
+export default withRouter(Rooms);

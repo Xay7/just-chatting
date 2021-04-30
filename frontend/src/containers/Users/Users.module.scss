@@ -1,76 +1,76 @@
 @import '../../index.scss';
 
 .Users {
-    position: relative;
-    min-width: 240px;
-    background-color: $white;
-    height: 100%;
-    border-left: 1px solid #DCDCDC;
+  position: relative;
+  min-width: 259px;
+  background-color: $white;
+  height: 100%;
+  border-left: 1px solid #dcdcdc;
 }
 
 .User {
-    font-size: 18px;
-    color: $black;
-    text-align: center;
-    text-transform: capitalize;
-    font-weight: 400;
+  font-size: 18px;
+  color: $black;
+  text-align: center;
+  text-transform: capitalize;
+  font-weight: 400;
 }
 
 .NumberOfUsers {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 .Avatar,
 .AvatarOffline {
-    margin-left: 20px;
-    margin-right: 7px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+  margin-left: 20px;
+  margin-right: 7px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
 }
 
 .AvatarOffline {
-    filter: grayscale(100%);
+  filter: grayscale(100%);
 }
 
 .Status::after {
-    content: "";
-    position: absolute;
-    top: 18.5px;
-    left: 41px;
-    height: 10px;
-    width: 10px;
-    border-radius: 50%;
-    border: 1px solid $white;
-    background-color: green;
+  content: '';
+  position: absolute;
+  top: 18.5px;
+  left: 41px;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  border: 1px solid $white;
+  background-color: green;
 }
 
 .UserWrapper,
 .UserWrapperOffline {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-    margin-top: 10px;
-    height: 30px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  margin-top: 10px;
+  height: 30px;
 }
 
 .UserWrapperOffline {
-    color: rgb(122, 122, 122);
+  color: rgb(122, 122, 122);
 }
 
 .UserRole {
-    margin: 0;
-    margin-left: 20px;
-    margin-top: 10px;
-    color: rgb(114, 114, 114);
-    text-transform: uppercase;
+  margin: 0;
+  margin-left: 20px;
+  margin-top: 10px;
+  color: rgb(114, 114, 114);
+  text-transform: uppercase;
 }
 
 @media (max-width: 1000px) {
-    .Users {
-        display: none;
-    }
+  .Users {
+    display: none;
+  }
 }
