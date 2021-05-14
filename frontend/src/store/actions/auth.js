@@ -1,17 +1,18 @@
 import axios from 'axios';
 import * as actionTypes from './actionTypes';
+import socket from 'SocketClient';
 
-export const signIn = (data) => {
+export const signIn = (data, history) => {
   return async (dispatch) => {
     try {
       const res = await axios.post('/users/signin', data);
-
       dispatch({
         type: actionTypes.AUTH_SIGN_IN,
         username: res.data.username,
         avatar: res.data.avatar + '?' + Date.now(),
         id: res.data.id,
       });
+      history.push('/chat');
     } catch (err) {
       dispatch({
         type: actionTypes.AUTH_SIGN_IN_ERROR,
@@ -21,15 +22,15 @@ export const signIn = (data) => {
   };
 };
 
-export const signUp = (data) => {
+export const signUp = (data, history) => {
   return async (dispatch) => {
     try {
       const res = await axios.post('/users/signup', data);
-
       dispatch({
         type: actionTypes.AUTH_SIGN_UP,
         payload: res.data.token,
       });
+      history.push('/signin');
     } catch (err) {
       dispatch({
         type: actionTypes.AUTH_SIGN_UP_ERROR,
@@ -108,6 +109,7 @@ export const clearFetchMessage = () => {
 export const Logout = () => {
   return async (dispatch) => {
     await axios.post('/users/logout');
+    socket.emit('LOGOUT');
 
     dispatch({
       type: actionTypes.LOGOUT,

@@ -1,107 +1,94 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import styles from './SignUp.module.scss';
 import Input from '../../components/Input/Input';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { signUp } from '../../store/actions/index';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Spinner from '../../components/Spinner/Spinner';
 import FetchResponse from '../../components/FetchResponse/FetchResponse';
 import { clearFetchMessage } from '../../store/actions/index';
 import Footer from '../../components/Footer/Footer';
 
-class SignUp extends Component {
+const SignUp = () => {
+  const { registered, errorMessage } = useSelector((state) => ({
+    registered: state.auth.registerSuccess,
+    errorMessage: state.auth.errorMessage,
+  }));
+  const dispatch = useDispatch();
+  const history = useHistory();
 
-    state = {
-        name: '',
-        email: '',
-        password: '',
-        loading: false,
-        submitError: false
-    }
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+  });
+  const [loading, setLoading] = useState(false);
 
-    onSubmit = async () => {
+  const onSubmit = async () => {
+    setLoading(true);
 
-        this.setState({ loading: true });
+    dispatch(signUp(formData, history));
 
-        const userInfo = {
-            name: this.state.name,
-            email: this.state.email,
-            password: this.state.password,
-        }
+    setLoading(false);
+  };
 
-        await this.props.signUp(userInfo);
+  const onChangeHandler = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-        this.setState({ loading: false });
+  let inputStyle = errorMessage ? styles.InputError : styles.Input;
 
-        if (this.props.registered) {
-            this.props.history.push('/signin');
-        }
-        else {
-            this.setState({ submitError: true })
-        }
-    }
+  let errorMessageStructure = (
+    <div className={styles.Information}>
+      <p className={styles.ErrorParagraph}>Name must be longer than 3 characters</p>
+      <p className={styles.ErrorParagraph}>Password must be longer than 6 characters</p>
+    </div>
+  );
 
-    onChangeHandler = (e) => {
-        this.setState({ [e.target.name]: e.target.value })
-    }
+  if (errorMessage) {
+    errorMessageStructure = (
+      <div className={styles.ErrorMessage}>
+        <FetchResponse>{errorMessage}</FetchResponse>
+        <p className={styles.ErrorParagraph}>Name must be longer than 3 characters</p>
+        <p className={styles.ErrorParagraph}>Password must be longer than 6 characters</p>
+      </div>
+    );
+  }
 
+  let submitButton = (
+    <button type="submit" onClick={onSubmit} className={styles.SubmitBtn}>
+      SUBMIT
+    </button>
+  );
 
-    render() {
+  if (loading) {
+    submitButton = <Spinner />;
+  }
 
-        let inputStyle = this.props.errorMessage ? styles.InputError : styles.Input;
+  return (
+    <div className={styles.Body}>
+      <div className={styles.Form}>
+        <h1 className={styles.Login}>Register</h1>
+        <form onSubmit={onSubmit}>
+          <Input inputClass={inputStyle} inputPlaceholder="Name" inputType="text" onchange={onChangeHandler} inputName="name">
+            Username
+          </Input>
+          <Input inputClass={inputStyle} inputPlaceholder="Email" inputType="email" onchange={onChangeHandler} inputName="email">
+            Email
+          </Input>
+          <Input inputClass={inputStyle} inputPlaceholder="Password" inputType="password" onchange={onChangeHandler} inputName="password">
+            Password
+          </Input>
+          {errorMessageStructure}
+        </form>
+        {submitButton}
+      </div>
+      <Link to="/signin" className={styles.Link} onClick={clearFetchMessage}>
+        If you have an account sign in here
+      </Link>
+      <Footer />
+    </div>
+  );
+};
 
-        let errorMessage = <div className={styles.Information}>
-            <p className={styles.ErrorParagraph}>Name must be longer than 3 characters</p>
-            <p className={styles.ErrorParagraph}>Password must be longer than 6 characters</p>
-        </div>;
-
-
-        if (this.props.error) {
-            errorMessage = <div className={styles.ErrorMessage}>
-                <FetchResponse>{this.props.errorMessage}</FetchResponse>
-                <p className={styles.ErrorParagraph}>Name must be longer than 3 characters</p>
-                <p className={styles.ErrorParagraph}>Password must be longer than 6 characters</p>
-            </div>
-        }
-
-        let submitButton = <button type="submit" onClick={this.onSubmit} className={styles.SubmitBtn}>SUBMIT</button>
-
-        if (this.state.loading) {
-            submitButton = <Spinner />
-        }
-
-        return (
-
-            <div className={styles.Body}>
-                <div className={styles.Form}>
-                    <h1 className={styles.Login}>Register</h1>
-                    <form onSubmit={this.onSubmit}>
-                        <Input inputClass={inputStyle} inputPlaceholder="Name" inputType="text" onchange={this.onChangeHandler} inputName="name">Username</Input>
-                        <Input inputClass={inputStyle} inputPlaceholder="Email" inputType="email" onchange={this.onChangeHandler} inputName="email">Email</Input>
-                        <Input inputClass={inputStyle} inputPlaceholder="Password" inputType="password" onchange={this.onChangeHandler} inputName="password">Password</Input>
-                        {errorMessage}
-                    </form>
-                    {submitButton}
-                </div>
-                <Link to='/signin' className={styles.Link} onClick={this.props.clearFetchMessage}>If you have an account sign in here</Link>
-                <Footer />
-            </div >
-        )
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-        isAuth: state.auth.isAuthenticated,
-        error: state.auth.signUpError,
-        errorMessage: state.auth.errorMessage,
-        registered: state.auth.registerSuccess
-    }
-}
-
-const mapDispatchToProps = {
-    signUp,
-    clearFetchMessage
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
+export default SignUp;

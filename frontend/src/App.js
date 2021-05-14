@@ -15,6 +15,7 @@ function App() {
       <Route exact path="/signin" component={SignIn} />
       <Route exact path="/chat" component={AuthGuard(Chat)} />
       <Route exact path="/signup" component={SignUp} />
+      <Route exact path="/room/:id" component={SignUp} />
     </Switch>
   );
 }

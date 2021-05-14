@@ -9,7 +9,6 @@ const cookieParser = require('cookie-parser');
 const socket = require('socket.io');
 const expressSession = require('express-session');
 const port = process.env.PORT || 3001;
-
 require('dotenv').config({ path: __dirname + '/.env' });
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });

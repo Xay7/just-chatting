@@ -1,56 +1,35 @@
-import React, { Component, Fragment } from 'react';
-import Sidebar from '../Sidebar/Sidebar';
+import React, { Fragment, useState } from 'react';
+import ChannelNavigation from '../ChannelNavigation/ChannelNavigation';
 import Chatbox from '../Chatbox/Chatbox';
-import Users from '../Users/Users';
+import UsersList from 'containers/UsersList/UsersList';
 import styles from './Chat.module.scss';
-import RoomHelpers from '../RoomHelpers/RoomHelpers';
-import Rooms from '../Rooms/Rooms';
-import { connect } from 'react-redux';
-import { Logout } from '../../store/actions/index';
+import RoomsNavigation from '../RoomsNavigation/RoomsNavigation';
+import ChannelHeader from 'containers/ChannelHeader/ChannelHeader';
 
-class Chat extends Component {
+const Chat = () => {
+  const [inRoom, setInRoom] = useState(false);
 
-    onUnload = (e) => { // the method that will be used for both add and remove event
-        this.props.Logout();
-    }
+  const inRoomHandler = () => {
+    setInRoom(true);
+  };
 
-    componentDidMount() {
-        window.addEventListener("beforeunload", this.onUnload)
-        window.history.pushState(null, document.title, window.location.href);
-        window.addEventListener('popstate', function (event) {
-            window.history.pushState(null, document.title, window.location.href);
-        });
-    }
+  return (
+    <Fragment>
+      <div className={styles.Holder}>
+        <RoomsNavigation inRoom={inRoomHandler} />
+        <div>
+          <ChannelNavigation />
+        </div>
+        <div className={styles.Chat}>
+          <ChannelHeader />
+          <div className={styles.ChatBottom}>
+            {inRoom && <Chatbox />}
+            <UsersList />
+          </div>
+        </div>
+      </div>
+    </Fragment>
+  );
+};
 
-    componentWillUnmount() {
-        window.removeEventListener("beforeunload", this.onUnload)
-    }
-    render() {
-        return (
-            <Fragment>
-                <div className={styles.Holder}>
-                    <Rooms />
-                    <div>
-                        <RoomHelpers />
-                        <div className={styles.Chat}>
-                            <Sidebar />
-                            <Chatbox />
-                            <Users />
-                        </div>
-                    </div>
-
-
-
-                </div>
-            </Fragment>
-        )
-    }
-}
-
-const mapDispatchToProps = {
-    Logout
-}
-
-
-
-export default connect(null, mapDispatchToProps)(Chat);
+export default Chat;

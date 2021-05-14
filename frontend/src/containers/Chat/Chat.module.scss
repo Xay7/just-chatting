@@ -1,21 +1,25 @@
 .Chat {
-    width: calc(100vw - 70px);
-    height: calc(100vh - 50px);
-    display: flex;
-    flex-direction: row;
+  width: calc(100vw - 270px);
+  height: calc(100vh - 50px);
 }
 
 .Holder {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
+}
+
+.ChatBottom {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
 }
 
 @media (max-width: 1000px) {
-    .Holder {
-        flex-direction: column;
-    }
+  .Holder {
+    flex-direction: column;
+  }
 
-    .Chat {
-        flex-direction: column;
-    }
+  .Chat {
+    flex-direction: column;
+  }
 }
