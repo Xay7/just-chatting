@@ -25,7 +25,7 @@ const Message = (props) => {
     if (isUrl(props.message) === true) {
       if (isImage(props.message) === true) {
         return (
-          <div className={styles.Messages} key={props.index}>
+          <div className={styles.Messages} key={props.created}>
             <a href={props.message} target="_blank" rel="noopener noreferrer">
               <img src={props.message} alt={props.message} onLoad={adjustImage} />
             </a>
@@ -42,13 +42,13 @@ const Message = (props) => {
     if (props.previousMessage !== null) {
       if (props.author.name === props.previousMessage.author.name && moment(props.created).diff(moment(props.previousMessage.created_at), 'minutes') < 30) {
         return (
-          <div className={styles.Messages} key={props.index}>
+          <div className={styles.Messages} key={props.created}>
             <div className={styles.Message}>{props.message}</div>
           </div>
         );
       } else {
         return (
-          <div className={styles.Messages} key={props.index}>
+          <div className={styles.Messages} key={props.created}>
             <hr className={styles.MessageHorizontalLine}></hr>
             <div className={styles.MessageHeader}>
               <img src={props.author.avatar} alt={props.author.name + ' avatar'} className={styles.Avatar} />
@@ -61,7 +61,7 @@ const Message = (props) => {
       }
     } else {
       return (
-        <div className={styles.Messages} key={props.index}>
+        <div className={styles.Messages} key={props.created}>
           <hr className={styles.MessageHorizontalLine}></hr>
           <div className={styles.MessageHeader}>
             <img src={props.author.avatar} alt={props.author.name + ' avatar'} className={styles.Avatar} />
@@ -74,7 +74,7 @@ const Message = (props) => {
     }
   } else {
     return (
-      <div className={styles.Messages} key={props.index}>
+      <div className={styles.Messages} key={props.created}>
         <hr className={styles.MessageHorizontalLine}></hr>
         <div className={styles.MessageHeader}>
           <img src={props.author.avatar} alt={props.author.name + ' avatar'} className={styles.Avatar} />

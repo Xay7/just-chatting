@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './Chatbox.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import moment from 'moment';
-import { getChatMessages, storeMessage, isFetching } from '../../store/actions/index';
+import { getChatMessages, isFetching } from '../../store/actions/index';
 import UserTyping from '../../components/UserTyping/UserTyping';
 import Loader from '../../components/Loader/Loader';
 import Message from './Message';
@@ -14,31 +13,32 @@ const Chatbox = () => {
     channels: state.chat.channels,
     username: state.auth.username,
     roomID: state.chat.roomID,
-    avatar: state.auth.avatar,
     channelID: state.chat.channelID,
-    errorMessage: state.auth.errorMessage,
-    successMessage: state.auth.successMessage,
-    roomName: state.chat.roomName,
     loading: state.chat.loading,
     messages: state.chat.messages,
   }));
   const dispatch = useDispatch();
-  const messageContainer = useRef(null);
 
   const [channelMessages, setChannelMessages] = useState([]);
   const [sameUserMessage, setSameUserMessage] = useState(false);
   const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState(0);
-  const [skipMessages, setSkipMessages] = useState(50);
+  const messageContainer = useRef(null);
+
+  const getMessages = async () => {
+    await dispatch(getChatMessages({ channel_id: channelID, skipMessages: 0 }));
+  };
 
   useEffect(() => {
+    getMessages();
+
     socket.on('RECEIVE_MESSAGE', function (data) {
       addMessage(data);
     });
 
-    socket.on('UPDATING_MESSAGES', (data) => {
-      setChannelMessages(messages);
-    });
+    // socket.on('USER_JOINED_CHANNEL', (data) => {
+    //   setChannelMessages(messages);
+    // });
 
     socket.on('SOMEONE_IS_TYPING', () => {
       if (typingTimeout) {
@@ -51,16 +51,19 @@ const Chatbox = () => {
           setIsOtherUserTyping(false);
         }, 2000)
       );
-
-      scrollToBottom();
     });
+
+    scrollToBottom();
+
+    return () => {
+      socket.close();
+    };
   }, []);
 
   const addMessage = (data) => {
     if (messages.length === 0) {
       return;
     }
-    console.log(channelMessages);
     if (data.author.name === messages.slice(-1)[0].author) {
       setSameUserMessage(true);
     } else {
@@ -68,13 +71,11 @@ const Chatbox = () => {
     }
     setChannelMessages([...channelMessages, data]);
     setIsOtherUserTyping(false);
-
     scrollToBottom();
   };
 
   const scrollToBottom = () => {
     if (messageContainer.current === null) return;
-    console.log(messageContainer.current);
     const scrollHeight = messageContainer.current.scrollHeight;
     const height = messageContainer.current.clientHeight;
     const maxScrollTop = scrollHeight - height;
@@ -89,7 +90,7 @@ const Chatbox = () => {
 
       let data = {
         channel_id: channelID,
-        skipMessages: skipMessages,
+        skipMessages: 50,
       };
 
       dispatch(getChatMessages(data));

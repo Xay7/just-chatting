@@ -58,7 +58,6 @@ const Channels = () => {
 
     setSelectedChannel(id);
     dispatch(changeChannel(id, name, description));
-    dispatch(getChatMessages(data));
 
     socket.emit('JOIN_CHANNEL', {
       channelID: id,

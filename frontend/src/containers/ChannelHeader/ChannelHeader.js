@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import styles from './RoomHelpers.module.scss';
+import styles from './ChannelHeader.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearFetchMessage } from '../../store/actions/index';
 import ChannelSettings from 'containers/Channels/ChannelSettings';
 
-const RoomHelpers = () => {
+const ChannelHeader = () => {
   const { roomID, channelName, channelDescription, channels } = useSelector((state) => ({
-    roomName: state.chat.roomName,
     roomID: state.chat.roomID,
+    channelName: state.chat.channelName,
+    channelDescription: state.chat.channelDescription,
     channels: state.chat.channels,
-    username: state.auth.username,
-    socketChat: state.auth.socket,
-    avatar: state.auth.avatar,
   }));
   const dispatch = useDispatch();
 
@@ -27,7 +25,7 @@ const RoomHelpers = () => {
       {!roomID ? null : (
         <React.Fragment>
           {showChannelSettings && <ChannelSettings display={showChannelSettingsHandler} />}
-          <div className={styles.RoomHelpers}>
+          <div className={styles.RoomHeader}>
             {channels.length === 0 ? null : (
               <div className={styles.Channel}>
                 <h2 className={styles.ChannelName}>{channelName}</h2>
@@ -66,4 +64,4 @@ const RoomHelpers = () => {
   );
 };
 
-export default RoomHelpers;
+export default ChannelHeader;

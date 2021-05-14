@@ -4,8 +4,9 @@ import { useSelector } from 'react-redux';
 import Channels from '../Channels/Channels';
 import UserSettings from '../UserSettings/UserSettings';
 import Tooltip from '../../components/Tooltip/Tooltip';
-import Roombar from './Roombar';
-const Sidebar = () => {
+import RoomHeader from 'containers/RoomHeader/RoomHeader';
+
+const ChannelNavigation = () => {
   const { username, roomID, avatar } = useSelector((state) => ({
     username: state.auth.username,
     roomID: state.chat.roomID,
@@ -19,7 +20,7 @@ const Sidebar = () => {
 
   return (
     <React.Fragment>
-      <Roombar />
+      <RoomHeader />
       {showUserSettings && <UserSettings toggleDisplay={showUserSettingsHandler} />}
       <div className={styles.Sidebar}>
         {roomID && <Channels />}
@@ -44,4 +45,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default ChannelNavigation;

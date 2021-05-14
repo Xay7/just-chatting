@@ -2,7 +2,7 @@
 
 $roomColor: #182c61;
 
-.RoomHelpers {
+.RoomHeader {
   height: 50px;
   width: 100%;
   display: flex;
@@ -85,7 +85,7 @@ $roomColor: #182c61;
 }
 
 @media (max-width: 1000px) {
-  .RoomHelpers {
+  .RoomHeader {
     width: 100vw;
     height: 50px;
     flex-direction: column;

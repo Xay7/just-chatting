@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import styles from './Users.module.scss';
 import socket from 'SocketClient';
 
-const Users = () => {
+const UsersList = () => {
   const { channels, roomID } = useSelector((state) => ({
     channels: state.chat.channels,
     roomID: state.chat.roomID,
@@ -125,4 +125,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default UsersList;

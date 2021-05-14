@@ -23,7 +23,6 @@ const SignUp = () => {
     password: '',
   });
   const [loading, setLoading] = useState(false);
-  const [submitError, setSubmitError] = useState(false);
 
   const onSubmit = async () => {
     setLoading(true);
@@ -31,10 +30,6 @@ const SignUp = () => {
     dispatch(signUp(formData, history));
 
     setLoading(false);
-
-    if (!registered) {
-      setSubmitError(true);
-    }
   };
 
   const onChangeHandler = (e) => {

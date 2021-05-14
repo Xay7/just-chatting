@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import styles from './RoomHelpers.module.scss';
+import styles from './RoomHeader.module.scss';
 import { useSelector } from 'react-redux';
 import RoomDropdown from 'containers/RoomSettings/RoomDropdown';
 import Modal from 'components/Modal/Modal';
 
-const Roombar = () => {
+const RoomHeader = () => {
   const { roomName, roomID } = useSelector((state) => ({
     roomName: state.chat.roomName,
     roomID: state.chat.roomID,
@@ -12,7 +12,6 @@ const Roombar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const showDropdownHandler = () => {
-    console.log('imclickedlol');
     setShowDropdown(!showDropdown);
   };
 
@@ -39,4 +38,4 @@ const Roombar = () => {
   );
 };
 
-export default Roombar;
+export default RoomHeader;

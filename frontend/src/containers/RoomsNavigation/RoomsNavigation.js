@@ -8,7 +8,7 @@ import AddRoom from './AddRoom';
 import JoinRoom from './JoinRoom';
 import AddOrJoin from './AddOrJoin';
 
-const Rooms = () => {
+const Rooms = (props) => {
   const { roomID, user_id, chatRooms } = useSelector((state) => ({
     username: state.auth.username,
     roomID: state.chat.roomID,
@@ -26,7 +26,8 @@ const Rooms = () => {
   const changeChatroom = async (id) => {
     const previousRoom = roomID;
     setSelectedRoom(id);
-    dispatch(changeRoom(id, previousRoom));
+    await dispatch(changeRoom(id, previousRoom));
+    props.inRoom();
   };
 
   const showAddorJoinHandler = () => {
@@ -50,7 +51,7 @@ const Rooms = () => {
   };
   useEffect(() => {
     dispatch(updateRooms(user_id));
-  }, []);
+  }, [user_id, dispatch]);
 
   // Changes selected room styles for visual clarity
   const currentRoomStyle = (id) => {

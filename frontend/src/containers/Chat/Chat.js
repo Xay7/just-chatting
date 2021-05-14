@@ -1,24 +1,30 @@
-import React, { Fragment } from 'react';
-import ChannelBar from '../Sidebar/Channelbar';
+import React, { Fragment, useState } from 'react';
+import ChannelNavigation from '../ChannelNavigation/ChannelNavigation';
 import Chatbox from '../Chatbox/Chatbox';
-import Users from '../Users/Users';
+import UsersList from 'containers/UsersList/UsersList';
 import styles from './Chat.module.scss';
-import RoomHelpers from '../RoomHelpers/RoomHelpers';
-import Rooms from '../Rooms/Rooms';
+import RoomsNavigation from '../RoomsNavigation/RoomsNavigation';
+import ChannelHeader from 'containers/ChannelHeader/ChannelHeader';
 
 const Chat = () => {
+  const [inRoom, setInRoom] = useState(false);
+
+  const inRoomHandler = () => {
+    setInRoom(true);
+  };
+
   return (
     <Fragment>
       <div className={styles.Holder}>
-        <Rooms />
+        <RoomsNavigation inRoom={inRoomHandler} />
         <div>
-          <ChannelBar />
+          <ChannelNavigation />
         </div>
         <div className={styles.Chat}>
-          <RoomHelpers />
+          <ChannelHeader />
           <div className={styles.ChatBottom}>
-            <Chatbox />
-            <Users />
+            {inRoom && <Chatbox />}
+            <UsersList />
           </div>
         </div>
       </div>

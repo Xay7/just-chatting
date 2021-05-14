@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import styles from './Chatbox.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { storeMessage } from '../../store/actions/index';
@@ -6,7 +6,7 @@ import socket from 'SocketClient';
 import moment from 'moment';
 
 const InputContainer = () => {
-  const { channelID, avatar, username } = useSelector((state) => ({
+  const { channelID } = useSelector((state) => ({
     channelID: state.chat.channelID,
     avatar: state.auth.avatar,
     username: state.auth.username,
