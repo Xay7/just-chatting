@@ -1,16 +1,16 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require("mongoose")
+const Schema = mongoose.Schema
 
 const channelMessageSchema = new Schema({
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
-        required: true
+        ref: "user",
+        required: true,
     },
     channel_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'channel',
-        required: true
+        ref: "channel",
+        required: true,
     },
     body: {
         type: String,
@@ -18,13 +18,15 @@ const channelMessageSchema = new Schema({
     },
     created_at: {
         type: String,
-        required: true
-    }
-}).set('toJSON', {
+        required: true,
+    },
+}).set("toJSON", {
     versionKey: false,
-    transform: function (doc, ret) { delete ret._id }
-});
+    transform: function (doc, ret) {
+        delete ret._id
+    },
+})
 
-const channelMessage = mongoose.model('channelMessage', channelMessageSchema);
+const channelMessage = mongoose.model("channelMessage", channelMessageSchema)
 
-module.exports = channelMessage;
+module.exports = channelMessage
