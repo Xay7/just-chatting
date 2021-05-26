@@ -1,4 +1,5 @@
-const io = require("./index.js")
+const { io } = require("./www.js")
+console.log(io)
 
 let users = {}
 
