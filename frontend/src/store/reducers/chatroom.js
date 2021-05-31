@@ -85,8 +85,11 @@ const reducer = (state = DEFAULT_STATE, action) => {
       let updatedSkip = null;
 
       if (action.messages.length === 0) {
-        noMessage = true;
-        reverse = [];
+        return {
+          ...state,
+          noMessages: true,
+          loading: false,
+        };
       } else {
         noMessage = false;
         reverse = action.messages.reverse();
@@ -94,7 +97,7 @@ const reducer = (state = DEFAULT_STATE, action) => {
       }
       return {
         ...state,
-        messages: reverse,
+        messages: [...reverse, ...state.messages],
         skip: updatedSkip,
         noMessages: noMessage,
         loading: false,

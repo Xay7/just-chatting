@@ -27,12 +27,6 @@ const Channels = () => {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (channels[0]) {
-      switchChannel(channels[0].id, channels[0].name, channels[0].description);
-    }
-  }, []);
-
-  useEffect(() => {
     if (prevRoomID !== roomID && channels[0]) {
       return switchChannel(channels[0].id, channels[0].name, channels[0].description);
     }

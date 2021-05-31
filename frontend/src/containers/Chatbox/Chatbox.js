@@ -9,25 +9,22 @@ import socket from 'SocketClient';
 import InputContainer from './InputContainer';
 
 const Chatbox = () => {
-  const { channels, roomID, channelID, noMessages, loading, messages } = useSelector((state) => ({
+  const { channels, roomID, channelID, noMessages, loading, messages, skip } = useSelector((state) => ({
     channels: state.chat.channels,
     username: state.auth.username,
     roomID: state.chat.roomID,
     channelID: state.chat.channelID,
     loading: state.chat.loading,
     messages: state.chat.messages,
+    noMessages: state.chat.noMessages,
+    skip: state.chat.skip,
   }));
   const dispatch = useDispatch();
 
   const [channelMessages, setChannelMessages] = useState([]);
-  const [sameUserMessage, setSameUserMessage] = useState(false);
   const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState(0);
   const messageContainer = useRef(null);
-
-  const getMessages = () => {
-    dispatch(getChatMessages({ channel_id: channelID, skipMessages: 0 }));
-  };
 
   useEffect(() => {
     socket.on('RECEIVE_MESSAGE', function (data) {
@@ -51,26 +48,16 @@ const Chatbox = () => {
       );
     });
 
-    scrollToBottom();
-
     return () => {
       socket.close();
     };
-  }, []);
-
-  useEffect(() => {
-    getMessages();
   }, []);
 
   const addMessage = (data) => {
     if (messages.length === 0) {
       return;
     }
-    if (data.author.name === messages.slice(-1)[0].author) {
-      setSameUserMessage(true);
-    } else {
-      setSameUserMessage(false);
-    }
+
     setChannelMessages([...channelMessages, data]);
     setIsOtherUserTyping(false);
     scrollToBottom();
@@ -86,17 +73,15 @@ const Chatbox = () => {
 
   const getMoreMessages = async () => {
     if (messageContainer.current.scrollTop === 0 && !noMessages) {
-      isFetching();
+      dispatch(isFetching());
 
       const previosScrollHeight = messageContainer.scrollHeight;
 
       let data = {
         channel_id: channelID,
-        skipMessages: 50,
+        skipMessages: skip,
       };
-
-      dispatch(getChatMessages(data));
-
+      await dispatch(getChatMessages(data));
       let mess = [...messages, ...channelMessages];
       setChannelMessages(mess);
 
