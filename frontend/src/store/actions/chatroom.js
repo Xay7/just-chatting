@@ -2,12 +2,12 @@ import * as actionTypes from './actionTypes';
 import axios from 'axios';
 import socket from 'SocketClient';
 
-const getRooms = async (id) => {
+export const getRooms = async (id) => {
   const res = await axios.get(`/users/${id}/chatrooms`);
   return res;
 };
 
-const getRoom = async (id) => {
+export const getRoom = async (id) => {
   const res = await axios.get(`/chatrooms/${id}`);
   return res;
 };

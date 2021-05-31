@@ -13,7 +13,7 @@ const RoomSetting = (props) => {
       <div className={styles.IconsWrapper}>
         <i className={props.icon}></i>
       </div>
-      <div className={styles.OptionsDescription} onClick={showInviteHandler}>
+      <div className={styles.OptionsDescription} onClick={props.onClick}>
         {props.children}
       </div>
     </div>

@@ -112,7 +112,6 @@ export const getChatMessages = (data) => {
   return async (dispatch) => {
     try {
       const res = await axios.get(`/channels/${data.channel_id}/messages?amount=50&skip=${data.skipMessages}`);
-
       dispatch({
         type: actionTypes.GET_MESSAGES,
         messages: res.data,

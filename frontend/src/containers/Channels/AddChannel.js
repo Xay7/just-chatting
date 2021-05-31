@@ -47,7 +47,7 @@ const AddChannel = (props) => {
 
   return (
     <React.Fragment>
-      <Modal onclick={() => props.show()} />
+      <Modal onClick={props.show} />
       <Options>
         <div className={styles.AddChannelWrapper}>
           <div className={styles.AddChannelDescription}>

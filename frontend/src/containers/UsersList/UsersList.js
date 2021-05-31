@@ -21,7 +21,6 @@ const UsersList = () => {
   };
 
   const userLoggedInHandler = (data) => {
-    console.log(data);
     const userExists = data.some((el) => {
       return el.username === data.username;
     });

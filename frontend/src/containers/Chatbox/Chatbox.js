@@ -25,13 +25,11 @@ const Chatbox = () => {
   const [typingTimeout, setTypingTimeout] = useState(0);
   const messageContainer = useRef(null);
 
-  const getMessages = async () => {
-    await dispatch(getChatMessages({ channel_id: channelID, skipMessages: 0 }));
+  const getMessages = () => {
+    dispatch(getChatMessages({ channel_id: channelID, skipMessages: 0 }));
   };
 
   useEffect(() => {
-    getMessages();
-
     socket.on('RECEIVE_MESSAGE', function (data) {
       addMessage(data);
     });
@@ -58,6 +56,10 @@ const Chatbox = () => {
     return () => {
       socket.close();
     };
+  }, []);
+
+  useEffect(() => {
+    getMessages();
   }, []);
 
   const addMessage = (data) => {
@@ -101,12 +103,21 @@ const Chatbox = () => {
       messageContainer.current.scrollTop = messageContainer.current.scrollHeight - previosScrollHeight;
     }
   };
-
-  let messagesStructure = messages.map((data, index, arr) => {
-    return (
-      <Message author={data.author} message={data.body} created={data.created_at} index={index} arr={arr} previousMessage={index > 1 ? arr[index - 1] : null} />
-    );
-  });
+  let messagesStructure;
+  if (messages.length > 0) {
+    messagesStructure = messages.map((data, index, arr) => {
+      return (
+        <Message
+          author={data.author}
+          message={data.body}
+          created={data.created_at}
+          index={index}
+          arr={arr}
+          previousMessage={index > 0 ? arr[index - 1] : null}
+        />
+      );
+    });
+  } else messagesStructure = null;
 
   return (
     <React.Fragment>
