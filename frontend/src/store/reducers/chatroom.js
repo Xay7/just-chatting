@@ -1,4 +1,5 @@
 import * as actionTypes from '../actions/actionTypes';
+import socket from '../../SocketClient';
 // remove objects after css is done
 const DEFAULT_STATE = {
   roomID: '',
@@ -170,6 +171,17 @@ const reducer = (state = DEFAULT_STATE, action) => {
         loading: true,
       };
     case actionTypes.SAVE_MESSAGE:
+      return {
+        ...state,
+        messages: [...state.messages, action.message],
+      };
+    case actionTypes.USERS_LIST:
+      return {
+        ...state,
+        members: action.members,
+        loading: false,
+      };
+    case actionTypes.UPDATE_MESSAGE:
       return {
         ...state,
         messages: [...state.messages, action.message],

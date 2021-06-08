@@ -99,7 +99,6 @@ export const storeMessage = (data) => {
         type: actionTypes.SAVE_MESSAGE,
         message: message,
       });
-      socket.emit('SEND_MESSAGE', message);
     } catch (error) {
       dispatch({
         type: actionTypes.SAVE_MESSAGE_ERROR,
@@ -121,5 +120,14 @@ export const getChatMessages = (data) => {
         type: actionTypes.GET_MESSAGES_ERROR,
       });
     }
+  };
+};
+
+export const updateMessages = (message) => {
+  return (dispatch) => {
+    dispatch({
+      type: actionTypes.UPDATE_MESSAGE,
+      message: message,
+    });
   };
 };

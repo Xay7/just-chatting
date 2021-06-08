@@ -6,7 +6,7 @@ import socket from 'SocketClient';
 import moment from 'moment';
 
 const InputContainer = () => {
-  const { channelID } = useSelector((state) => ({
+  const { channelID, avatar, username } = useSelector((state) => ({
     channelID: state.chat.channelID,
     avatar: state.auth.avatar,
     username: state.auth.username,
@@ -22,7 +22,18 @@ const InputContainer = () => {
       created_at: moment(),
     };
 
+    let msg = {
+      author: {
+        name: username,
+        avatar: avatar,
+      },
+      body: message,
+      created_at: moment(),
+      channel_id: channelID,
+    };
+
     dispatch(storeMessage(dbmessage));
+    socket.emit('SEND_MESSAGE', msg);
   };
 
   const enterHandler = async (e) => {

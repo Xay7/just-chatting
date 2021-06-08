@@ -82,6 +82,7 @@ const Channels = () => {
         <button onClick={() => switchChannel(el.id, el.name, el.description)} disabled={currentChannelDisable(el.id)}>
           {'# ' + el.name}
         </button>
+        {/* <i className="fas fa-cog" style={{ cursor: 'pointer' }}></i> */}
       </div>
     );
   });

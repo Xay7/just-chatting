@@ -41,7 +41,7 @@ const JoinRoom = (props) => {
 
   return (
     <div>
-      <Modal onclick={props.showJoin} />
+      <Modal onClick={props.showJoin} />
       <Options>
         <div className={styles.AddJoinWrapper}>
           <div className={styles.AddJoinDescription}>

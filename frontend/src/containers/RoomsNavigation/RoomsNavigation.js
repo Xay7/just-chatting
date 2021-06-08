@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './Rooms.module.scss';
-import { updateRooms, changeRoom, clearFetchMessage, Logout } from '../../store/actions/index';
+import { updateRooms, changeRoom, clearFetchMessage, Logout, isFetching, getUsers } from '../../store/actions/index';
 import { withRouter, useHistory } from 'react-router-dom';
 import Tooltip from '../../components/Tooltip/Tooltip';
 import AddRoom from './AddRoom';
 import JoinRoom from './JoinRoom';
 import AddOrJoin from './AddOrJoin';
+import socket from '../../SocketClient';
 
 const Rooms = (props) => {
-  const { roomID, user_id, chatRooms } = useSelector((state) => ({
+  const { roomID, user_id, chatRooms, members } = useSelector((state) => ({
     username: state.auth.username,
     roomID: state.chat.roomID,
     avatar: state.auth.avatar,
     user_id: state.auth.user_id,
     chatRooms: state.chat.chatRooms,
+    members: state.chat.members,
   }));
   const dispatch = useDispatch();
   const history = useHistory();
@@ -26,7 +28,9 @@ const Rooms = (props) => {
   const changeChatroom = async (id) => {
     const previousRoom = roomID;
     setSelectedRoom(id);
+    dispatch(isFetching());
     await dispatch(changeRoom(id, previousRoom));
+    socket.emit('ROOM_USER_LIST', id);
     props.inRoom();
   };
 

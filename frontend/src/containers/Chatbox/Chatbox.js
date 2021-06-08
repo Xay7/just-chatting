@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './Chatbox.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import { getChatMessages, isFetching } from '../../store/actions/index';
+import { getChatMessages, isFetching, updateMessages } from '../../store/actions/index';
 import UserTyping from '../../components/UserTyping/UserTyping';
 import Loader from '../../components/Loader/Loader';
 import Message from './Message';
@@ -31,10 +31,6 @@ const Chatbox = () => {
       addMessage(data);
     });
 
-    // socket.on('USER_JOINED_CHANNEL', (data) => {
-    //   setChannelMessages(messages);
-    // });
-
     socket.on('SOMEONE_IS_TYPING', () => {
       if (typingTimeout) {
         clearTimeout(typingTimeout);
@@ -53,14 +49,14 @@ const Chatbox = () => {
     };
   }, []);
 
-  const addMessage = (data) => {
-    if (messages.length === 0) {
-      return;
-    }
-
-    setChannelMessages([...channelMessages, data]);
-    setIsOtherUserTyping(false);
+  useEffect(() => {
     scrollToBottom();
+  }, [messages.length]);
+
+  const addMessage = (data) => {
+    dispatch(updateMessages(data));
+    scrollToBottom();
+    setIsOtherUserTyping(false);
   };
 
   const scrollToBottom = () => {

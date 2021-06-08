@@ -32,7 +32,7 @@ const AddRoom = (props) => {
 
   return (
     <div>
-      <Modal onclick={props.showAdd} />
+      <Modal onClick={props.showAdd} />
       <Options>
         <div className={styles.AddJoinWrapper}>
           <div className={styles.AddJoinDescription}>
