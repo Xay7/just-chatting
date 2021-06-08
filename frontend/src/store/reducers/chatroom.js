@@ -1,4 +1,5 @@
 import * as actionTypes from '../actions/actionTypes';
+import socket from '../../SocketClient';
 // remove objects after css is done
 const DEFAULT_STATE = {
   roomID: '',
@@ -85,8 +86,11 @@ const reducer = (state = DEFAULT_STATE, action) => {
       let updatedSkip = null;
 
       if (action.messages.length === 0) {
-        noMessage = true;
-        reverse = [];
+        return {
+          ...state,
+          noMessages: true,
+          loading: false,
+        };
       } else {
         noMessage = false;
         reverse = action.messages.reverse();
@@ -94,7 +98,7 @@ const reducer = (state = DEFAULT_STATE, action) => {
       }
       return {
         ...state,
-        messages: reverse,
+        messages: [...reverse, ...state.messages],
         skip: updatedSkip,
         noMessages: noMessage,
         loading: false,
@@ -167,6 +171,17 @@ const reducer = (state = DEFAULT_STATE, action) => {
         loading: true,
       };
     case actionTypes.SAVE_MESSAGE:
+      return {
+        ...state,
+        messages: [...state.messages, action.message],
+      };
+    case actionTypes.USERS_LIST:
+      return {
+        ...state,
+        members: action.members,
+        loading: false,
+      };
+    case actionTypes.UPDATE_MESSAGE:
       return {
         ...state,
         messages: [...state.messages, action.message],

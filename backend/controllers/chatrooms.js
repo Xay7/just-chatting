@@ -15,7 +15,6 @@ module.exports = {
         name: el.name,
       };
     });
-
     res.status(200).json({
       chatrooms: formattedChatrooms,
     });

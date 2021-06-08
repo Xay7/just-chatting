@@ -21,6 +21,7 @@ const Message = (props) => {
       img.style.height = 'auto';
     }
   };
+
   if (props.index > 0) {
     if (isUrl(props.message) === true) {
       if (isImage(props.message) === true) {
@@ -39,26 +40,12 @@ const Message = (props) => {
         );
     }
     // CHECK FOR SAME AUTHOR AND IF THERE IS LESS THAN 30 MINUTES TIME DIFFERENCE BETWEEN LAST MESSAGE
-    if (props.previousMessage !== null) {
-      if (props.author.name === props.previousMessage.author.name && moment(props.created).diff(moment(props.previousMessage.created_at), 'minutes') < 30) {
-        return (
-          <div className={styles.Messages} key={props.created}>
-            <div className={styles.Message}>{props.message}</div>
-          </div>
-        );
-      } else {
-        return (
-          <div className={styles.Messages} key={props.created}>
-            <hr className={styles.MessageHorizontalLine}></hr>
-            <div className={styles.MessageHeader}>
-              <img src={props.author.avatar} alt={props.author.name + ' avatar'} className={styles.Avatar} />
-              <p className={styles.Username}>{props.author.name}</p>
-              <p className={styles.Date}>{moment(props.created).calendar(null)}</p>
-            </div>
-            <div className={styles.Message}>{props.message}</div>
-          </div>
-        );
-      }
+    if (props.author.name === props.previousMessage.author.name && moment(props.created).diff(moment(props.previousMessage.created_at), 'minutes') < 30) {
+      return (
+        <div className={styles.Messages} key={props.created}>
+          <div className={styles.Message}>{props.message}</div>
+        </div>
+      );
     } else {
       return (
         <div className={styles.Messages} key={props.created}>
@@ -66,7 +53,7 @@ const Message = (props) => {
           <div className={styles.MessageHeader}>
             <img src={props.author.avatar} alt={props.author.name + ' avatar'} className={styles.Avatar} />
             <p className={styles.Username}>{props.author.name}</p>
-            <p className={styles.Date}>{moment(props.created_at).calendar(null)}</p>
+            <p className={styles.Date}>{moment(props.created).calendar(null)}</p>
           </div>
           <div className={styles.Message}>{props.message}</div>
         </div>
@@ -79,7 +66,7 @@ const Message = (props) => {
         <div className={styles.MessageHeader}>
           <img src={props.author.avatar} alt={props.author.name + ' avatar'} className={styles.Avatar} />
           <p className={styles.Username}>{props.author.name}</p>
-          <p className={styles.Date}>{moment(props.created_at).calendar(null)}</p>
+          <p className={styles.Date}>{moment(props.created).calendar(null)}</p>
         </div>
         <div className={styles.Message}>{props.message}</div>
       </div>

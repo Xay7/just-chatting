@@ -17,10 +17,10 @@ const RoomHeader = () => {
 
   return (
     <React.Fragment>
-      {showDropdown ? (
+      {showDropdown && roomName ? (
         <React.Fragment>
           <Modal onClick={showDropdownHandler} />
-          <RoomDropdown />
+          <RoomDropdown show={showDropdownHandler} />
         </React.Fragment>
       ) : null}
       <div className={styles.Room} onClick={showDropdownHandler}>

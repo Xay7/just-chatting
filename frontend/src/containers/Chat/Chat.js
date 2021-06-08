@@ -24,7 +24,7 @@ const Chat = () => {
           <ChannelHeader />
           <div className={styles.ChatBottom}>
             {inRoom && <Chatbox />}
-            <UsersList />
+            {inRoom && <UsersList />}
           </div>
         </div>
       </div>

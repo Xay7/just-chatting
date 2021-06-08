@@ -6,7 +6,7 @@ import styles from './Rooms.module.scss';
 const AddOrJoin = (props) => {
   return (
     <div>
-      <Modal onclick={props.showAddorJoin} />
+      <Modal onClick={props.showAddOrJoin} />
       <Options>
         <div className={styles.Wrapper}>
           <div className={styles.JoinAndAdd}>

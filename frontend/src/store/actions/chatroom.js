@@ -2,14 +2,36 @@ import * as actionTypes from './actionTypes';
 import axios from 'axios';
 import socket from 'SocketClient';
 
-const getRooms = async (id) => {
+export const getRooms = async (id) => {
   const res = await axios.get(`/users/${id}/chatrooms`);
   return res;
 };
 
-const getRoom = async (id) => {
+export const getRoom = async (id) => {
   const res = await axios.get(`/chatrooms/${id}`);
   return res;
+};
+
+export const getUsers = (id, previosRoom) => {
+  return async (dispatch, getState) => {
+    try {
+      const res = await getRoom(id);
+      for (let i = 0; i < res.data.members.length; i++) {
+        res.data.members[i] = { ...res.data.members[i], status: 'offline' };
+      }
+
+      dispatch({
+        type: actionTypes.USERS_LIST,
+        members: res.data.members,
+      });
+
+      socket.emit('CHANGE_ROOM', {
+        previousRoom: previosRoom,
+        roomID: id,
+        user_id: getState().auth.user_id,
+      });
+    } catch (error) {}
+  };
 };
 
 export const updateRooms = (id) => {
@@ -69,20 +91,25 @@ export const changeRoom = (id, previousRoom) => {
   return async (dispatch, getState) => {
     try {
       const res = await getRoom(id);
-      socket.emit('CHANGE_ROOM', {
-        previousRoom: previousRoom,
-        roomID: id,
-        username: getState().auth.username,
-        avatar: getState().auth.avatar,
-      });
+
+      for (let i = 0; i < res.data.members.length; i++) {
+        res.data.members[i] = { ...res.data.members[i], status: 'offline' };
+      }
       dispatch({
         type: actionTypes.CHANGE_ROOM,
         roomID: res.data.id,
         roomName: res.data.name,
         channelName: '',
-        channels: res.data.channels,
         members: res.data.members,
+        channels: res.data.channels,
         roomOwner: res.data.owner,
+      });
+      socket.emit('CHANGE_ROOM', {
+        previousRoom: previousRoom,
+        roomID: id,
+        username: getState().auth.username,
+        avatar: getState().auth.avatar,
+        members: getState().chat.members,
       });
     } catch (error) {
       dispatch({

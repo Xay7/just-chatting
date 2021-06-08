@@ -27,12 +27,6 @@ const Channels = () => {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (channels[0]) {
-      switchChannel(channels[0].id, channels[0].name, channels[0].description);
-    }
-  }, []);
-
-  useEffect(() => {
     if (prevRoomID !== roomID && channels[0]) {
       return switchChannel(channels[0].id, channels[0].name, channels[0].description);
     }
@@ -58,6 +52,7 @@ const Channels = () => {
 
     setSelectedChannel(id);
     dispatch(changeChannel(id, name, description));
+    dispatch(getChatMessages(data));
 
     socket.emit('JOIN_CHANNEL', {
       channelID: id,
@@ -87,6 +82,7 @@ const Channels = () => {
         <button onClick={() => switchChannel(el.id, el.name, el.description)} disabled={currentChannelDisable(el.id)}>
           {'# ' + el.name}
         </button>
+        {/* <i className="fas fa-cog" style={{ cursor: 'pointer' }}></i> */}
       </div>
     );
   });
