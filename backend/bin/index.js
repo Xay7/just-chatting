@@ -4,5 +4,4 @@ process.on("unhandledRejection", (reason, promise) => {
     console.log("Promise: ", promise)
 })
 
-require("./database.js")
 require("./www.js")

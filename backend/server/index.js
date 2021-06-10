@@ -1,45 +1,55 @@
 const { app, io } = require("../bin/www")
-
-const express = require("express")
-const expressSession = require("express-session")
-const bodyParser = require("body-parser")
-const cookieParser = require("cookie-parser")
-
+const { join } = require("path")
 const morgan = require("morgan")
+const passport = require("passport")
+const session = require("express-session")
+const { json, urlencoded } = require("body-parser")
+const cookieParser = require("cookie-parser")
 const cors = require("cors")
 
+const { sequelize, DataTypes } = require("../bin/database")
+
+require("../models/index")(sequelize, DataTypes)
+require("../controllers/passport")(passport, sequelize)
+
 const sessionSecret = require("../config/index").session
+const SequelizeStore = require("connect-session-sequelize")(session.Store)
 
-const mongoose = require("../bin/database")
+const mainRouter = require("./routers/")
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(json())
+
+app.use(urlencoded({ extended: true }))
+
 app.use(cookieParser())
-app.use(morgan("dev"))
+
+app.use(
+    session({
+        secret: sessionSecret,
+        resave: false,
+        saveUninitialized: true,
+        cookie: {
+            maxAge: 600000000,
+        },
+        // store: new SequelizeStore({
+        //     db: sequelize,
+        // }),
+    })
+)
+
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        // origin: "http://localhost:3000",
+        origin: "*",
         credentials: true,
     })
 )
 
-app.use(
-    expressSession({
-        secret: sessionSecret,
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            maxAge: 1800000,
-            sameSite: "none",
-            secure: true,
-            httpOnly: true,
-        },
-    })
-)
+app.use(morgan("dev"))
 
-app.use("/users", require("../routes/users"))
-app.use("/chatrooms", require("../routes/chatroom"))
-app.use("/channels", require("../routes/channel"))
+app.use("/", mainRouter(passport, sequelize, DataTypes))
 
 module.exports = app

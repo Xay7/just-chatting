@@ -2,7 +2,7 @@ const passport = require("passport")
 const JWTStrategy = require("passport-jwt").Strategy
 const LocalStrategy = require("passport-local").Strategy
 const { JWT_S } = require("./config/index")
-const User = require("./models/user")
+const User = require("./models/User")
 
 const getCookie = (req) => {
     let token = null

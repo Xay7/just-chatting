@@ -1,26 +1,20 @@
-const mongoose = require("mongoose")
-const Schema = mongoose.Schema
+module.exports = (sequelize, DataTypes) => {
+    const Channel = sequelize.define("Channel", {
+        id: {
+            type: DataTypes.INTEGER,
+            unique: true,
+            primaryKey: true,
+            autoIncrementation: true,
+            allowNull: true,
+        },
+        name: {
+            type: DataTypes.STRING,
+            required: true,
+        },
+        description: {
+            type: DataTypes.STRING,
+        },
+    })
 
-const channelSchema = new Schema({
-    chatroom_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-    },
-    name: {
-        type: String,
-        required: true,
-    },
-    description: {
-        type: String,
-    },
-}).set("toJSON", {
-    virtuals: true,
-    versionKey: false,
-    transform: function (doc, ret) {
-        delete ret._id
-    },
-})
-
-const channel = mongoose.model("channel", channelSchema)
-
-module.exports = channel
+    return Channel
+}
