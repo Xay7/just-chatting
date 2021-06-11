@@ -3,34 +3,22 @@ const { join } = require("path")
 
 module.exports = (passport, sequelize, DataTypes) => {
     const MainRouter = express.Router()
-
-    // const passport = require(join(__dirname, "../../controllers/passport"))(
-    //     sequelize,
-    //     DataTypes
-    // )
+    const UsersRouter = require("./users")(passport, sequelize)
+    const ChatroomsRouter = require("./chatrooms")(sequelize)
+    const ChannelsRouter = require("./channels")(sequelize)
 
     const { User, Channel, Chatroom, ChannelMessage } = sequelize.models
 
-    //router.use('/public', express.static(join(__dirname, '../../public/')))
-
     MainRouter.get("/sync", async (_, res) => {
-        await sequelize.models.User.sync({
-            force: true,
-        })
+        await User.sync({ force: true })
 
-        await sequelize.models.Channel.sync({
-            force: true,
-        })
+        await Channel.sync({ force: true })
 
-        await sequelize.models.Chatroom.sync({
-            force: true,
-        })
+        await Chatroom.sync({ force: true })
 
-        await sequelize.models.ChannelMessage.sync({
-            force: true,
-        })
+        await ChannelMessage.sync({ force: true })
 
-        res.send("OK")
+        res.send("SYNC OK")
     })
 
     MainRouter.get("/make", async (_, res) => {
@@ -56,8 +44,8 @@ module.exports = (passport, sequelize, DataTypes) => {
         }
     })
 
-    MainRouter.get("/users/getOne", async (_, res) => {
-        const users = await User.findOne({ email: "admin@admin.admin" })
+    MainRouter.get("/getOne", async (_, res) => {
+        const users = await User.findOne()
         console.log(users)
         if (users) {
             res.json(users)
@@ -90,26 +78,13 @@ module.exports = (passport, sequelize, DataTypes) => {
     MainRouter.get("/index.php", async (req, res) => res.redirect("/"))
     MainRouter.get("/index.html", async (req, res) => res.redirect("/"))
 
-    MainRouter.use("/users", require("./users")(passport, sequelize))
+    MainRouter.use("/users", UsersRouter)
+    MainRouter.use("/chatrooms", isLoggedIn, ChatroomsRouter)
+    MainRouter.use("/channels", ChannelsRouter)
 
-    MainRouter.use("/chatrooms", require("./chatrooms")(sequelize))
-
-    MainRouter.use("/channels", require("./channels")(sequelize))
-
-    // MainRouter.use(
-    //     "/favicon.ico",
-    //     express.static(join(__dirname, "../../assets/favicon.png"))
-    // )
-
-    // MainRouter.use(
-    //     "/robots.txt",
-    //     express.static(join(__dirname, "../../assets/robots.txt"))
-    // )
-
-    // MainRouter.use(
-    //     "/sitemap.xml",
-    //     express.static(join(__dirname, "../../assets/sitemap.xml"))
-    // )
+    // MainRouter.use("/favicon.ico",express.static(join(__dirname, "../../assets/favicon.png")))
+    // MainRouter.use("/robots.txt", express.static(join(__dirname, "../../assets/robots.txt")))
+    // MainRouter.use( "/sitemap.xml",express.static(join(__dirname, "../../assets/sitemap.xml")))
 
     MainRouter.get("*", async (req, res) => res.redirect("/"))
 

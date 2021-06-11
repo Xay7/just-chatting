@@ -22,12 +22,19 @@ module.exports = (passport, sequelize) => {
             },
             (req, email, password, done) => {
                 User.findOne({ where: { email } }).then((user) => {
-                    console.log("Czy jest użytkownik?")
                     if (!user) return done(null, false)
-                    console.log("user: ", user)
+
+                    //console.log("user: ", user)
+
+                    const comparison = bcrypt.compareSync(
+                        password,
+                        user.password
+                    )
+                    console.log("bcrypt compare() => ", comparison)
                     if (!bcrypt.compareSync(password, user.password))
                         return done(null, false)
 
+                    console.log("last step")
                     return done(null, user)
                 })
             }

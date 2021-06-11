@@ -31,7 +31,7 @@ module.exports = (passport, sequelize) => {
 
     router.get("/:id", isLoggedIn, UserController.getInfo)
 
-    router.post("/signin", UserController.signIn)
+    router.post("/signin", isLoggedOut, UserController.signIn)
 
     router.post("/logout", UserController.logout)
 

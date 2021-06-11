@@ -4,6 +4,7 @@ const { JWT_S } = require("../config/index")
 const upload = require("../services/fileupload")
 const uploadAvatar = upload.single("avatar")
 const { Op } = require("sequelize")
+const bcryptjs = require("bcryptjs")
 
 module.exports = (passport, sequelize) => {
     const { User } = sequelize.models
@@ -21,22 +22,26 @@ module.exports = (passport, sequelize) => {
     }
 
     const signUp = async (req, res, next) => {
-        const { email, password, name } = req.value.body
+        const email = !req.body.email ? "" : req.body.email.trim()
+        const password = !req.body.password ? "" : req.body.password.trim()
+        const name = !req.body.name ? "" : req.body.name.trim()
 
         const foundUser = await User.findOne({ where: { email } })
-        const foundName = await User.findOne({ where: { name } })
 
         if (foundUser) {
             return res.status(403).send({ error: "Email arleady in use" })
         }
 
+        const foundName = await User.findOne({ where: { name } })
         if (foundName) {
             return res.status(403).send({ error: "Username arleady in use" })
         }
 
+        const pwdHash = await bcryptjs.hash(password, bcryptjs.genSaltSync(10))
+
         await User.create({
             email: email,
-            password: password,
+            password: pwdHash,
             name: name,
             avatar: "https://justchattingbucket.s3.eu-west-3.amazonaws.com/DefaultUserAvatar",
         })
@@ -54,28 +59,48 @@ module.exports = (passport, sequelize) => {
     }
 
     const signIn = async (req, res, next) => {
-        console.log("trying")
+        req.session.user = req.user
+        if (req.body)
+            if (req.user) {
+                return res
+                    .status(400)
+                    .json({ error: "User arleady logged in, try again later" })
+            }
 
         if (!req.body.email || !req.body.password) {
             res.status(400).json({ error: "data incomplete" })
         } else {
+            console.log("authenticating")
             passport.authenticate("local-login", (err, user, info) => {
                 if (err) {
-                    console.log(err)
+                    console.log("1:", err)
                 } else {
                     if (!user) {
+                        console.log("no user found")
                     } else {
                         req.login(user, (err) => {
                             if (err) {
+                                console.log("2::", err)
                             } else {
-                                if (
-                                    !req.query.next ||
-                                    req.query.next.includes("http")
-                                ) {
-                                    res.redirect("/")
-                                } else {
-                                    res.redirect(req.query.next)
-                                }
+                                // res.redirect("/users/" + user.id)
+                                const avatar = user.avatar
+                                const username = user.name
+                                const id = user.id
+
+                                res.json({
+                                    avatar,
+                                    username,
+                                    id,
+                                })
+
+                                // if (
+                                //     !req.query.next ||
+                                //     req.query.next.includes("http")
+                                // ) {
+                                //     res.redirect("/")
+                                // } else {
+                                //     res.redirect(req.query.next)
+                                // }
                             }
                         })
                     }
@@ -83,33 +108,12 @@ module.exports = (passport, sequelize) => {
             })(req, res)
         }
 
-        // if (req.body)
-        //     if (req.session.user) {
-        //         return res
-        //             .status(400)
-        //             .json({ error: "User arleady logged in, try again later" })
-        //     }
-
-        // const avatar = req.user.avatar
-        // const username = req.user.name
-        // const id = req.user._id
-
         // const token = signToken(req.user)
         // res.cookie("access_token", token, {
         //     httpOnly: true,
         //     expires: new Date(Date.now() + 900000),
         //     sameSite: "none",
         //     secure: true,
-        // })
-
-        // req.session.user = req.user
-
-        res.send("Logged")
-
-        // res.json({
-        //     username,
-        //     avatar,
-        //     id,
         // })
     }
 
@@ -160,6 +164,7 @@ module.exports = (passport, sequelize) => {
         res.json({ token })
     }
 
+    //dodane ale po co
     const getInfo = async (req, res, next) => {
         if (req.params.id) {
             const user = await User.findOne({ where: { id: req.params.id } })

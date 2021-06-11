@@ -35,8 +35,6 @@ module.exports = (sequelize, DataTypes) => {
 
     User.hashPassword = async (password) => {
         const hash = await bcrypt.hash(password, await bcrypt.genSalt(10))
-        console.log("hash = ", hash)
-        console.log("hash = ", typeof hash)
         return hash
     }
 
