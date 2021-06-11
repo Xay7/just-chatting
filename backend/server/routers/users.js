@@ -1,10 +1,6 @@
 const { join } = require("path")
-// const { app, io } = require("../../bin/www")
-// const socket = io
 const express = require("express")
 const router = express.Router()
-// const passport = require("passport")
-// const passportConfig = require("../../passport")
 const { validateBody, schemas } = require("../../helpers/route-helpers")
 
 const isLoggedIn = require("../../utils/isLoggedIn")
@@ -16,12 +12,6 @@ module.exports = (passport, sequelize) => {
 
     const userCtrlPath = join(__dirname, "../../controllers/user")
     const UserController = require(userCtrlPath)(passport, sequelize)
-
-    // Auth stuff
-    // const passport = require("passport")
-    // const passportSignIn = passport.authenticate("local-login", { session: false })
-    // const passportJWT = passport.authenticate("jwt", { session: false })
-    //passport.authenticate("local-login")
 
     router.post(
         "/signup",

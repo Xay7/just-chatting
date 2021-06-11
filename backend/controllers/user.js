@@ -1,6 +1,4 @@
 const { join } = require("path")
-const JWT = require("jsonwebtoken")
-const { JWT_S } = require("../config/index")
 const upload = require("../services/fileupload")
 const uploadAvatar = upload.single("avatar")
 const { Op } = require("sequelize")
@@ -8,18 +6,6 @@ const bcryptjs = require("bcryptjs")
 
 module.exports = (passport, sequelize) => {
     const { User } = sequelize.models
-
-    const signToken = (user) => {
-        return (token = JWT.sign(
-            {
-                iss: "HELLO",
-                sub: user.id,
-                iat: new Date().getTime(), // CURRENT TIME
-                exp: new Date().setDate(new Date().getDate() + 1), // TOMMOROW
-            },
-            JWT_S
-        ))
-    }
 
     const signUp = async (req, res, next) => {
         const email = !req.body.email ? "" : req.body.email.trim()
@@ -33,6 +19,7 @@ module.exports = (passport, sequelize) => {
         }
 
         const foundName = await User.findOne({ where: { name } })
+
         if (foundName) {
             return res.status(403).send({ error: "Username arleady in use" })
         }
@@ -45,15 +32,6 @@ module.exports = (passport, sequelize) => {
             name: name,
             avatar: "https://justchattingbucket.s3.eu-west-3.amazonaws.com/DefaultUserAvatar",
         })
-
-        // const token = signToken(newUser)
-
-        // res.cookie("access_token", token, {
-        //     httpOnly: true,
-        //     expires: new Date(Date.now() + 900000),
-        //     sameSite: "none",
-        //     secure: true,
-        // })
 
         res.json({ success: "User has been registered" })
     }
@@ -73,14 +51,12 @@ module.exports = (passport, sequelize) => {
             console.log("authenticating")
             passport.authenticate("local-login", (err, user, info) => {
                 if (err) {
-                    console.log("1:", err)
                 } else {
                     if (!user) {
-                        console.log("no user found")
+                        res.status(404).json({ failure: "data incorrect" })
                     } else {
                         req.login(user, (err) => {
                             if (err) {
-                                console.log("2::", err)
                             } else {
                                 // res.redirect("/users/" + user.id)
                                 const avatar = user.avatar
@@ -107,22 +83,19 @@ module.exports = (passport, sequelize) => {
                 }
             })(req, res)
         }
-
-        // const token = signToken(req.user)
-        // res.cookie("access_token", token, {
-        //     httpOnly: true,
-        //     expires: new Date(Date.now() + 900000),
-        //     sameSite: "none",
-        //     secure: true,
-        // })
     }
 
     const changePassword = async (req, res, next) => {
-        const password = req.body.password
-        await User.findOne({ _id: req.params.id }, function (err, doc) {
-            doc.password = password
-            doc.save()
-        })
+        const password = !req.body.password ? "" : req.body.password
+
+        if (password.length < 6) {
+            res.json({ failure: "Incorrect data" })
+        }
+
+        const user = await User.findOne({ id: req.user.id })
+
+        user.password = password
+        await user.save({ fields: ["password"] })
 
         res.json({ success: "Password has been changed" })
     }
@@ -174,7 +147,6 @@ module.exports = (passport, sequelize) => {
     }
 
     return {
-        signToken,
         signUp,
         signIn,
         changePassword,

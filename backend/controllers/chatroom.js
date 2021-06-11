@@ -1,24 +1,18 @@
-const { join } = require("path")
-
 module.exports = (sequelize) => {
-    // const userPath = join(__dirname, "../models/User")
-    // const User = require(userPath)(sequelize, DataTypes)
-
-    // const channelPath = join(__dirname, "../models/Channel")
-    // const Channel = require(channelPath)(sequelize, DataTypes)
-
-    // const chatroomPath = join(__dirname, "../models/Chatroom")
-    // const Chatroom = require(chatroomPath)(sequelize, DataTypes)
-
     const { Chatroom, Channel } = sequelize.models
 
     const chatrooms = async (req, res, next) => {
-        const foundChatrooms = await Chatroom.find().where("_id").in(chatrooms)
+        const foundChatrooms = await Chatroom.findAll()
+        console.log("czatrumy")
+        console.log(foundChatrooms)
 
         const formattedChatrooms = foundChatrooms.map((el) => ({
-            id: el._id,
+            id: el.id,
             name: el.name,
         }))
+
+        console.log("sfromatowane czatrumy")
+        console.log(formattedChatrooms)
 
         res.json({
             chatrooms: formattedChatrooms,
@@ -26,33 +20,26 @@ module.exports = (sequelize) => {
     }
 
     const newChatroom = async (req, res, next) => {
-        const name = req.body.name
-        const id = req.user._id
+        const name = !req.body.name ? "" : req.body.name.trim()
 
-        const newChatroom = new Chatroom({
+        const chatroom = await Chatroom.create({
             name: name,
-            owner: id,
-            members: id,
+            ownerId: req.user.id,
         })
 
-        const newChannel = new Channel({
-            chatroom_id: newChatroom._id,
+        console.log("chatroom: ")
+        console.log(chatroom)
+
+        const channel = await Channel.create({
             name: "General",
+            chatroomId: chatroom.id,
         })
 
-        await newChatroom.save()
-        await newChannel.save()
+        console.log("channel")
+        console.log(channel)
 
-        await User.findOneAndUpdate(
-            { _id: id },
-            {
-                $push: {
-                    chatrooms: newChatroom._id,
-                },
-            }
-        )
-
-        res.status(201).json({ id: newChatroom._id, name: newChatroom.name })
+        // 201 -> created
+        res.status(201).json({ id: chatroom.id, name: chatroom.name })
     }
 
     const joinChatroom = async (req, res, next) => {
@@ -142,7 +129,7 @@ module.exports = (sequelize) => {
         }
 
         // Delete chatroom
-        await Chatroom.findOneAndDelete({ _id: id })
+        await Chatroom.findOneAndDelete({ id })
 
         // Delete chatroom channels
         await Channel.deleteMany({ chatroom_id: id })
@@ -163,10 +150,17 @@ module.exports = (sequelize) => {
     const getChatroomData = async (req, res, next) => {
         const id = req.params.id
 
-        const foundChatroom = await Chatroom.findOne({ _id: id }).populate([
-            { path: "members", select: "name avatar _id" },
-            { path: "owner", select: "name" },
-        ])
+        const chatroom = await Chatroom.findOne({
+            where: { id, userId: req.user.id },
+        })
+
+        console.log("chatroom")
+        console.log(chatroom)
+
+        // .populate([
+        //     { path: "members", select: "name avatar _id" },
+        //     { path: "owner", select: "name" },
+        // ])
 
         if (!foundChatroom) {
             return res.status(404).json({ error: "Chatroom doesn't exist" })

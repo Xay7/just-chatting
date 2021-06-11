@@ -1,5 +1,3 @@
-const { join } = require("path")
-
 const LocalStrategy = require("passport-local").Strategy
 const bcrypt = require("bcryptjs")
 
@@ -24,17 +22,10 @@ module.exports = (passport, sequelize) => {
                 User.findOne({ where: { email } }).then((user) => {
                     if (!user) return done(null, false)
 
-                    //console.log("user: ", user)
-
-                    const comparison = bcrypt.compareSync(
-                        password,
-                        user.password
-                    )
-                    console.log("bcrypt compare() => ", comparison)
-                    if (!bcrypt.compareSync(password, user.password))
+                    if (!bcrypt.compareSync(password, user.password)) {
                         return done(null, false)
+                    }
 
-                    console.log("last step")
                     return done(null, user)
                 })
             }

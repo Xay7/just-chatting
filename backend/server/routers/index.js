@@ -1,6 +1,9 @@
 const express = require("express")
 const { join } = require("path")
 
+const isLoggedIn = require("../../utils/isLoggedIn")
+const isLoggedOut = require("../../utils/isLoggedOut")
+
 module.exports = (passport, sequelize, DataTypes) => {
     const MainRouter = express.Router()
     const UsersRouter = require("./users")(passport, sequelize)
@@ -8,6 +11,26 @@ module.exports = (passport, sequelize, DataTypes) => {
     const ChannelsRouter = require("./channels")(sequelize)
 
     const { User, Channel, Chatroom, ChannelMessage } = sequelize.models
+
+    const init = async () => {
+        await User.sync({ force: true })
+
+        await Channel.sync({ force: true })
+
+        await Chatroom.sync({ force: true })
+
+        await ChannelMessage.sync({ force: true })
+
+        if (!(await User.findOne({ username: "admin" }))) {
+            await User.create({
+                name: "admin",
+                email: "admin@admin.admin",
+                password: await User.hashPassword("admin"),
+                avatar: "https://justchattingbucket.s3.eu-west-3.amazonaws.com/DefaultUserAvatar",
+            })
+        }
+    }
+    init()
 
     MainRouter.get("/sync", async (_, res) => {
         await User.sync({ force: true })
@@ -45,19 +68,17 @@ module.exports = (passport, sequelize, DataTypes) => {
     })
 
     MainRouter.get("/getOne", async (_, res) => {
-        const users = await User.findOne()
-        console.log(users)
-        if (users) {
-            res.json(users)
+        const user = await User.findOne({ id: 1 })
+
+        if (user) {
+            res.json(user)
         } else {
             res.send("No one user found.")
         }
     })
 
     MainRouter.get("/loguj", async (req, res, next) => {
-        const user = await User.findOne({
-            where: { email: "admin@admin.admin" },
-        })
+        const user = await User.findOne({ email: "admin@admin.admin" })
 
         if (user) {
             req.logIn(user, (err) => {
@@ -80,7 +101,7 @@ module.exports = (passport, sequelize, DataTypes) => {
 
     MainRouter.use("/users", UsersRouter)
     MainRouter.use("/chatrooms", isLoggedIn, ChatroomsRouter)
-    MainRouter.use("/channels", ChannelsRouter)
+    MainRouter.use("/channels", isLoggedIn, ChannelsRouter)
 
     // MainRouter.use("/favicon.ico",express.static(join(__dirname, "../../assets/favicon.png")))
     // MainRouter.use("/robots.txt", express.static(join(__dirname, "../../assets/robots.txt")))

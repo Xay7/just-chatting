@@ -18,14 +18,14 @@ module.exports = (sequelize, DataTypes) => {
         DataTypes
     )
 
-    User.hasMany(Chatroom)
-
+    User.hasMany(Chatroom) //, { foreignKey: "userId" }
     Chatroom.belongsTo(User)
-    Chatroom.hasMany(Channel)
+    Chatroom.hasMany(User, { as: "members" })
 
+    Chatroom.hasMany(Channel) //, { foreignKey: "chatroomId" }
     Channel.belongsTo(Chatroom)
-    Channel.hasMany(ChannelMessage)
 
+    Channel.hasMany(ChannelMessage) // , { foreignKey: "channelId" }
     ChannelMessage.belongsTo(Channel)
 
     return {
