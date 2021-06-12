@@ -17,21 +17,35 @@ module.exports = (sequelize, DataTypes) => {
         sequelize,
         DataTypes
     )
+    const User_Chatroom = require(join(__dirname, "../models/User_Chatroom"))(
+        sequelize,
+        DataTypes
+    )
 
-    User.hasMany(Chatroom) //, { foreignKey: "userId" }
-    Chatroom.belongsTo(User)
-    Chatroom.hasMany(User, { as: "members" })
+    User.hasMany(Chatroom, { foreignKey: "user_id" })
+    Chatroom.belongsTo(User, { foreignKey: "owner_id" })
+    Chatroom.belongsToMany(User, {
+        through: User_Chatroom,
+        foreignKey: "chatroom_id",
+        as: "members",
+    })
+    User.belongsToMany(Chatroom, {
+        foreignKey: "member_id",
+        as: "members",
+        through: "User_Chatroom",
+    })
 
-    Chatroom.hasMany(Channel) //, { foreignKey: "chatroomId" }
-    Channel.belongsTo(Chatroom)
+    Chatroom.hasMany(Channel, { foreignKey: "chatroomId" })
+    Channel.belongsTo(Chatroom, { foreignKey: "chatroomId" })
 
-    Channel.hasMany(ChannelMessage) // , { foreignKey: "channelId" }
-    ChannelMessage.belongsTo(Channel)
+    Channel.hasMany(ChannelMessage, { foreignKey: "channelId" })
+    ChannelMessage.belongsTo(Channel, { foreignKey: "channelId" })
 
     return {
         User,
         Chatroom,
         Channel,
         ChannelMessage,
+        User_Chatroom,
     }
 }

@@ -1,21 +1,20 @@
 module.exports = (sequelize) => {
-    const { Chatroom, Channel } = sequelize.models
+    const { Chatroom, Channel, User_Chatrooms } = sequelize.models
 
     const chatrooms = async (req, res, next) => {
-        const foundChatrooms = await Chatroom.findAll()
-        console.log("czatrumy")
-        console.log(foundChatrooms)
+        const userId = req.user.id
 
-        const formattedChatrooms = foundChatrooms.map((el) => ({
+        let userChatrooms = await Chatroom.findAll({
+            where: { owner_id: userId },
+        })
+
+        const userChatrooms = foundChatrooms.map((el) => ({
             id: el.id,
             name: el.name,
         }))
 
-        console.log("sfromatowane czatrumy")
-        console.log(formattedChatrooms)
-
         res.json({
-            chatrooms: formattedChatrooms,
+            chatrooms: userChatrooms,
         })
     }
 
@@ -27,158 +26,134 @@ module.exports = (sequelize) => {
             ownerId: req.user.id,
         })
 
-        console.log("chatroom: ")
-        console.log(chatroom)
-
-        const channel = await Channel.create({
+        await Channel.create({
             name: "General",
             chatroomId: chatroom.id,
         })
 
-        console.log("channel")
-        console.log(channel)
-
-        // 201 -> created
         res.status(201).json({ id: chatroom.id, name: chatroom.name })
     }
 
     const joinChatroom = async (req, res, next) => {
-        const id = req.params.id
-        const user_id = req.user._id
+        const chatroomId = !req.params.id ? "" : req.params.id.trim()
+        const userId = req.user.id
 
-        const foundUser = await User.findById({ _id: user_id })
-
-        const userChatrooms = foundUser.chatrooms
+        const userChatrooms = await Chatroom.findAll({
+            where: {
+                owner_id: userId,
+            },
+        })
 
         // Make sure user can't join arleady joined rooms
 
-        if (userChatrooms.includes(id)) {
+        const isUserJoined = userChatrooms.some(
+            (chatroom) => chatroom["owner_id"] == chatroomId
+        )
+
+        if (isUserJoined) {
             return res
                 .status(409)
                 .json({ error: "You arleady joined this chatroom" })
         }
 
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ error: "Invalid chatroom ID" })
-        }
+        const chatroomExists = await Chatroom.findOne({
+            where: {
+                id: chatroomId,
+            },
+        })
 
-        const foundChatroom = await Chatroom.findOne({ _id: id })
-
-        if (!foundChatroom) {
+        if (!chatroomExists) {
             return res.status(403).json({ error: "Chatroom doesn't exist" })
         }
 
-        await User.findByIdAndUpdate(
-            { _id: user_id },
-            {
-                $push: {
-                    chatrooms: foundChatroom._id,
-                },
-            }
-        )
+        const member = await User_Chatrooms.create({
+            where: {
+                chatroom_id: chatroomId,
+            },
+        })
 
-        await Chatroom.findOneAndUpdate(
-            { _id: id },
-            {
-                $push: {
-                    members: foundUser._id,
-                },
-            }
-        )
+        const chatroom = userChatrooms
+            .filter(chatroom["owner_id"] == chatroomId)
+            .shift()
 
         res.status(200).json({
-            id: foundChatroom._id,
-            name: foundChatroom.name,
+            id: chatroom.id,
+            name: chatroom.name,
         })
     }
 
     const leaveChatroom = async (req, res, next) => {
-        const id = req.params.id
-        const user_id = req.user._id
+        const chatroomId = req.params.id
+        const userId = req.user.id
 
-        await Chatroom.findOneAndUpdate(
-            { _id: id },
-            {
-                $pull: {
-                    members: user_id,
-                },
-            }
-        )
+        const chatroom = await Chatroom.findOne({
+            where: { id: chatroomId, owner_id: userId },
+        })
 
-        await User.findOneAndUpdate(
-            { _id: user_id },
-            {
-                $pull: {
-                    chatrooms: id,
-                },
-            }
-        )
+        if (!chatroom) {
+            res.status(404).json({ error: "It's not your chatroom" })
+        }
 
         res.status(200).json("good")
     }
 
     const deleteChatroom = async (req, res, next) => {
-        const id = req.params.id
-        const user_id = req.user._id
+        const chatroomId = req.params.id
+        const userId = req.user.id
 
         // Check if request is from owner
-        const foundOwner = await Chatroom.findOne({ _id: id })
+        const chatroomOwner = await Chatroom.findOne({
+            where: {
+                owner_id: userId,
+            },
+        })
 
-        if (!user_id.equals(foundOwner.owner)) {
+        if (!chatroomOwner.owner_id == userId) {
             return res.status(403).json({ error: "Unauthorized" })
         }
 
-        // Delete chatroom
-        await Chatroom.findOneAndDelete({ id })
-
         // Delete chatroom channels
-        await Channel.deleteMany({ chatroom_id: id })
+        const chatroomChannels = Channel.findAll({
+            where: {
+                chatroom_id: chatroomId,
+            },
+        })
 
-        // Find room clients and delete all id's
-        await User.updateMany(
-            { chatrooms: id },
-            {
-                $pull: {
-                    chatrooms: id,
-                },
-            }
-        )
+        for (const channel of chatroomChannels) {
+            channel.destroy()
+        }
+
+        // Delete chatroom
+        await chatroom.destroy()
 
         res.status(200).json({ success: "Chat has been deleted" })
     }
 
     const getChatroomData = async (req, res, next) => {
-        const id = req.params.id
+        const chatroomId = req.params.id
+        const userId = req.user.id
 
         const chatroom = await Chatroom.findOne({
-            where: { id, userId: req.user.id },
+            where: { id: chatroomId, owener_id: req.user.id },
+            include: ["members", "channel"],
         })
 
-        console.log("chatroom")
-        console.log(chatroom)
-
-        // .populate([
-        //     { path: "members", select: "name avatar _id" },
-        //     { path: "owner", select: "name" },
-        // ])
-
-        if (!foundChatroom) {
+        if (!chatroom) {
             return res.status(404).json({ error: "Chatroom doesn't exist" })
         }
-        const foundChannels = await Channel.find(
-            { chatroom_id: id },
-            { chatroom_id: false, __v: false }
-        )
+
+        const channels = chatroom.channel
+        const members = chatroom.members
 
         const data = {
-            id: foundChatroom._id,
-            name: foundChatroom.name,
+            id: chatroom.id,
+            name: chatroom.name,
             owner: {
-                name: foundChatroom.owner.name,
-                id: foundChatroom.owner._id,
+                id: foundChatroom.owner.id,
+                name: chatroom.owner.name,
             },
-            members: foundChatroom.members,
-            channels: foundChannels,
+            members,
+            channels,
         }
         res.status(200).json(data)
     }

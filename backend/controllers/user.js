@@ -87,13 +87,13 @@ module.exports = (passport, sequelize) => {
 
     const changePassword = async (req, res, next) => {
         const password = !req.body.password ? "" : req.body.password
+        const userId = req.user.id
 
         if (password.length < 6) {
             res.json({ failure: "Incorrect data" })
         }
 
-        const user = await User.findOne({ id: req.user.id })
-
+        const user = await User.findOne({ where: { id: userId } })
         user.password = password
         await user.save({ fields: ["password"] })
 
@@ -101,18 +101,17 @@ module.exports = (passport, sequelize) => {
     }
 
     const changeAvatar = async (req, res, next) => {
-        const id = req.params.id
+        const avatarId = req.params.id
+        const userId = req.user.id
 
-        await User.findOneAndUpdate(
-            { _id: id },
-            {
-                avatar: `https://justchattingbucket.s3.eu-west-3.amazonaws.com/${id}`,
-            }
-        )
+        await User.findOneAndUpdate({ where: { id: userId } })
+
+        user.avatar = `https://justchattingbucket.s3.eu-west-3.amazonaws.com/${avatarId}`
+        user.save({ fields: ["avatar"] })
 
         await uploadAvatar(req, res, function (err) {
             if (err) {
-                return res.status(403).json({ error: err.message })
+                return res.status(500).json({ error: err.message })
             }
 
             res.status(201).json({ success: "Updated avatar" })
@@ -121,29 +120,15 @@ module.exports = (passport, sequelize) => {
 
     const logout = async (req, res, next) => {
         req.logout()
-        // res.redirect("/")
-        // req.session.destroy()
         res.json({ success: "Logout successful" })
     }
 
     const googleOAuth = async (req, res, next) => {
-        const token = signToken(req.user)
-        res.json({ token })
+        res.status(500).json("Not implemented yet.")
     }
 
     const facebookOAuth = async (req, res, next) => {
-        const token = signToken(req.user)
-        console.log(sequelize)
-        res.json({ token })
-    }
-
-    //dodane ale po co
-    const getInfo = async (req, res, next) => {
-        if (req.params.id) {
-            const user = await User.findOne({ where: { id: req.params.id } })
-            res.json(user)
-        }
-        res.json({ status: false })
+        res.status(500).json("Not implemented yet.")
     }
 
     return {
@@ -154,6 +139,5 @@ module.exports = (passport, sequelize) => {
         logout,
         googleOAuth,
         facebookOAuth,
-        getInfo,
     }
 }
