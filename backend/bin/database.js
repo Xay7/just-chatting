@@ -15,9 +15,3 @@ module.exports = {
     DataTypes,
 }
 
-//dialect: "mysql",
-//         logging: false,
-//         host: "mysql.ct8.pl",
-//         username: "m16837_gt",
-//         password: "&huyHh1nbDsiYmdErkd*",
-//         database: "m16837_wf"
