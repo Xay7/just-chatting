@@ -4,7 +4,7 @@
   "description": "MERN real time text chat with with custom chatrooms with channels (think Discord/Slack)",
   "main": "index.js",
   "scripts": {
-    "start-server": "nodemon backend/index.js",
+    "start-server": "nodemon backend/app.js",
     "start-client": "npm start --prefix frontend",
     "start": "concurrently \"npm run start-server\" \"npm run start-client\""
   },

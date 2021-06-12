@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start-server": "nodemon backend/index.js",
+    "start-server": "nodemon backend/app.js",
     "start-client": "npm start --prefix frontend",
     "start": "concurrently \"npm run start-server\" \"npm run start-client\""
   },
@@ -20,6 +20,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "concurrently": "^4.1.2",
+    "connect-session-sequelize": "^7.1.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -35,8 +36,12 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
+    "pg": "^8.6.0",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.6.2",
     "sharp": "^0.23.2",
     "socket.io": "^2.4.1",
+    "sqlite3": "^5.0.2",
     "uuid4": "^1.1.4"
   }
 }
