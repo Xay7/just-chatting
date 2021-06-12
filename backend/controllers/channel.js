@@ -1,30 +1,34 @@
 module.exports = (sequelize) => {
-    const { Channel } = sequelize.models
+    const { Channel, ChannelMessage } = sequelize.models
 
     const newChannel = async (req, res, next) => {
-        const chatroom = req.body.id
-        const name = req.body.name
-        const description = req.body.description
+        const chatroomId = req.body.id
+        const channelName = req.body.name
+        const channelDescription = req.body.description
 
-        const newChannel = new Channel({
+        const channel = Channel.create({
             chatroom_id: chatroom,
-            name: name,
-            description: description,
+            name: channelName,
+            description: channelDescription,
         })
 
-        await newChannel.save()
-
-        res.status(200).json({
-            success: "Created new channel",
-            id: newChannel.id,
-        })
+        if (channel) {
+            res.status(200).json({
+                success: "Created new channel",
+                id: newChannel.id,
+            })
+        } else {
+            res.status(500).json("error")
+        }
     }
 
     const getChannels = async (req, res, next) => {
-        const channels = await Chatroom.findOne(
-            { id: req.params.id },
-            { _id: 0 }
-        ).select("channels")
+        const chatroomId = req.params.id
+        const channels = await Chatroom.findOne({
+            where: {
+                chatroom_id: chatroomId,
+            },
+        })
 
         res.status(200).json(channels)
     }
@@ -38,73 +42,94 @@ module.exports = (sequelize) => {
     }
 
     const changeChannelData = async (req, res, next) => {
-        const id = req.params.id
-
-        let newChannelName = req.body.channelName
-        const newChannelDescription = req.body.channelDescription
+        const channelId = req.params.id
+        let channelName = req.body.channelName
+        const channelDescription = req.body.channelDescription
 
         if (newChannelName == "") {
             newChannelName = req.body.oldChannelName
         }
 
-        await Channel.findByIdAndUpdate(
-            { _id: id },
-            {
-                name: newChannelName,
-                description: newChannelDescription,
-            }
-        )
+        const channel = Channel.findOne({
+            where: {
+                id: channelId,
+            },
+        })
+
+        if (!channel) {
+            res.status(404).json("channel not found")
+        }
+
+        channel.name = channelName
+        channel.description = channelDescription
+        await channel.save()
 
         res.status(200).json({ success: "Channel data has been changed" })
     }
 
     const deleteChannel = async (req, res, next) => {
-        const user_id = req.user._id
-        const channelID = req.params.id
+        const userId = req.user._id
+        const channelId = req.params.id
 
-        const foundChannel = await Channel.findById({ _id: channelID })
+        const channel = await Channel.findOne({
+            where: {
+                id: channelId,
+            },
+        })
 
-        if (!foundChannel) {
+        if (!channel) {
             res.status(404).json({ error: "Channel doesn't exist" })
         }
 
-        const isOwner = await Chatroom.findById(foundChannel.chatroom_id)
+        const isOwner = await Chatroom.find({
+            where: {
+                id: channel.chatroom_id,
+                ownerId: req.user.id,
+            },
+        })
 
-        if (isOwner.owner.toString() !== user_id.toString()) {
+        if (!isOwner) {
             return res.status(403).json({ error: "Unauthorized" })
         }
 
-        await Channel.deleteOne({ _id: channelID })
+        await channel.destroy()
 
         res.status(200).json({ success: "Channel has been deleted" })
     }
 
     const storeMessage = async (req, res, next) => {
-        const newChannelMessage = new ChannelMessage({
-            channel_id: req.body.id,
-            author: req.user._id,
-            body: req.body.body,
-            created_at: req.body.created_at,
-        })
+        const channelId = req.body.id
+        const author = req.user.id
+        const body = requ.body.body
+        const created_at = req.body.created_at
 
-        newChannelMessage.save()
+        const channelMessage = await ChannelMessage.create({
+            where: {
+                channel_id: channelId,
+                author,
+                body,
+                created_at,
+            },
+        })
 
         res.status(200).json({ success: "Stored a message" })
     }
 
     const getMessages = async (req, res, next) => {
+        const channelId = req.params.id
         const amount = +req.query.amount
         const skip = +req.query.skip
 
-        const foundMessages = await ChannelMessage.find({
-            channel_id: req.params.id,
+        const messages = await ChannelMessage.findAll({
+            where: {
+                channel_id: channelId,
+            },
+            limit: amount,
+            offset: skip,
+            order: [["id", "DESC"]],
         })
-            .sort({ _id: -1 })
-            .limit(amount)
-            .skip(skip)
-            .populate("author", "name avatar -_id")
 
-        res.status(200).json(foundMessages)
+        res.status(200).json(messages)
     }
 
     return {

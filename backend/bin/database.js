@@ -1,5 +1,6 @@
 const { join } = require("path")
 config = require("../config/index").database
+const { host, username, password, database } = config
 
 const { Sequelize, DataTypes } = require("sequelize")
 
@@ -14,4 +15,3 @@ module.exports = {
     sequelize,
     DataTypes,
 }
-
