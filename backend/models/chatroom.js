@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -23,3 +24,21 @@ const chatSchema = new Schema({
 const chatroom = mongoose.model('chatroom', chatSchema);
 
 module.exports = chatroom;
+=======
+module.exports = (sequelize, DataTypes) => {
+    const Chatroom = sequelize.define("Chatroom", {
+        id: {
+            type: DataTypes.INTEGER,
+            unique: true,
+            primaryKey: true,
+            allowNull: true,
+            autoIncrement: true,
+        },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+    })
+    return Chatroom
+}
+>>>>>>> 73e8593571a2f00b92217314feb92974fefdd528

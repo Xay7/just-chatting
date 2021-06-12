@@ -1,57 +1,50 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const Schema = mongoose.Schema;
+const bcrypt = require("bcryptjs")
 
-const userSchema = new Schema({
-    name: {
-        type: String,
-    },
-    email: {
-        type: String,
-        lowercase: true
-    },
-    password: {
-        type: String,
-    },
-    avatar: {
-        type: String,
-    },
-    chatrooms: [
-        { type: mongoose.Schema.Types.ObjectId, ref: 'chatroom', required: true }
-    ]
-}).set('toJSON', {
-    virtuals: true,
-    versionKey: false,
-    transform: function (doc, ret) { delete ret._id }
-});
+module.exports = (sequelize, DataTypes) => {
+    const User = sequelize.define(
+        "User",
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                unique: true,
+                primaryKey: true,
+                allowNull: true,
+                autoIncrement: true,
+            },
+            name: {
+                type: DataTypes.STRING,
+                lowercase: true,
+            },
+            email: {
+                type: DataTypes.STRING,
+                lowercase: true,
+                isEmail: true,
+                unique: true,
+                required: true,
+            },
+            password: {
+                type: DataTypes.STRING,
+                required: true,
+            },
+            avatar: {
+                type: DataTypes.STRING,
+            },
+        }
+        // { indexes: [{ unique: true, fields: ["email"] }] }
+    )
 
-
-userSchema.pre('save', async function (next) {
-    try {
-
-        // Generate a salt
-        const salt = await bcrypt.genSalt(10);
-        // Generate password hash
-        const hashedPassword = await bcrypt.hash(this.password, salt);
-
-        // Replace originial password with a hashed password
-        this.password = hashedPassword;
-
-        next();
-
-    } catch (error) {
-        next(error);
+    User.hashPassword = async (password) => {
+        const hash = await bcrypt.hash(password, await bcrypt.genSalt(10))
+        return hash
     }
-});
 
-userSchema.methods.isValidPassword = async function (newPassword) {
-    try {
-        return await bcrypt.compare(newPassword, this.password);
-    } catch (error) {
-        throw new Error(error);
+    User.isValidPassword = async (newPassword) => {
+        try {
+            return await bcrypt.compare(newPassword, this.password)
+        } catch (error) {
+            throw new Error(error)
+        }
     }
+
+    return User
 }
-
-const user = mongoose.model('user', userSchema);
-
-module.exports = user;
